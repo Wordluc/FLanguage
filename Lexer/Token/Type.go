@@ -3,8 +3,7 @@ package Token
 type TokenType uint8
 
 const (
-	ERROR_L TokenType = 255
-	END     TokenType = iota
+	END TokenType = iota
 	LET
 	VALUE
 	FUNC
@@ -26,6 +25,7 @@ const (
 	DOT_COMMA
 	DOUBLE_QUOTE
 	SINGLE_QUOTE
+	ERROR_L TokenType = 255
 )
 
 func GetTokenType(typeF string) TokenType {
