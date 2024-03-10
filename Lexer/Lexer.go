@@ -1,42 +1,52 @@
-package lexer
+package Lexer
 
 import (
 	Token "FLanguage/Lexer/Token"
-	TokenT "FLanguage/Lexer/Token/Type"
-	"bufio"
+	"errors"
 	"log"
 	"os"
 	"regexp"
 )
 
-type ParseResult struct {
-	tokens []Token.Token
+type Lexer struct {
+	input         []string
+	pCurrectValue int
+	pNextValue    int
 }
 
-func Parse(path string) (ParseResult, error) {
-	f, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
+func (l *Lexer) GetP() (int, int) {
+	return l.pCurrectValue, l.pNextValue
+}
+func (l *Lexer) IncrP() error {
+	if l.pCurrectValue == (len(l.input))-1 {
+		return errors.New("no more token")
+	}
+	l.pCurrectValue = l.pNextValue
+	l.pNextValue++
+	return nil
+
+}
+func OpenFile(path string) ([]byte, error) {
+	file, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatalf("open file error: %v", err)
-		return ParseResult{}, err
+		return nil, err
 	}
-	defer f.Close()
-	scan := bufio.NewScanner(f)
-	result := ParseResult{}
-	regex := GetRegex()
-	r := regexp.MustCompile(regex.Get())
-	n := 0
-	for scan.Scan() {
-		var line = scan.Text()
-		result.parseLine(line, r, n)
-		n++
-	}
-	return result, nil
+	return file, nil
 }
-func (r *ParseResult) parseLine(line string, source *regexp.Regexp, n int) {
-	matchs := source.FindAllString(line, -1)
-	for _, match := range matchs {
+func New(text []byte) (Lexer, error) {
+	regex := GetRegex()
+	r := regexp.MustCompile(regex)
+	matchs := r.FindAllString(string(text), -1)
+	return Lexer{matchs, -1, 0}, nil
 
-		ttype := TokenT.GetTokenType(match)
-		r.tokens = append(r.tokens, Token.New(match, ttype, n))
+}
+func (l *Lexer) NextToken(n int) (Token.Token, error) {
+	e := l.IncrP()
+	if e != nil {
+		return Token.Token{}, e
 	}
+	ttype := Token.GetTokenType(l.input[l.pCurrectValue])
+	return Token.New(l.input[l.pCurrectValue], ttype, n), nil
+
 }

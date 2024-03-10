@@ -1,26 +1,15 @@
-package lexer
+package Lexer
 
 import "strings"
 
-type RegexToken struct {
-	s strings.Builder
-}
-
-func (r *RegexToken) AddRegexPart(p string) {
-	r.s.WriteString(p)
-}
-func (r RegexToken) Get() string {
-	return r.s.String()
-}
-
-func GetRegex() RegexToken {
-	r := RegexToken{}
-	r.AddRegexPart(`\w+|`)                            //Parole
-	r.AddRegexPart(`\/\*|\*\/|`)                      //Commenti multi linea
-	r.AddRegexPart(`\/{1,2}|`)                        //Commenti mono linea
-	r.AddRegexPart(`\+{1,2}|\{1,2}|\-{1,2}|\={1,2}|`) //Operazioni aritmentiche
-	r.AddRegexPart(`!=|\>\=?|\<\=?|`)                 //Operazioni boleani
-	r.AddRegexPart(`[(){}]|`)                         //Parentesi
-	r.AddRegexPart(`[,.:;!?\"*]`)                     //Simboli
-	return r
+func GetRegex() string {
+	r := strings.Builder{}
+	r.WriteString(`\w+|`)                            //Parole
+	r.WriteString(`\/\*|\*\/|`)                      //Commenti multi linea
+	r.WriteString(`\/{1,2}|`)                        //Commenti mono linea
+	r.WriteString(`\+{1,2}|\{1,2}|\-{1,2}|\={1,2}|`) //Operazioni aritmentiche
+	r.WriteString(`!=|\>\=?|\<\=?|`)                 //Operazioni boleani
+	r.WriteString(`[(){}]|`)                         //Parentesi
+	r.WriteString(`[,.:;!?\"*]`)                     //Simboli
+	return r.String()
 }

@@ -1,9 +1,11 @@
-package Type
+package Token
 
-type TokenType int8
+type TokenType uint8
 
 const (
-	LET TokenType = iota
+	ERROR_L TokenType = 255
+	END     TokenType = iota
+	LET
 	VALUE
 	FUNC
 	RETURN
@@ -17,12 +19,13 @@ const (
 	OPEN_GRAP_BRACKET
 	CLOSE_GRAP_BRACKET
 	IF
-	OPEN_COM
-	CLOSE_COM
+	OPEN_COMM
+	CLOSE_COMM
 	DOT
 	COMMA
 	DOT_COMMA
-	END
+	DOUBLE_QUOTE
+	SINGLE_QUOTE
 )
 
 func GetTokenType(typeF string) TokenType {
@@ -56,16 +59,32 @@ func GetTokenType(typeF string) TokenType {
 	case "END":
 		return END
 	case "/*":
-		return OPEN_COM
+		return OPEN_COMM
 	case "*/":
-		return CLOSE_COM
+		return CLOSE_COMM
 	case ".":
 		return DOT
 	case ",":
 		return COMMA
 	case ";":
 		return DOT_COMMA
+	case "\"":
+		return DOUBLE_QUOTE
+	case "'":
+		return SINGLE_QUOTE
 	default:
-		return VALUE
+		if isValidValua(typeF) {
+			return VALUE
+		}
+		return ERROR_L
 	}
+}
+func isValidValua(value string) bool {
+	for _, cr := range value {
+		c := string(cr)
+		if !((c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || (c >= "0" && c <= "9")) {
+			return false
+		}
+	}
+	return true
 }
