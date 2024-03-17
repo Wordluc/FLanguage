@@ -5,7 +5,7 @@ type TokenType uint8
 const (
 	END TokenType = iota
 	LET
-	VALUE
+	WORD
 	FUNC
 	RETURN
 	PLUS
@@ -74,7 +74,7 @@ func GetTokenType(typeF string) TokenType {
 		return SINGLE_QUOTE
 	default:
 		if isValidValua(typeF) {
-			return VALUE
+			return WORD
 		}
 		return ERROR_L
 	}

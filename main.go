@@ -2,14 +2,15 @@ package main
 
 import (
 	Lexer "FLanguage/Lexer"
+	"FLanguage/Parser"
 	"fmt"
 )
 
 func lexerFromFile() {
-	file, _ := Lexer.OpenFile("prova.txt")
+	file, _ := Lexer.GetByteFromFile("prova.txt")
 	lexer, _ := Lexer.New(file)
 	for {
-		v, e := lexer.NextToken(0)
+		v, e := lexer.NextToken()
 		if e != nil {
 			break
 		}
@@ -17,5 +18,6 @@ func lexerFromFile() {
 	}
 }
 func main() {
-	Lexer.ReplLexer()
+	Parser.ReplParser()
+	//Lexer.ReplLexer()
 }
