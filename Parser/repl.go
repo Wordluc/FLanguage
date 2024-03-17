@@ -1,29 +1,32 @@
-package Lexer
+package Parser
 
 import (
+	"FLanguage/Lexer"
 	"bufio"
 	"fmt"
 	"os"
 	"slices"
 )
 
-func ReplLexer() {
+func ReplParser() {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("-")
 	v, _ := reader.ReadBytes('\n')
 	if string(v) == "{{\r\n" {
 		v = readBlockLines(reader)
 	}
-	l, _ := New(v)
+	l, _ := Lexer.New(v)
 	fmt.Println("--------------")
 	for {
-		t, e := l.NextToken()
+		statement, e := parseStatement(&l)
+
 		if e != nil {
+			fmt.Println(e)
 			break
 		}
-		fmt.Println(t)
+		fmt.Println(statement.getStatement())
 	}
-	ReplLexer()
+	ReplParser()
 }
 func readBlockLines(reader *bufio.Reader) []byte {
 	var text []byte
