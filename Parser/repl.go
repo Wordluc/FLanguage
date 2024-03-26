@@ -24,7 +24,7 @@ func ReplParser() {
 			fmt.Println(e)
 			break
 		}
-		fmt.Println(statement.getStatement())
+		fmt.Println(statement.GetStatement())
 	}
 	ReplParser()
 }
