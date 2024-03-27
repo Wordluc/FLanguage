@@ -40,7 +40,7 @@ func New(text []byte) (Lexer, error) {
 	regex := GetRegex()
 	r := regexp.MustCompile(regex)
 	matchs := r.FindAllString(string(text), -1)
-	return Lexer{matchs, -1, 0}, nil
+	return Lexer{matchs, 0, 1}, nil
 
 }
 func (l *Lexer) NextToken() (Token.Token, error) {
@@ -58,5 +58,10 @@ func (l *Lexer) LookNext() (Token.Token, error) {
 	}
 	ttype := Token.GetTokenType(l.input[l.pNextValue])
 	return Token.New(l.input[l.pNextValue], ttype), nil
+
+}
+func (l *Lexer) LookCurrent() Token.Token {
+	ttype := Token.GetTokenType(l.input[l.pCurrectValue])
+	return Token.New(l.input[l.pCurrectValue], ttype)
 
 }
