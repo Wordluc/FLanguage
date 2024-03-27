@@ -12,8 +12,9 @@ func TestLexer(t *testing.T) {
 	Ff prova(){
 		ret e;
 	}
+	END
 	`
-	exp := [17]Token.TokenType{
+	exp := [18]Token.TokenType{
 		Token.LET, Token.WORD, Token.EQUAL, Token.WORD, Token.DOT_COMMA,
 		Token.WORD, Token.PLUS, Token.WORD,
 		Token.FUNC, Token.WORD, Token.OPEN_CIRCLE_BRACKET, Token.CLOSE_CIRCLE_BRACKET, Token.OPEN_GRAP_BRACKET,
@@ -25,10 +26,11 @@ func TestLexer(t *testing.T) {
 		t.Error("creazione Lexer fallita")
 	}
 	for _, i := range exp {
-		got, _ := l.NextToken()
+		got, _ := l.LookCurrent()
 		if got.Type != Token.TokenType(i) {
 			t.Errorf("errore parsing: got %v instead %v", got.Type, Token.TokenType(i))
 		}
+		l.IncrP()
 
 	}
 }
