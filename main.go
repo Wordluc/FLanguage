@@ -2,7 +2,6 @@ package main
 
 import (
 	Lexer "FLanguage/Lexer"
-	"FLanguage/Parser"
 	"fmt"
 )
 
@@ -18,6 +17,5 @@ func lexerFromFile() {
 	}
 }
 func main() {
-	Parser.ReplParser()
 	//Lexer.ReplLexer()
 }
