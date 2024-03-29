@@ -26,7 +26,27 @@ func TestLexer(t *testing.T) {
 		t.Error("creazione Lexer fallita")
 	}
 	for _, i := range exp {
-		got, _ := l.LookCurrent()
+		got := l.LookCurrent()
+		if got.Type != Token.TokenType(i) {
+			t.Errorf("errore parsing: got %v instead %v", got.Type, Token.TokenType(i))
+		}
+		l.IncrP()
+
+	}
+}
+func TestLexer_Op(t *testing.T) {
+	text := `
+	*-/+;
+	`
+	exp := []Token.TokenType{
+		Token.MULT, Token.MINUS, Token.DIV, Token.PLUS, Token.DOT_COMMA,
+	}
+	l, e := New([]byte(text))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	for _, i := range exp {
+		got := l.LookCurrent()
 		if got.Type != Token.TokenType(i) {
 			t.Errorf("errore parsing: got %v instead %v", got.Type, Token.TokenType(i))
 		}
