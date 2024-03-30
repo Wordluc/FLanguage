@@ -12,7 +12,8 @@ func TestBinaryOperation_OneOperation(t *testing.T) {
 	if e != nil {
 		//t.Error(e)
 	}
-	program, e := ParseWord(&lexer)
+	lexer.IncrP()
+	program, e := ParseBinaryOp(&lexer)
 	if e != nil {
 		t.Error(e)
 	}
@@ -20,27 +21,34 @@ func TestBinaryOperation_OneOperation(t *testing.T) {
 		t.Error("program is nil")
 	}
 	CompareWith := []CompareWith{
-		{Type: Token.WORD, Value: "10"},
-		{Type: Token.PLUS, Value: "+"},
-		{Type: Token.WORD, Value: "2"},
+		{TypeA: Token.WORD, ValueA: "10", Operator: Token.PLUS, ValueOperator: "+"},
+		{TypeA: Token.WORD, ValueA: "2"},
 	}
-	head := program
+	head := program.(BinaryExpresion)
+	_ = head
 	i := 0
+	//t.SkipNow()
 	for {
 		e := head.Is(CompareWith[i])
 		if e != nil {
 			t.Error(e)
-		}
-		head = head.NextExpresion
-		if head == nil {
 			break
 		}
-		i++
+		switch head.NextExpresion.(type) {
+		case BinaryExpresion:
+			head = head.NextExpresion.(BinaryExpresion)
+			i++
+		case nil:
+			return
+		case EmptyExpresion:
+			return
+		default:
+			return
+		}
 
 	}
 }
 func TestBinaryOperation_TwoOperation(t *testing.T) {
-
 	ist := "10+2*1;"
 	lexer, e := Lexer.New([]byte(ist))
 	if e != nil {
@@ -50,68 +58,65 @@ func TestBinaryOperation_TwoOperation(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	t.Log("mi manca" + lexer.LookCurrent().Value)
 	expected := []CompareWith{
-		{Type: Token.WORD, Value: "10"},
-		{Type: Token.PLUS, Value: "+"},
+		{TypeA: Token.WORD, ValueA: "10", Operator: Token.PLUS, ValueOperator: "+"},
 	}
-	head := program
-	for {
-
-		if head == nil {
-			break
-		}
-		t.Log("log", head.Value)
-		head = head.NextExpresion
-	}
-	head = program
+	head := program.(BinaryExpresion)
 	i := 0
+GO:
 	for {
 		e := head.Is(expected[i])
+		t.Log(head.ValueA)
 		if e != nil {
 			t.Error(e)
-		}
-		head = head.NextExpresion
-		if head == nil {
 			break
 		}
-		i++
+
+		switch head.NextExpresion.(type) {
+		case BinaryExpresion:
+			head = head.NextExpresion.(BinaryExpresion)
+			i++
+		case EmptyExpresion:
+			break GO
+		case nil:
+			return
+		default:
+			t.Error("error parsing")
+			return
+		}
 
 	}
+
 	//	lexer.IncrP()
 	program, e = ParseWord(&lexer)
 	//print program
-	head = program
-	t.Log("print")
+	head = program.(BinaryExpresion)
 	if e != nil {
 		t.Error(e)
 	}
-	for {
-
-		if head == nil {
-			break
-		}
-		t.Log(head.Value)
-		head = head.NextExpresion
-	}
 
 	expected = []CompareWith{
-		{Type: Token.WORD, Value: "2"},
-		{Type: Token.MULT, Value: "*"},
-		{Type: Token.WORD, Value: "1"},
+		{TypeA: Token.WORD, ValueA: "2", Operator: Token.MULT, ValueOperator: "*"},
+		{TypeA: Token.WORD, ValueA: "1"},
 	}
-	head = program
+	head = program.(BinaryExpresion)
 	i = 0
 	for {
 		e := head.Is(expected[i])
 		if e != nil {
 			t.Error(e)
-		}
-		head = head.NextExpresion
-		if head == nil {
 			break
 		}
-		i++
+		switch head.NextExpresion.(type) {
+		case BinaryExpresion:
+			head = head.NextExpresion.(BinaryExpresion)
+			i++
+		case EmptyExpresion:
+			return
+		case nil:
+			t.Log("nil")
+			return
+		}
 
 	}
 }

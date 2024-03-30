@@ -2,8 +2,14 @@ package Expresions
 
 import "FLanguage/Lexer/Token"
 
-type Expresion struct {
-	Type          Token.TokenType
-	Value         string
-	NextExpresion *Expresion
+type BinaryExpresion struct {
+	ValueA        string
+	TypeA         Token.TokenType
+	Operator      Token.Token
+	ValueOperator string
+	NextExpresion IExpresion
+}
+type EmptyExpresion struct {
+}
+type IExpresion interface {
 }

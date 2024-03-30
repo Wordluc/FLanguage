@@ -6,13 +6,18 @@ import (
 )
 
 type CompareWith struct {
-	Type  Token.TokenType
-	Value string
+	TypeA         Token.TokenType
+	ValueA        string
+	Operator      Token.TokenType
+	ValueOperator string
 }
 
-func (e Expresion) Is(c CompareWith) error {
-	if e.Type == c.Type && e.Value == c.Value {
-		return nil
+func (e BinaryExpresion) Is(c CompareWith) error {
+	if !(e.TypeA == c.TypeA && e.ValueA == c.ValueA) {
+		return errors.New("A:type or value are not equal, got " + e.ValueA + " expected " + c.ValueA)
 	}
-	return errors.New(string(e.Type) + "is not " + string(c.Type) + "and " + string(e.Value) + "is not " + string(c.Value))
+	if !(e.Operator.Type == c.Operator && e.Operator.Value == c.ValueOperator) {
+		return errors.New("Operator:type or value are not equal, got " + e.ValueA + "expected " + c.ValueA)
+	}
+	return nil
 }
