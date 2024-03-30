@@ -8,5 +8,5 @@ import (
 type IStatement interface {
 	ToString() string
 	TokenType() Token.TokenType
-	ToExpression() *Expresions.Expresion
+	ToExpression() Expresions.IExpresion
 }

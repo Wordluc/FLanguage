@@ -7,10 +7,10 @@ import (
 	"errors"
 )
 
-type ParseExpresion func(l *Lexer.Lexer) (*Expresion, error)
+type ParseExpresion func(l *Lexer.Lexer) (IExpresion, error)
 
-func ParseExpresionEmpty(l *Lexer.Lexer) (*Expresion, error) {
-	return &Expresion{}, nil
+func ParseExpresionEmpty(l *Lexer.Lexer) (IExpresion, error) {
+	return EmptyExpresion{}, nil
 }
 func And(e error, s string) error {
 	v := e.Error()
@@ -33,32 +33,33 @@ func GetParse(than Token.TokenType) (ParseExpresion, error) {
 	}
 	return nil, errors.New("GetParse: " + string(than) + "not implemented")
 }
-func ParseWord(l *Lexer.Lexer) (*Expresion, error) {
+func ParseWord(l *Lexer.Lexer) (IExpresion, error) {
 	nextOp, e := l.NextToken()
 	if e != nil {
-		return nil, e
+		return EmptyExpresion{}, e
 	}
 	f, e := GetParse(nextOp.Type)
 	if e != nil {
-		return nil, And(e, "ParseWord"+nextOp.Value)
+		return EmptyExpresion{}, And(e, "ParseWord"+nextOp.Value)
 	}
 	exp, e := f(l)
 	if e != nil {
-		return nil, e
+		return EmptyExpresion{}, e
 	}
 	return exp, nil
 }
-func ParseBinaryOp(l *Lexer.Lexer) (*Expresion, error) { //sono sul operazione
+func ParseBinaryOp(l *Lexer.Lexer) (IExpresion, error) { //sono sul operazione
 	backValue, e := l.LookBack()
 	if e != nil {
-		return &Expresion{}, And(e, "backValue")
+		return EmptyExpresion{}, And(e, "backValue")
 	}
 	forceCurOp, e := Attraction.GetForce(l.LookCurrent().Type)
 	if e != nil {
-		return &Expresion{}, And(e, "forceCurOp"+l.LookCurrent().Value)
+		return EmptyExpresion{}, And(e, "forceCurOp"+l.LookCurrent().Value)
 	}
-	expresion := &Expresion{Type: backValue.Type, Value: backValue.Value, NextExpresion: nil}
-	expresion.NextExpresion = &Expresion{Type: l.LookCurrent().Type, Value: l.LookCurrent().Value}
+	expresion := BinaryExpresion{TypeA: backValue.Type, ValueA: backValue.Value, NextExpresion: EmptyExpresion{}}
+	expresion.Operator = l.LookCurrent()
+	expresion.ValueOperator = l.LookCurrent().Value
 	nextValue, e := l.NextToken()
 	if e != nil {
 		return expresion, And(e, "nextValue")
@@ -67,14 +68,17 @@ func ParseBinaryOp(l *Lexer.Lexer) (*Expresion, error) { //sono sul operazione
 	if e != nil {
 		return expresion, And(e, "nextOp")
 	}
-
+	if nextOp.Type == Token.DOT_COMMA {
+		expresion.NextExpresion = BinaryExpresion{TypeA: nextValue.Type, ValueA: nextValue.Value, NextExpresion: EmptyExpresion{}}
+		return expresion, nil
+	}
 	forceNextOp, e := Attraction.GetForce(nextOp.Type)
 	if e != nil {
 		return expresion, And(e, "forceNextOp")
 	}
 	if forceCurOp > forceNextOp {
 		l.IncrP()
-		expresion.NextExpresion.NextExpresion = &Expresion{Type: nextValue.Type, Value: nextValue.Value}
+		expresion.NextExpresion = BinaryExpresion{TypeA: nextValue.Type, ValueA: nextValue.Value, NextExpresion: EmptyExpresion{}}
 	}
 	return expresion, nil
 }
