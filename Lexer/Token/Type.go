@@ -7,6 +7,7 @@ const (
 	LET
 	WORD
 	FUNC
+	NONE
 	RETURN
 	PLUS
 	MINUS

@@ -31,7 +31,35 @@ func GetParse(than Token.TokenType) (ParseExpresion, error) {
 	case Token.DOT_COMMA:
 		return ParseExpresionEmpty, nil
 	}
-	return nil, errors.New("GetParse: " + string(than) + "not implemented")
+	return nil, errors.New("GetParse: Operator:" + string(than) + "not implemented")
+}
+func ParseProgram(l *Lexer.Lexer) (IExpresion, error) {
+	f, e := GetParse(l.LookCurrent().Type)
+	if e != nil {
+		return EmptyExpresion{}, And(e, "ParseProgram")
+	}
+	exp, e := f(l)
+	program := &MainExpresion{Expresion: exp}
+	head := program
+	for {
+		//	head.NextExpresion = &MainExpresion{Expresion: &OperatorExpresion{Operator: l.LookCurrent()}}
+		//	head = head.GetNextExpresion().(*MainExpresion)
+		//	l.IncrP()
+		f, e := GetParse(l.LookCurrent().Type)
+		if e != nil {
+			return EmptyExpresion{}, And(e, "ParseProgram")
+		}
+		ex, e := f(l)
+		if e != nil {
+			return program, e
+		}
+		head.NextExpresion = &MainExpresion{Expresion: ex}
+		head = head.GetNextExpresion().(*MainExpresion)
+		if l.LookCurrent().Type == Token.DOT_COMMA { //TODO: permettere di definire l'uscita dal for
+			break
+		}
+	}
+	return program, nil
 }
 func ParseWord(l *Lexer.Lexer) (IExpresion, error) {
 	nextOp, e := l.NextToken()
@@ -57,9 +85,7 @@ func ParseBinaryOp(l *Lexer.Lexer) (IExpresion, error) { //sono sul operazione
 	if e != nil {
 		return EmptyExpresion{}, And(e, "forceCurOp"+l.LookCurrent().Value)
 	}
-	expresion := BinaryExpresion{TypeA: backValue.Type, ValueA: backValue.Value, NextExpresion: EmptyExpresion{}}
-	expresion.Operator = l.LookCurrent()
-	expresion.ValueOperator = l.LookCurrent().Value
+	expresion := BinaryExpresion{}.New(backValue, l.LookCurrent())
 	nextValue, e := l.NextToken()
 	if e != nil {
 		return expresion, And(e, "nextValue")
@@ -69,16 +95,28 @@ func ParseBinaryOp(l *Lexer.Lexer) (IExpresion, error) { //sono sul operazione
 		return expresion, And(e, "nextOp")
 	}
 	if nextOp.Type == Token.DOT_COMMA {
-		expresion.NextExpresion = BinaryExpresion{TypeA: nextValue.Type, ValueA: nextValue.Value, NextExpresion: EmptyExpresion{}}
+		l.IncrP()
+		expresion.NextExpresion = BinaryExpresion{}.NewValue(nextValue)
 		return expresion, nil
 	}
 	forceNextOp, e := Attraction.GetForce(nextOp.Type)
 	if e != nil {
 		return expresion, And(e, "forceNextOp")
 	}
+	l.IncrP()
 	if forceCurOp > forceNextOp {
-		l.IncrP()
-		expresion.NextExpresion = BinaryExpresion{TypeA: nextValue.Type, ValueA: nextValue.Value, NextExpresion: EmptyExpresion{}}
+		expresion.NextExpresion = BinaryExpresion{}.NewValue(nextValue)
+		return expresion, nil
 	}
+
+	f, e := GetParse(nextOp.Type)
+	if e != nil {
+		return expresion, And(e, "f")
+	}
+	exp, e := f(l)
+	if e != nil {
+		return expresion, And(e, "exp")
+	}
+	expresion.NextExpresion = exp
 	return expresion, nil
 }
