@@ -7,116 +7,121 @@ import (
 	"errors"
 )
 
-type ParseExpresion func(l *Lexer.Lexer) (IExpresion, error)
+type fParse func(l *Lexer.Lexer, expresion IExpresion) (IExpresion, error)
 
-func ParseExpresionEmpty(l *Lexer.Lexer) (IExpresion, error) {
-	return EmptyExpresion{}, nil
-}
 func And(e error, s string) error {
 	v := e.Error()
 	return errors.New(v + " " + s)
 }
-func GetParse(than Token.TokenType) (ParseExpresion, error) {
+func IsWord(token Token.Token) bool {
+	return token.Type == Token.WORD
+}
+func GetParse(than Token.TokenType) (fParse, error) {
 	switch than {
 	case Token.DIV:
-		return ParseBinaryOp, nil
+		return ParseTree, nil
 	case Token.MULT:
-		return ParseBinaryOp, nil
+		return ParseTree, nil
 	case Token.MINUS:
-		return ParseBinaryOp, nil
+		return ParseTree, nil
 	case Token.PLUS:
-		return ParseBinaryOp, nil
+		return ParseTree, nil
 	case Token.WORD:
-		return ParseWord, nil
-	case Token.DOT_COMMA:
-		return ParseExpresionEmpty, nil
+		return ParseLeaf, nil
 	}
 	return nil, errors.New("GetParse: Operator:" + string(than) + "not implemented")
 }
-func ParseProgram(l *Lexer.Lexer) (IExpresion, error) {
-	f, e := GetParse(l.LookCurrent().Type)
-	if e != nil {
-		return EmptyExpresion{}, And(e, "ParseProgram")
-	}
-	exp, e := f(l)
-	program := &MainExpresion{Expresion: exp}
-	head := program
+func ParseExpresion(l *Lexer.Lexer) (IExpresion, error) {
+	var root IExpresion
 	for {
-		//	head.NextExpresion = &MainExpresion{Expresion: &OperatorExpresion{Operator: l.LookCurrent()}}
-		//	head = head.GetNextExpresion().(*MainExpresion)
-		//	l.IncrP()
-		f, e := GetParse(l.LookCurrent().Type)
-		if e != nil {
-			return EmptyExpresion{}, And(e, "ParseProgram")
+		lookCurrVar := l.LookCurrent()
+		if lookCurrVar.Type == Token.DOT_COMMA {
+			break
 		}
-		ex, e := f(l)
+		fVar, e := GetParse(lookCurrVar.Type)
 		if e != nil {
-			return program, e
+			return nil, e
 		}
-		head.NextExpresion = &MainExpresion{Expresion: ex}
-		head = head.GetNextExpresion().(*MainExpresion)
-		if l.LookCurrent().Type == Token.DOT_COMMA { //TODO: permettere di definire l'uscita dal for
+		node, e := fVar(l, root)
+		if e != nil {
+			return nil, e
+		}
+		switch node.(type) {
+		case ExpresionNode:
+			root = node
+		case ExpresionLeaf:
+			root = node
+		}
+
+		lookCurrVar = l.LookCurrent()
+		if lookCurrVar.Type == Token.DOT_COMMA {
 			break
 		}
 	}
-	return program, nil
+	return root, nil
 }
-func ParseWord(l *Lexer.Lexer) (IExpresion, error) {
-	nextOp, e := l.NextToken()
-	if e != nil {
-		return EmptyExpresion{}, e
-	}
-	f, e := GetParse(nextOp.Type)
-	if e != nil {
-		return EmptyExpresion{}, And(e, "ParseWord"+nextOp.Value)
-	}
-	exp, e := f(l)
-	if e != nil {
-		return EmptyExpresion{}, e
-	}
-	return exp, nil
-}
-func ParseBinaryOp(l *Lexer.Lexer) (IExpresion, error) { //sono sul operazione
-	backValue, e := l.LookBack()
-	if e != nil {
-		return EmptyExpresion{}, And(e, "backValue")
-	}
-	forceCurOp, e := Attraction.GetForce(l.LookCurrent().Type)
-	if e != nil {
-		return EmptyExpresion{}, And(e, "forceCurOp"+l.LookCurrent().Value)
-	}
-	expresion := BinaryExpresion{}.New(backValue, l.LookCurrent())
-	nextValue, e := l.NextToken()
-	if e != nil {
-		return expresion, And(e, "nextValue")
-	}
-	nextOp, e := l.LookNext()
-	if e != nil {
-		return expresion, And(e, "nextOp")
-	}
-	if nextOp.Type == Token.DOT_COMMA {
-		l.IncrP()
-		expresion.NextExpresion = BinaryExpresion{}.NewValue(nextValue)
-		return expresion, nil
-	}
-	forceNextOp, e := Attraction.GetForce(nextOp.Type)
-	if e != nil {
-		return expresion, And(e, "forceNextOp")
+func ParseLeaf(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
+	leaf := &ExpresionLeaf{}
+	curToken := l.LookCurrent()
+	if curToken.Type != Token.WORD {
+		return nil, errors.New("ParseLeaf: not implemented,expected a word,got:" + curToken.Value)
 	}
 	l.IncrP()
-	if forceCurOp > forceNextOp {
-		expresion.NextExpresion = BinaryExpresion{}.NewValue(nextValue)
-		return expresion, nil
-	}
-
-	f, e := GetParse(nextOp.Type)
+	return leaf.New(curToken), nil
+}
+func ParseTree(l *Lexer.Lexer, left IExpresion) (IExpresion, error) {
+	tree := ExpresionNode{LeftExpresion: left}
+	curOpToken := l.LookCurrent()
+	powerCur, e := Attraction.GetForce(curOpToken.Type)
 	if e != nil {
-		return expresion, And(e, "f")
+		return nil, e
 	}
-	exp, e := f(l)
+	if IsWord(curOpToken) {
+		return nil, errors.New("ParseTree: got a word instead of an operator")
+	}
+	if curOpToken.Type == Token.DOT_COMMA {
+		return tree, nil
+	}
+	tree.SetOperator(curOpToken)
+	lookNextVar, e := l.NextToken()
 	if e != nil {
-		return expresion, And(e, "exp")
+		return nil, e
 	}
-	expresion.NextExpresion = exp
-	return expresion, nil
+	if !IsWord(lookNextVar) {
+		return nil, errors.New("ParseTree: got a operator instead of an word")
+	}
+	fVar, e := GetParse(lookNextVar.Type)
+	if e != nil {
+		return nil, e
+	}
+	node, e := fVar(l, ExpresionLeaf{})
+	if e != nil {
+		return nil, e
+	}
+	lookNextOp := l.LookCurrent()
+	if lookNextOp.Type == Token.DOT_COMMA {
+		tree.SetRight(node)
+		return tree, nil
+	}
+	if IsWord(lookNextOp) {
+		return nil, errors.New("ParseTree: got a word instead of an operator")
+	}
+	powerNext, e := Attraction.GetForce(lookNextOp.Type)
+	if e != nil {
+		return nil, e
+	}
+	if powerCur < powerNext {
+		fop, e := GetParse(lookNextOp.Type)
+		if e != nil {
+			return nil, e
+		}
+		treeRigth, e := fop(l, node)
+		if e != nil {
+			return nil, e
+		}
+		tree.SetRight(treeRigth)
+		return tree, nil
+	}
+	tree.SetRight(node)
+	return tree, nil
 }
