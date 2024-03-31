@@ -2,148 +2,63 @@ package Expresions
 
 import (
 	"FLanguage/Lexer"
-	"FLanguage/Lexer/Token"
 	"testing"
 )
 
-func TestBinaryOperation_OneOperation(t *testing.T) {
-	ist := "10+2;"
+func ParseExpresion_WithOneValue_ShouldPass(t *testing.T) {
+	ist := "10;"
 	lexer, e := Lexer.New([]byte(ist))
-	if e != nil {
-		//t.Error(e)
-	}
-	lexer.IncrP()
-	program, e := ParseBinaryOp(&lexer)
 	if e != nil {
 		t.Error(e)
 	}
-	if program == nil {
-		t.Error("program is nil")
+	program, e := ParseExpresion(&lexer)
+	if e != nil {
+		t.Error(e)
 	}
-	CompareWith := []CompareWith{
-		{TypeA: Token.WORD, ValueA: "10", Operator: Token.PLUS, ValueOperator: "+"},
-		{TypeA: Token.WORD, ValueA: "2"},
-	}
-	head := program.(BinaryExpresion)
-	_ = head
-	i := 0
-	//t.SkipNow()
-	for {
-		e := head.Is(CompareWith[i])
-		if e != nil {
-			t.Error(e)
-			break
-		}
-		switch head.NextExpresion.(type) {
-		case BinaryExpresion:
-			head = head.NextExpresion.(BinaryExpresion)
-			i++
-		case nil:
-			return
-		case EmptyExpresion:
-			return
-		default:
-			return
-		}
-
+	expected := "10"
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
-func TestBinaryOperation_TwoOperation(t *testing.T) {
-
-	t.SkipNow()
-	ist := "10+2*1;"
+func ParseExpresion_Valid_ShouldPass1(t *testing.T) {
+	ist := "10+2*1+2+22/2+16*3;"
 	lexer, e := Lexer.New([]byte(ist))
 	if e != nil {
-		//t.Error(e)
+		t.Error(e)
 	}
-	program, e := ParseWord(&lexer)
+	program, e := ParseExpresion(&lexer)
 	if e != nil {
 		t.Error(e)
 	}
-	expected := []CompareWith{
-		{TypeA: Token.WORD, ValueA: "10", Operator: Token.PLUS, ValueOperator: "+"},
-	}
-	head := program.(BinaryExpresion)
-	i := 0
-GO:
-	for {
-		e := head.Is(expected[i])
-		t.Log(head.ValueA)
-		if e != nil {
-			t.Error(e)
-			break
-		}
-
-		switch head.NextExpresion.(type) {
-		case BinaryExpresion:
-			head = head.NextExpresion.(BinaryExpresion)
-			i++
-		case EmptyExpresion:
-			break GO
-		case nil:
-			return
-		default:
-			t.Error("error parsing")
-			return
-		}
-	}
-	//	lexer.IncrP()
-	program, e = ParseWord(&lexer)
-	//print program
-	head = program.(BinaryExpresion)
-	if e != nil {
-		t.Error(e)
-	}
-	expected = []CompareWith{
-		{TypeA: Token.WORD, ValueA: "2", Operator: Token.MULT, ValueOperator: "*"},
-		{TypeA: Token.WORD, ValueA: "1"},
-	}
-	head = program.(BinaryExpresion)
-	i = 0
-	for {
-		e := head.Is(expected[i])
-		if e != nil {
-			t.Error(e)
-			break
-		}
-		switch head.NextExpresion.(type) {
-		case BinaryExpresion:
-			head = head.NextExpresion.(BinaryExpresion)
-			i++
-		case EmptyExpresion:
-			return
-		case nil:
-			t.Log("nil")
-			return
-		}
-
+	expected := "(((10 + (2 * 1)) + 2) + (22 / 2)) + (16 * 3)"
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
-func TestComplexProgramParsing(t *testing.T) {
-	ist := "10+2*1+22/2*2*3+1;"
+func ParseExpresion_Valid_ShouldPass2(t *testing.T) {
+	ist := "10+22/2+16*3;"
 	lexer, e := Lexer.New([]byte(ist))
-	if e != nil {
-		//t.Error(e)
-	}
-	program, e := ParseProgram(&lexer)
 	if e != nil {
 		t.Error(e)
 	}
-	if program.GetString() != "{10+[2*[1]]}+{[22/[2*[2*[3]]]]}+{[1]}" {
-		t.Error("error parsing", "expected: {10+[2*[1]]}+{[22/[2*[2*[3]]]]}+{[1]}, got:", program.GetString())
+	program, e := ParseExpresion(&lexer)
+	if e != nil {
+		t.Error(e)
+	}
+	expected := "(10 + (22 / 2)) + (16 * 3)"
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
-func TestProgramParsing(t *testing.T) {
-	ist := "10+2*1+22/2;"
+func ParseExpresion_Invalid_ShouldFail(t *testing.T) {
+	ist := "10+22**2+16*3;"
 	lexer, e := Lexer.New([]byte(ist))
-	if e != nil {
-		//t.Error(e)
-	}
-	program, e := ParseProgram(&lexer)
 	if e != nil {
 		t.Error(e)
 	}
-	if program.GetString() != "{10+[2*[1]]}{1+[22/[2]]}" {
-		t.Error("error parsing", "expected: {10+[2*[1]]}+{[22/[2]]}, got:", program.GetString())
+	_, e = ParseExpresion(&lexer)
+	if e == nil {
+		t.Error("should be error")
 	}
+
 }

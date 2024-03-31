@@ -1,99 +1,60 @@
 package Expresions
 
-import (
-	"FLanguage/Lexer/Token"
-	"reflect"
-)
+import "FLanguage/Lexer/Token"
 
-type BinaryExpresion struct {
-	ValueA        string
-	TypeA         Token.TokenType
-	Operator      Token.Token
-	ValueOperator string
-	NextExpresion IExpresion
+type ExpresionNode struct {
+	LeftExpresion  IExpresion
+	Operator       Token.Token
+	OperatorValue  string
+	RightExpresion IExpresion
 }
 
-func (e BinaryExpresion) GetNextExpresion() IExpresion {
-	return e.NextExpresion
-}
-func (e BinaryExpresion) SetNextExpresion(exp IExpresion) IExpresion {
-	e.NextExpresion = exp
-	return e
-}
-
-func (e BinaryExpresion) GetString() string {
-	r := e.ValueA + e.ValueOperator
-	if e.NextExpresion != nil && reflect.TypeOf(e.NextExpresion).Name() != "EmptyExpresion" {
-		r += "[" + e.NextExpresion.GetString() + "]"
+func (e ExpresionNode) ToString() string {
+	r := ""
+	if e.LeftExpresion != nil {
+		r += PrintLeafOrExpresion(e.LeftExpresion)
+	}
+	r += " " + e.Operator.Value + " "
+	if e.RightExpresion != nil {
+		r += PrintLeafOrExpresion(e.RightExpresion)
 	}
 	return r
 }
-
-func (e BinaryExpresion) New(tokenA, tokenOp Token.Token) BinaryExpresion {
-	e.ValueA = tokenA.Value
-	e.TypeA = tokenA.Type
-	e.Operator = tokenOp
-	e.ValueOperator = tokenOp.Value
-	e.NextExpresion = EmptyExpresion{}
-	return e
-}
-func (e BinaryExpresion) NewValue(tokenA Token.Token) BinaryExpresion {
-	e.ValueA = tokenA.Value
-	e.TypeA = tokenA.Type
-	e.NextExpresion = EmptyExpresion{}
-	return e
-}
-
-type OperatorExpresion struct {
-	Operator Token.Token
-}
-
-func (e OperatorExpresion) GetNextExpresion() IExpresion {
-	return nil
-}
-func (e OperatorExpresion) SetNextExpresion(IExpresion) IExpresion {
-	return e
-}
-func (e OperatorExpresion) GetString() string {
-	return e.Operator.Value
-}
-
-type MainExpresion struct {
-	Operator      Token.Token
-	Expresion     IExpresion
-	NextExpresion *MainExpresion
-}
-
-func (e MainExpresion) GetNextExpresion() IExpresion {
-	return e.NextExpresion
-}
-func (e MainExpresion) SetNextExpresion(exp IExpresion) IExpresion {
-	e.NextExpresion = &MainExpresion{Expresion: exp} //TODO: verificare l'utilità di usare la stessa interface
-	return e
-}
-func (e MainExpresion) GetString() string {
-	r := "{" + e.Expresion.GetString() + "}"
-	if e.NextExpresion != nil {
-		r += e.NextExpresion.GetString()
+func PrintLeafOrExpresion(e IExpresion) string {
+	switch e.(type) {
+	case ExpresionLeaf:
+		return e.ToString()
+	case ExpresionNode:
+		return "(" + e.ToString() + ")"
 	}
-	return r
-}
-
-type EmptyExpresion struct {
-}
-
-func (e EmptyExpresion) GetNextExpresion() IExpresion {
-	return nil
-}
-func (e EmptyExpresion) SetNextExpresion(IExpresion) IExpresion {
-	return e
-}
-func (e EmptyExpresion) GetString() string {
 	return ""
+}
+func (e *ExpresionNode) SetLeft(left IExpresion) {
+	e.LeftExpresion = left
+}
+func (e *ExpresionNode) SetRight(right IExpresion) {
+	e.RightExpresion = right
+}
+func (e *ExpresionNode) SetOperator(operator Token.Token) {
+	e.Operator = operator
+	e.OperatorValue = operator.Value
+}
+
+type ExpresionLeaf struct {
+	Value string
+	Type  Token.Token
+}
+
+func (e ExpresionLeaf) ToString() string {
+	return e.Value
+}
+func (_ ExpresionLeaf) New(t Token.Token) ExpresionLeaf {
+	e := ExpresionLeaf{}
+	e.Type = t
+	e.Value = t.Value
+	return e
 }
 
 type IExpresion interface {
-	GetNextExpresion() IExpresion
-	SetNextExpresion(IExpresion) IExpresion
-	GetString() string
+	ToString() string
 }
