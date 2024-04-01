@@ -139,6 +139,10 @@ func TestParseExpresion_CallFuncAtEnd_WithParm_ShouldPass(t *testing.T) {
 		t.Error(e)
 	}
 	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	if e != nil {
+		t.Error(e)
+		return
+	}
 	expected := "4 * (prova(3,))"
 	if program.ToString() != expected {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
@@ -161,8 +165,13 @@ func TestParseExpresion_CallFunc_WithExpressionParms_ShouldPass(t *testing.T) {
 	lexer, e := Lexer.New([]byte(ist))
 	if e != nil {
 		t.Error(e)
+		return
 	}
 	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	if e != nil {
+		t.Error(e)
+		return
+	}
 	expected := "prova(3 + 3,(4 * 2) + (2 + 2),ciao,)"
 	if program.ToString() != expected {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
