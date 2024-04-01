@@ -8,14 +8,14 @@ import (
 	"slices"
 )
 
-type fParse func(l *Lexer.Lexer, expresion IExpresion) (IExpresion, error)
+type fParse func(l *Lexer.Lexer, expresion IExpresion, exitTokens ...Token.TokenType) (IExpresion, error)
 
 func And(e error, s string) error {
 	v := e.Error()
 	return errors.New(v + " " + s)
 }
 func IsABrach(token Token.Token) bool {
-	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET
+	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET || token.Type == Token.CALL_FUNC
 }
 func GetParse(than Token.TokenType) (fParse, error) {
 	switch than {
@@ -50,7 +50,7 @@ func ParseExpresion(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IExpresion, 
 		if e != nil {
 			return nil, e
 		}
-		root, e = fVar(l, root)
+		root, e = fVar(l, root, exitTokens...)
 		if e != nil {
 			return nil, e
 		}
@@ -58,10 +58,11 @@ func ParseExpresion(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IExpresion, 
 		if slices.Contains(exitTokens, lookCurrVar.Type) {
 			break
 		}
+
 	}
 	return root, nil
 }
-func parseCallFunc(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
+func parseCallFunc(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	callFunc := &ExpresionCallFunc{NameFunc: l.LookCurrent().Value[:len(l.LookCurrent().Value)-1]}
 	l.IncrP()
 	for {
@@ -82,11 +83,10 @@ func parseCallFunc(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
 		}
 		l.IncrP()
 	}
-	//	funcName, e := ParseExpresion(l, Token.CLOSE_CIRCLE_BRACKET)
 	l.IncrP()
 	return callFunc, nil
 }
-func parseExpresionBlock(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
+func parseExpresionBlock(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	l.IncrP()
 	block, e := ParseExpresion(l, Token.CLOSE_CIRCLE_BRACKET)
 	l.IncrP()
@@ -95,7 +95,7 @@ func parseExpresionBlock(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
 	}
 	return block, nil
 }
-func parseLeaf(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
+func parseLeaf(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	leaf := &ExpresionLeaf{}
 	curToken := l.LookCurrent()
 	if curToken.Type != Token.WORD {
@@ -104,7 +104,9 @@ func parseLeaf(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
 	l.IncrP()
 	return leaf.New(curToken), nil
 }
-func parseTree(l *Lexer.Lexer, left IExpresion) (IExpresion, error) {
+
+// TODO: distinguere le word e i numeri
+func parseTree(l *Lexer.Lexer, left IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	tree := ExpresionNode{LeftExpresion: left}
 	curOpToken := l.LookCurrent()
 	powerCur, e := Attraction.GetForce(curOpToken.Type)
@@ -114,7 +116,7 @@ func parseTree(l *Lexer.Lexer, left IExpresion) (IExpresion, error) {
 	if IsABrach(curOpToken) {
 		return nil, errors.New("ParseTree: got a word instead of an operator")
 	}
-	if curOpToken.Type == Token.DOT_COMMA {
+	if slices.Contains(exitTokens, curOpToken.Type) {
 		return tree, nil
 	}
 	tree.SetOperator(curOpToken)
@@ -134,7 +136,7 @@ func parseTree(l *Lexer.Lexer, left IExpresion) (IExpresion, error) {
 		return tree, errors.New("ParseTree: not implemented,expected a word,got:" + lookNextVar.Value)
 	}
 	lookNextOp := l.LookCurrent()
-	if lookNextOp.Type == Token.DOT_COMMA || lookNextOp.Type == Token.COMMA || lookNextOp.Type == Token.CLOSE_CIRCLE_BRACKET {
+	if slices.Contains(exitTokens, lookNextOp.Type) {
 		tree.SetRight(node)
 		return tree, nil
 	}
@@ -151,7 +153,7 @@ func parseTree(l *Lexer.Lexer, left IExpresion) (IExpresion, error) {
 		if e != nil || fop == nil {
 			return nil, e
 		}
-		treeRigth, e := fop(l, node)
+		treeRigth, e := fop(l, node, exitTokens...)
 		if e != nil {
 			return nil, e
 		}
