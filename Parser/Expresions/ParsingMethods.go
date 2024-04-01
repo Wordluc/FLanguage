@@ -5,6 +5,7 @@ import (
 	"FLanguage/Lexer/Token"
 	"FLanguage/Parser/Attraction.go"
 	"errors"
+	"slices"
 )
 
 type fParse func(l *Lexer.Lexer, expresion IExpresion) (IExpresion, error)
@@ -13,54 +14,61 @@ func And(e error, s string) error {
 	v := e.Error()
 	return errors.New(v + " " + s)
 }
-func IsWord(token Token.Token) bool {
-	return token.Type == Token.WORD
+func IsABrach(token Token.Token) bool {
+	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET
 }
 func GetParse(than Token.TokenType) (fParse, error) {
 	switch than {
 	case Token.DIV:
-		return ParseTree, nil
+		return parseTree, nil
 	case Token.MULT:
-		return ParseTree, nil
+		return parseTree, nil
 	case Token.MINUS:
-		return ParseTree, nil
+		return parseTree, nil
 	case Token.PLUS:
-		return ParseTree, nil
+		return parseTree, nil
 	case Token.WORD:
-		return ParseLeaf, nil
+		return parseLeaf, nil
+	case Token.OPEN_CIRCLE_BRACKET:
+		return parseExpresionBlock, nil
 	}
 	return nil, errors.New("GetParse: Operator:" + string(than) + "not implemented")
 }
-func ParseExpresion(l *Lexer.Lexer) (IExpresion, error) {
+func ParseExpresion(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IExpresion, error) {
 	var root IExpresion
+	if exitTokens == nil {
+		return nil, errors.New("ParseExpresion: no exitTokens defined")
+	}
 	for {
 		lookCurrVar := l.LookCurrent()
-		if lookCurrVar.Type == Token.DOT_COMMA {
+		if slices.Contains(exitTokens, lookCurrVar.Type) {
 			break
 		}
 		fVar, e := GetParse(lookCurrVar.Type)
 		if e != nil {
 			return nil, e
 		}
-		node, e := fVar(l, root)
+		root, e = fVar(l, root)
 		if e != nil {
 			return nil, e
 		}
-		switch node.(type) {
-		case ExpresionNode:
-			root = node
-		case ExpresionLeaf:
-			root = node
-		}
-
 		lookCurrVar = l.LookCurrent()
-		if lookCurrVar.Type == Token.DOT_COMMA {
+		if slices.Contains(exitTokens, lookCurrVar.Type) {
 			break
 		}
 	}
 	return root, nil
 }
-func ParseLeaf(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
+func parseExpresionBlock(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
+	l.IncrP()
+	block, e := ParseExpresion(l, Token.CLOSE_CIRCLE_BRACKET)
+	l.IncrP()
+	if e != nil {
+		return nil, e
+	}
+	return block, nil
+}
+func parseLeaf(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
 	leaf := &ExpresionLeaf{}
 	curToken := l.LookCurrent()
 	if curToken.Type != Token.WORD {
@@ -69,14 +77,14 @@ func ParseLeaf(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
 	l.IncrP()
 	return leaf.New(curToken), nil
 }
-func ParseTree(l *Lexer.Lexer, left IExpresion) (IExpresion, error) {
+func parseTree(l *Lexer.Lexer, left IExpresion) (IExpresion, error) {
 	tree := ExpresionNode{LeftExpresion: left}
 	curOpToken := l.LookCurrent()
 	powerCur, e := Attraction.GetForce(curOpToken.Type)
 	if e != nil {
 		return nil, e
 	}
-	if IsWord(curOpToken) {
+	if IsABrach(curOpToken) {
 		return nil, errors.New("ParseTree: got a word instead of an operator")
 	}
 	if curOpToken.Type == Token.DOT_COMMA {
@@ -87,9 +95,6 @@ func ParseTree(l *Lexer.Lexer, left IExpresion) (IExpresion, error) {
 	if e != nil {
 		return nil, e
 	}
-	if !IsWord(lookNextVar) {
-		return nil, errors.New("ParseTree: got a operator instead of an word")
-	}
 	fVar, e := GetParse(lookNextVar.Type)
 	if e != nil {
 		return nil, e
@@ -98,21 +103,25 @@ func ParseTree(l *Lexer.Lexer, left IExpresion) (IExpresion, error) {
 	if e != nil {
 		return nil, e
 	}
+	if !IsABrach(lookNextVar) {
+		return tree, errors.New("ParseTree: not implemented,expected a word,got:" + lookNextVar.Value)
+	}
 	lookNextOp := l.LookCurrent()
-	if lookNextOp.Type == Token.DOT_COMMA {
+	if lookNextOp.Type == Token.DOT_COMMA || lookNextOp.Type == Token.CLOSE_CIRCLE_BRACKET {
 		tree.SetRight(node)
 		return tree, nil
 	}
-	if IsWord(lookNextOp) {
+	if IsABrach(lookNextOp) {
 		return nil, errors.New("ParseTree: got a word instead of an operator")
 	}
+
 	powerNext, e := Attraction.GetForce(lookNextOp.Type)
 	if e != nil {
 		return nil, e
 	}
 	if powerCur < powerNext {
 		fop, e := GetParse(lookNextOp.Type)
-		if e != nil {
+		if e != nil || fop == nil {
 			return nil, e
 		}
 		treeRigth, e := fop(l, node)

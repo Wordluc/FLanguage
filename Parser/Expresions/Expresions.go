@@ -39,6 +39,19 @@ func (e *ExpresionNode) SetOperator(operator Token.Token) {
 	e.Operator = operator
 	e.OperatorValue = operator.Value
 }
+func (e ExpresionNode) GetWithLeft(left IExpresion) IExpresion {
+	e.LeftExpresion = left
+	return e
+}
+func (e ExpresionNode) GetWithRight(right IExpresion) IExpresion {
+	e.RightExpresion = right
+	return e
+}
+func (e ExpresionNode) GetWithOperator(operator Token.Token) IExpresion {
+	e.Operator = operator
+	e.OperatorValue = operator.Value
+	return e
+}
 
 type ExpresionLeaf struct {
 	Value string
