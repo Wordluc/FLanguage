@@ -89,10 +89,10 @@ func parseCallFunc(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) 
 func parseExpresionBlock(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	l.IncrP()
 	block, e := ParseExpresion(l, Token.CLOSE_CIRCLE_BRACKET)
-	l.IncrP()
 	if e != nil {
 		return nil, e
 	}
+	l.IncrP()
 	return block, nil
 }
 func parseLeaf(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
@@ -124,6 +124,9 @@ func parseTree(l *Lexer.Lexer, left IExpresion, exitTokens ...Token.TokenType) (
 	if e != nil {
 		return nil, e
 	}
+	if !IsABrach(lookNextVar) {
+		return nil, errors.New("ParseTree: not implemented,expected a brach,got:" + lookNextVar.Value)
+	}
 	fVar, e := GetParse(lookNextVar.Type)
 	if e != nil {
 		return nil, e
@@ -132,9 +135,7 @@ func parseTree(l *Lexer.Lexer, left IExpresion, exitTokens ...Token.TokenType) (
 	if e != nil {
 		return nil, e
 	}
-	if !IsABrach(lookNextVar) {
-		return tree, errors.New("ParseTree: not implemented,expected a word,got:" + lookNextVar.Value)
-	}
+
 	lookNextOp := l.LookCurrent()
 	if slices.Contains(exitTokens, lookNextOp.Type) {
 		tree.SetRight(node)
@@ -161,5 +162,6 @@ func parseTree(l *Lexer.Lexer, left IExpresion, exitTokens ...Token.TokenType) (
 		return tree, nil
 	}
 	tree.SetRight(node)
+
 	return tree, nil
 }
