@@ -28,7 +28,6 @@ func TestParseExpresion_Valid_ShouldPass1(t *testing.T) {
 		t.Error(e)
 	}
 	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
-	t.Log("ff" + lexer.LookCurrent().Value)
 	if e != nil {
 		t.Error(e)
 	}
