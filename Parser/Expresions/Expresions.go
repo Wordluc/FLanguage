@@ -24,10 +24,9 @@ func PrintLeafOrExpresion(e IExpresion) string {
 	switch e.(type) {
 	case ExpresionLeaf:
 		return e.ToString()
-	case ExpresionNode:
+	default:
 		return "(" + e.ToString() + ")"
 	}
-	return ""
 }
 func (e *ExpresionNode) SetLeft(left IExpresion) {
 	e.LeftExpresion = left
