@@ -14,8 +14,11 @@ func And(e error, s string) error {
 	v := e.Error()
 	return errors.New(v + " " + s)
 }
-func IsABrach(token Token.Token) bool {
+func IsAValidBrach(token Token.Token) bool {
 	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET || token.Type == Token.CALL_FUNC
+}
+func IsAValidOperator(token Token.Token) bool {
+	return !IsAValidBrach(token)
 }
 func GetParse(than Token.TokenType) (fParse, error) {
 	switch than {
@@ -113,35 +116,35 @@ func parseTree(l *Lexer.Lexer, left IExpresion, exitTokens ...Token.TokenType) (
 	if e != nil {
 		return nil, e
 	}
-	if IsABrach(curOpToken) {
+	if !IsAValidOperator(curOpToken) {
 		return nil, errors.New("ParseTree: got a word instead of an operator")
 	}
 	if slices.Contains(exitTokens, curOpToken.Type) {
 		return tree, nil
 	}
 	tree.SetOperator(curOpToken)
-	lookNextVar, e := l.NextToken()
+	lookNextBranch, e := l.NextToken()
 	if e != nil {
 		return nil, e
 	}
-	if !IsABrach(lookNextVar) {
-		return nil, errors.New("ParseTree: not implemented,expected a brach,got:" + lookNextVar.Value)
+	if !IsAValidBrach(lookNextBranch) {
+		return nil, errors.New("ParseTree: not implemented,expected a brach,got:" + lookNextBranch.Value)
 	}
-	fVar, e := GetParse(lookNextVar.Type)
+	fBranch, e := GetParse(lookNextBranch.Type)
 	if e != nil {
 		return nil, e
 	}
-	node, e := fVar(l, ExpresionLeaf{})
+	branch, e := fBranch(l, ExpresionLeaf{})
 	if e != nil {
 		return nil, e
 	}
 
 	lookNextOp := l.LookCurrent()
 	if slices.Contains(exitTokens, lookNextOp.Type) {
-		tree.SetRight(node)
+		tree.SetRight(branch)
 		return tree, nil
 	}
-	if IsABrach(lookNextOp) {
+	if !IsAValidOperator(lookNextOp) {
 		return nil, errors.New("ParseTree: got a word instead of an operator")
 	}
 
@@ -154,14 +157,13 @@ func parseTree(l *Lexer.Lexer, left IExpresion, exitTokens ...Token.TokenType) (
 		if e != nil || fop == nil {
 			return nil, e
 		}
-		treeRigth, e := fop(l, node, exitTokens...)
+		treeRigth, e := fop(l, branch, exitTokens...)
 		if e != nil {
 			return nil, e
 		}
 		tree.SetRight(treeRigth)
 		return tree, nil
 	}
-	tree.SetRight(node)
-
+	tree.SetRight(branch)
 	return tree, nil
 }
