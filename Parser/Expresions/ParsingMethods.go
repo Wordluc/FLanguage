@@ -31,6 +31,8 @@ func GetParse(than Token.TokenType) (fParse, error) {
 		return parseLeaf, nil
 	case Token.OPEN_CIRCLE_BRACKET:
 		return parseExpresionBlock, nil
+	case Token.CALL_FUNC:
+		return parseCallFunc, nil
 	}
 	return nil, errors.New("GetParse: Operator:" + string(than) + "not implemented")
 }
@@ -58,6 +60,31 @@ func ParseExpresion(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IExpresion, 
 		}
 	}
 	return root, nil
+}
+func parseCallFunc(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
+	callFunc := &ExpresionCallFunc{NameFunc: l.LookCurrent().Value[:len(l.LookCurrent().Value)-1]}
+	l.IncrP()
+	for {
+		if l.LookCurrent().Type == Token.CLOSE_CIRCLE_BRACKET {
+			break
+		}
+
+		parm, e := ParseExpresion(l, Token.COMMA, Token.CLOSE_CIRCLE_BRACKET)
+		if e != nil {
+			return nil, e
+		}
+		if parm == nil {
+			break
+		}
+		callFunc.AddParm(parm)
+		if l.LookCurrent().Type == Token.CLOSE_CIRCLE_BRACKET {
+			break
+		}
+		l.IncrP()
+	}
+	//	funcName, e := ParseExpresion(l, Token.CLOSE_CIRCLE_BRACKET)
+	l.IncrP()
+	return callFunc, nil
 }
 func parseExpresionBlock(l *Lexer.Lexer, _ IExpresion) (IExpresion, error) {
 	l.IncrP()
@@ -107,7 +134,7 @@ func parseTree(l *Lexer.Lexer, left IExpresion) (IExpresion, error) {
 		return tree, errors.New("ParseTree: not implemented,expected a word,got:" + lookNextVar.Value)
 	}
 	lookNextOp := l.LookCurrent()
-	if lookNextOp.Type == Token.DOT_COMMA || lookNextOp.Type == Token.CLOSE_CIRCLE_BRACKET {
+	if lookNextOp.Type == Token.DOT_COMMA || lookNextOp.Type == Token.COMMA || lookNextOp.Type == Token.CLOSE_CIRCLE_BRACKET {
 		tree.SetRight(node)
 		return tree, nil
 	}

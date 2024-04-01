@@ -1,5 +1,9 @@
 package Token
 
+import (
+	"strings"
+)
+
 type TokenType uint8
 
 const (
@@ -18,6 +22,7 @@ const (
 	CLOSE_CIRCLE_BRACKET
 	OPEN_GRAP_BRACKET
 	CLOSE_GRAP_BRACKET
+	CALL_FUNC
 	IF
 	OPEN_COMM
 	CLOSE_COMM
@@ -74,6 +79,9 @@ func GetTokenType(typeF string) TokenType {
 	case "'":
 		return SINGLE_QUOTE
 	default:
+		if isACallFunc(typeF) {
+			return CALL_FUNC
+		}
 		if isValidValua(typeF) {
 			return WORD
 		}
@@ -82,6 +90,19 @@ func GetTokenType(typeF string) TokenType {
 }
 func isValidValua(value string) bool {
 	for _, cr := range value {
+		c := string(cr)
+		if !((c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || (c >= "0" && c <= "9")) {
+			return false
+		}
+	}
+	return true
+}
+func isACallFunc(value string) bool {
+	parts := strings.Split(value, "(")
+	if len(parts) != 2 {
+		return false
+	}
+	for _, cr := range parts[0] {
 		c := string(cr)
 		if !((c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || (c >= "0" && c <= "9")) {
 			return false

@@ -99,3 +99,47 @@ func TestParseExpresion_WithBracket_ShouldPass_2(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+func TestParseExpresion_CallFunc_NoParms_ShouldPass(t *testing.T) {
+	ist := "prova();"
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	_, e = ParseExpresion(&lexer, Token.DOT_COMMA)
+}
+func TestParseExpresion_CallFunc_WithParm_ShouldPass(t *testing.T) {
+	ist := "prova(3);"
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	expected := "prova(3,)"
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
+func TestParseExpresion_CallFunc_With3Parms_ShouldPass(t *testing.T) {
+	ist := "prova(3,4,ciao);"
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	expected := "prova(3,4,ciao,)"
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
+func TestParseExpresion_CallFunc_WithExpressionParms_ShouldPass(t *testing.T) {
+	ist := "prova(3+3,4*2+(2+2),ciao);"
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	expected := "prova(3 + 3,(4 * 2) + (2 + 2),ciao,)"
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}

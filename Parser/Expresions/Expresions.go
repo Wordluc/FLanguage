@@ -68,6 +68,28 @@ func (_ ExpresionLeaf) New(t Token.Token) ExpresionLeaf {
 	return e
 }
 
+type ExpresionCallFunc struct {
+	Values   []IExpresion
+	NameFunc string
+}
+
+func (e *ExpresionCallFunc) AddParm(value IExpresion) {
+	e.Values = append(e.Values, value)
+}
+func (e ExpresionCallFunc) ToString() string {
+	r := e.NameFunc + "("
+	i := 0
+	for {
+		if i == len(e.Values) {
+			break
+		}
+		r += e.Values[i].ToString() + ","
+		i++
+	}
+	r += ")"
+	return r
+}
+
 type IExpresion interface {
 	ToString() string
 }
