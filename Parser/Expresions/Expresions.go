@@ -1,6 +1,8 @@
 package Expresions
 
-import "FLanguage/Lexer/Token"
+import (
+	"FLanguage/Lexer/Token"
+)
 
 type ExpresionNode struct {
 	LeftExpresion  IExpresion
@@ -60,6 +62,7 @@ type ExpresionLeaf struct {
 func (e ExpresionLeaf) ToString() string {
 	return e.Value
 }
+
 func (_ ExpresionLeaf) New(t Token.Token) ExpresionLeaf {
 	e := ExpresionLeaf{}
 	e.Type = t

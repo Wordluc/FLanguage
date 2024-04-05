@@ -5,6 +5,7 @@ import (
 	"FLanguage/Lexer/Token"
 	"FLanguage/Parser/Attraction.go"
 	"errors"
+	"fmt"
 	"slices"
 )
 
@@ -15,7 +16,7 @@ func And(e error, s string) error {
 	return errors.New(v + " " + s)
 }
 func IsAValidBrach(token Token.Token) bool {
-	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET || token.Type == Token.CALL_FUNC
+	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET || token.Type == Token.CALL_FUNC || token.Type == Token.NUMBER
 }
 func IsAValidOperator(token Token.Token) bool {
 	return !IsAValidBrach(token)
@@ -30,13 +31,14 @@ func GetParse(than Token.TokenType) (fParse, error) {
 		return parseTree, nil
 	case Token.PLUS:
 		return parseTree, nil
-	case Token.WORD:
+	case Token.WORD, Token.NUMBER:
 		return parseLeaf, nil
 	case Token.OPEN_CIRCLE_BRACKET:
 		return parseExpresionBlock, nil
 	case Token.CALL_FUNC:
 		return parseCallFunc, nil
 	}
+	fmt.Println(than)
 	return nil, errors.New("GetParse: Operator:" + string(than) + "not implemented")
 }
 func ParseExpresion(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IExpresion, error) {
@@ -101,9 +103,6 @@ func parseExpresionBlock(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.Token
 func parseLeaf(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	leaf := &ExpresionLeaf{}
 	curToken := l.LookCurrent()
-	if curToken.Type != Token.WORD {
-		return nil, errors.New("ParseLeaf: not implemented,expected a word,got:" + curToken.Value)
-	}
 	l.IncrP()
 	return leaf.New(curToken), nil
 }
