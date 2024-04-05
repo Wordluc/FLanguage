@@ -10,9 +10,11 @@ const (
 	END TokenType = iota
 	LET
 	WORD
+	NUMBER
 	FUNC
 	NONE
 	RETURN
+	STRING
 	PLUS
 	MINUS
 	DIV
@@ -74,24 +76,35 @@ func GetTokenType(typeF string) TokenType {
 		return COMMA
 	case ";":
 		return DOT_COMMA
-	case "\"":
-		return DOUBLE_QUOTE
-	case "'":
-		return SINGLE_QUOTE
 	default:
 		if isACallFunc(typeF) {
 			return CALL_FUNC
 		}
-		if isValidValua(typeF) {
+		if isValidWord(typeF) {
 			return WORD
+		}
+		if isValidNumber(typeF) {
+			return NUMBER
+		}
+		if isAString(typeF) {
+			return STRING
 		}
 		return ERROR_L
 	}
 }
-func isValidValua(value string) bool {
+func isValidWord(value string) bool {
 	for _, cr := range value {
 		c := string(cr)
-		if !((c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || (c >= "0" && c <= "9")) {
+		if !((c >= "a" && c <= "z") || (c >= "A" && c <= "Z")) {
+			return false
+		}
+	}
+	return true
+}
+func isValidNumber(value string) bool {
+	for _, cr := range value {
+		c := string(cr)
+		if !(c >= "0" && c <= "9") {
 			return false
 		}
 	}
@@ -102,11 +115,15 @@ func isACallFunc(value string) bool {
 	if len(parts) != 2 {
 		return false
 	}
-	for _, cr := range parts[0] {
-		c := string(cr)
-		if !((c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || (c >= "0" && c <= "9")) {
-			return false
-		}
+	if !isValidWord(parts[0]) {
+		return false
+	}
+	return true
+}
+func isAString(value string) bool {
+	parts := strings.Split(value, "\"")
+	if len(parts) != 3 {
+		return false
 	}
 	return true
 }
