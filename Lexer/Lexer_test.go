@@ -59,7 +59,7 @@ func TestLexer_CallFunc(t *testing.T) {
 	Prova(){
 		
 	}
-	ciao
+	cia1o
 	`
 	exp := []Token.TokenType{
 		Token.CALL_FUNC, Token.CLOSE_CIRCLE_BRACKET, Token.OPEN_GRAP_BRACKET, Token.CLOSE_GRAP_BRACKET, Token.WORD,
@@ -77,16 +77,41 @@ func TestLexer_CallFunc(t *testing.T) {
 
 	}
 }
-func TestString(t *testing.T) {
+func TestWordError(t *testing.T) {
 	text := `
-	"prova"
+	33r
 	`
 	l, e := New([]byte(text))
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
 	got := l.LookCurrent()
-	if got.Type != Token.STRING {
+	if got.Type != Token.ERROR_L {
 		t.Errorf("errore parsing: got %v instead %v", got.Type, Token.STRING)
+	}
+}
+func TestString(t *testing.T) {
+	text := `
+	"prova" "fff"
+	'prova"vvv"'
+	`
+
+	l, e := New([]byte(text))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	exp := [3]Token.TokenType{
+		Token.STRING, Token.STRING, Token.STRING,
+	}
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	for _, i := range exp {
+		got := l.LookCurrent()
+		if got.Type != Token.TokenType(i) {
+			t.Errorf("errore parsing: got %v instead %v", got.Type, Token.TokenType(i))
+		}
+		l.IncrP()
+
 	}
 }
