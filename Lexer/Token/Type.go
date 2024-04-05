@@ -1,6 +1,7 @@
 package Token
 
 import (
+	"regexp"
 	"strings"
 )
 
@@ -80,35 +81,29 @@ func GetTokenType(typeF string) TokenType {
 		if isACallFunc(typeF) {
 			return CALL_FUNC
 		}
+		if isAString(typeF) {
+			return STRING
+		}
 		if isValidWord(typeF) {
 			return WORD
 		}
 		if isValidNumber(typeF) {
 			return NUMBER
 		}
-		if isAString(typeF) {
-			return STRING
-		}
+
 		return ERROR_L
 	}
 }
+
+var isAWord = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]*$`)
+
+var isANumber = regexp.MustCompile(`^[0-9_]+$`)
+
 func isValidWord(value string) bool {
-	for _, cr := range value {
-		c := string(cr)
-		if !((c >= "a" && c <= "z") || (c >= "A" && c <= "Z")) {
-			return false
-		}
-	}
-	return true
+	return isAWord.MatchString(string(value))
 }
 func isValidNumber(value string) bool {
-	for _, cr := range value {
-		c := string(cr)
-		if !(c >= "0" && c <= "9") {
-			return false
-		}
-	}
-	return true
+	return isANumber.MatchString(string(value))
 }
 func isACallFunc(value string) bool {
 	parts := strings.Split(value, "(")
@@ -121,9 +116,11 @@ func isACallFunc(value string) bool {
 	return true
 }
 func isAString(value string) bool {
-	parts := strings.Split(value, "\"")
-	if len(parts) != 3 {
-		return false
+	if value[0] == '"' && value[len(value)-1] == '"' {
+		return true
 	}
-	return true
+	if value[0] == '\'' && value[len(value)-1] == '\'' {
+		return true
+	}
+	return false
 }
