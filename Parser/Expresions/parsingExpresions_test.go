@@ -87,6 +87,18 @@ func TestParseExpresion_WithBracket_ShouldPass(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+func TestParseExpresion_WithoutCloseBrackets(t *testing.T) {
+	ist := "prova(3+3,'ciao'+3*4;"
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	_, e = ParseExpresion(&lexer, Token.DOT_COMMA)
+	if e == nil {
+		t.Error("expected error")
+		return
+	}
+}
 func TestParseExpresion_WithBracket_ShouldPass_2(t *testing.T) {
 	ist := "22*(2+16*2)*3;"
 	lexer, e := Lexer.New([]byte(ist))
@@ -184,6 +196,22 @@ func TestParseExpresion_CallFunc_WithExpressionParmsAndExpresion_ShouldPass(t *t
 	}
 	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
 	expected := "(prova(3 + 3,ciao,)) + (3 * 4)"
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
+func TestParseExpresion_StringParameter(t *testing.T) {
+	ist := "prova(3+3,'ciao')+3*4;"
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := "(prova(3 + 3,'ciao',)) + (3 * 4)"
 	if program.ToString() != expected {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}

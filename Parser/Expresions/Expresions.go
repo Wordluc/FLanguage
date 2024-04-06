@@ -4,6 +4,9 @@ import (
 	"FLanguage/Lexer/Token"
 )
 
+type IExpresion interface {
+	ToString() string
+}
 type ExpresionNode struct {
 	LeftExpresion  IExpresion
 	Operator       Token.Token
@@ -90,8 +93,4 @@ func (e ExpresionCallFunc) ToString() string {
 	}
 	r += ")"
 	return r
-}
-
-type IExpresion interface {
-	ToString() string
 }
