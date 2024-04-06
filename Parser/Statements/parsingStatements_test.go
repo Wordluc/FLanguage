@@ -18,7 +18,7 @@ func TestParsingLetStatements(t *testing.T) {
 	if e != nil {
 		//t.Error(e)
 	}
-	program, e := ParsingStatement(&lexer, Token.DOT_COMMA)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 	}
@@ -129,5 +129,101 @@ func TestParsingLetWithoutEND(t *testing.T) {
 	_, e = ParsingStatement(&lexer, Token.END)
 	if e == nil {
 		t.Error("expected error")
+	}
+}
+func TestParseExpresion_IF(t *testing.T) {
+	ist := `
+	if (x > 0) {
+		let x = x + 1;	
+	}
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `
+	IF ( x > 0 ) {
+		LET x = x + 1		
+	}`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
+func TestParseExpresion_IFANDELSE(t *testing.T) {
+	ist := `
+	if (x > 0) {
+		let x = x + 1;	
+	}else{
+		let a=prova();
+	}
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `
+	IF ( x > 0 ) {
+		LET x = x + 1		
+	} ELSE {
+		LET a = prova()
+	}`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
+func TestParseExpresion_WITHWORD(t *testing.T) {
+	ist := `
+	if (x > 0) {
+		x = x + 1;	
+	}else{
+		a=prova();
+	}
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `
+	IF ( x > 0 ) {
+		x = x + 1		
+	} ELSE {
+		a = prova()
+	}`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
+func TestParseExpresion_CallFunc(t *testing.T) {
+	ist := `
+	Prova("cioa","frfr",3);
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `
+	Prova("cioa","frfr",3,)`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }

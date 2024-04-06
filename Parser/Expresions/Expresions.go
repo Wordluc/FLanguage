@@ -59,7 +59,7 @@ func (e ExpresionNode) GetWithOperator(operator Token.Token) IExpresion {
 
 type ExpresionLeaf struct {
 	Value string
-	Type  Token.Token
+	Type  Token.TokenType
 }
 
 func (e ExpresionLeaf) ToString() string {
@@ -68,7 +68,7 @@ func (e ExpresionLeaf) ToString() string {
 
 func (_ ExpresionLeaf) New(t Token.Token) ExpresionLeaf {
 	e := ExpresionLeaf{}
-	e.Type = t
+	e.Type = t.Type
 	e.Value = t.Value
 	return e
 }
