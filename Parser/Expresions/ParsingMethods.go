@@ -5,7 +5,6 @@ import (
 	"FLanguage/Lexer/Token"
 	"FLanguage/Parser/Attraction.go"
 	"errors"
-	"fmt"
 	"slices"
 )
 
@@ -31,14 +30,13 @@ func GetParse(than Token.TokenType) (fParse, error) {
 		return parseTree, nil
 	case Token.PLUS:
 		return parseTree, nil
-	case Token.WORD, Token.NUMBER:
+	case Token.WORD, Token.NUMBER, Token.STRING:
 		return parseLeaf, nil
 	case Token.OPEN_CIRCLE_BRACKET:
 		return parseExpresionBlock, nil
 	case Token.CALL_FUNC:
 		return parseCallFunc, nil
 	}
-	fmt.Println(than)
 	return nil, errors.New("GetParse: Operator:" + string(than) + "not implemented")
 }
 func ParseExpresion(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IExpresion, error) {
@@ -107,7 +105,6 @@ func parseLeaf(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IEx
 	return leaf.New(curToken), nil
 }
 
-// TODO: distinguere le word e i numeri
 func parseTree(l *Lexer.Lexer, left IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	tree := ExpresionNode{LeftExpresion: left}
 	curOpToken := l.LookCurrent()
