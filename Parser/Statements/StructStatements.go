@@ -2,7 +2,7 @@ package Statements
 
 import (
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Expresions"
+	"FLanguage/Parser/Statements/Expresions"
 )
 
 type IStatement interface {
@@ -13,10 +13,10 @@ type StatementNode struct {
 	Next      *StatementNode
 }
 
-func (s *StatementNode) AddNext(next *StatementNode) {
+func (s *StatementNode) addNext(next *StatementNode) {
 	s.Next = next
 }
-func (s *StatementNode) AddStatement(statement IStatement) {
+func (s *StatementNode) addStatement(statement IStatement) {
 	s.Statement = statement
 }
 func (s *StatementNode) ToString() string {
