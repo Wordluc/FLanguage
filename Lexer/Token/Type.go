@@ -15,11 +15,11 @@ const (
 	NONE
 	RETURN
 	STRING
+	ASSIGN
 	PLUS
 	MINUS
 	DIV
 	MULT
-	EQUAL
 	OPEN_CIRCLE_BRACKET
 	CLOSE_CIRCLE_BRACKET
 	OPEN_GRAP_BRACKET
@@ -34,6 +34,13 @@ const (
 	DOUBLE_QUOTE
 	SINGLE_QUOTE
 	ERROR_L TokenType = 255
+	GREATER
+	LESS
+	GREATER_EQUAL
+	LESS_EQUAL
+	NOT_EQUAL
+	EQUAL
+	ELSE
 )
 
 func GetTokenType(typeF string) TokenType {
@@ -53,7 +60,7 @@ func GetTokenType(typeF string) TokenType {
 	case "/":
 		return DIV
 	case "=":
-		return EQUAL
+		return ASSIGN
 	case "(":
 		return OPEN_CIRCLE_BRACKET
 	case ")":
@@ -76,6 +83,20 @@ func GetTokenType(typeF string) TokenType {
 		return COMMA
 	case ";":
 		return DOT_COMMA
+	case ">":
+		return GREATER
+	case "<":
+		return LESS
+	case ">=":
+		return GREATER_EQUAL
+	case "<=":
+		return LESS_EQUAL
+	case "!=":
+		return NOT_EQUAL
+	case "==":
+		return EQUAL
+	case "else":
+		return ELSE
 	default:
 		if isValidCallFunc(typeF) {
 			return CALL_FUNC
