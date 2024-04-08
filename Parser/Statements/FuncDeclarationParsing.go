@@ -33,7 +33,8 @@ func ParsingFuncDeclaration(lexer *Lexer.Lexer, exitTokens ...Token.TokenType) (
 	}
 
 	lexer.IncrP()
-	funcDeclaration.Body, _, e = ParsingStatement(lexer, Token.CLOSE_GRAP_BRACKET)
+	program, e := ParsingStatement(lexer, Token.CLOSE_GRAP_BRACKET)
+	funcDeclaration.Body = program["root"]
 	if e != nil {
 		return nil, e
 	}
