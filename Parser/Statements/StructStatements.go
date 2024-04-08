@@ -82,3 +82,25 @@ type AssignExpresionStatement struct {
 func (s AssignExpresionStatement) ToString() string {
 	return s.Identifier + " = " + s.Expresion.ToString()
 }
+
+type FuncDeclarationStatement struct {
+	Identifier string
+	Body       IStatement
+	Params     []string
+}
+
+func (s FuncDeclarationStatement) ToString() string {
+	r := "Ff " + s.Identifier + " ( "
+	for i := 0; i < len(s.Params); i++ {
+		r += s.Params[i]
+		if i < len(s.Params)-1 {
+			r += ", "
+		}
+	}
+	r += " ) {\n"
+	if s.Body != nil {
+		r += s.Body.ToString()
+	}
+	r += "\n}"
+	return r
+}
