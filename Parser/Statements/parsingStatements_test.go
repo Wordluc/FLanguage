@@ -251,6 +251,41 @@ func TestParseExpresion_FuncDefinition(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", funcs["prova"].ToString())
 	}
 }
+func TestParseExpresion_TwoFuncDefinition(t *testing.T) {
+	ist := `
+	Ff prova (a){
+		Prova("cioa","frfr",3);
+	}
+	Ff pippo (a,b,c){
+		let a=3+4;
+	}
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	_, funcs, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `
+	Ff prova ( a ) {
+	        Prova("cioa","frfr",3,)
+	
+	}`
+	if !IsEqual(funcs["prova"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", funcs["prova"].ToString())
+	}
+	expected = `
+	Ff pippo ( a, b, c ) {
+                LET a = 3 + 4
+
+        }`
+	if !IsEqual(funcs["pippo"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", funcs["pippo"].ToString())
+	}
+}
 func TestParseExpresion_FuncDefinitionWithCall(t *testing.T) {
 	ist := `
 	Ff prova (a){
