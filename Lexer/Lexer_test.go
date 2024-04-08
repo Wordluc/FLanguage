@@ -139,3 +139,31 @@ func TestCompare(t *testing.T) {
 
 	}
 }
+func TestFuncDefinition(t *testing.T) {
+	text := `
+ 	Ff (a, b, c) {
+ 		print();
+	}
+ 	END
+	`
+
+	l, e := New([]byte(text))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	exp := [14]Token.TokenType{
+		Token.FUNC, Token.OPEN_CIRCLE_BRACKET, Token.WORD, Token.COMMA, Token.WORD, Token.COMMA, Token.WORD, Token.CLOSE_CIRCLE_BRACKET,
+		Token.OPEN_GRAP_BRACKET, Token.CALL_FUNC, Token.CLOSE_CIRCLE_BRACKET, Token.DOT_COMMA, Token.CLOSE_GRAP_BRACKET, Token.END,
+	}
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	for _, i := range exp {
+		got := l.LookCurrent()
+		if got.Type != Token.TokenType(i) {
+			t.Errorf("errore parsing: got %v instead %v", got.Type, Token.TokenType(i))
+		}
+		l.IncrP()
+
+	}
+}

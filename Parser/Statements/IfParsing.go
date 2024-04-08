@@ -38,7 +38,7 @@ func parseIfStatement(l *Lexer.Lexer) (IStatement, error) {
 		return nil, errors.New("parseIfStatement: expected '{' token")
 	}
 	l.IncrP()
-	ifExpr.Body, e = ParsingStatement(l, Token.CLOSE_GRAP_BRACKET)
+	ifExpr.Body, _, e = ParsingStatement(l, Token.CLOSE_GRAP_BRACKET)
 	if e != nil {
 		return nil, e
 	}
@@ -59,7 +59,7 @@ func parseIfStatement(l *Lexer.Lexer) (IStatement, error) {
 		return nil, errors.New("parseIfStatement: expected '{' token")
 	}
 	l.IncrP()
-	ifExpr.Else, e = ParsingStatement(l, Token.CLOSE_GRAP_BRACKET)
+	ifExpr.Else, _, e = ParsingStatement(l, Token.CLOSE_GRAP_BRACKET)
 	if e != nil {
 		return nil, e
 	}
