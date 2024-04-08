@@ -18,7 +18,7 @@ func TestParsingLetStatements(t *testing.T) {
 	if e != nil {
 		//t.Error(e)
 	}
-	program, _, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 	}
@@ -27,8 +27,8 @@ func TestParsingLetStatements(t *testing.T) {
 	}
 
 	expected := "LET a = 5"
-	if !IsEqual(program.ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	if !IsEqual(program["root"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
 	}
 }
 func TestParsingLetStatements2(t *testing.T) {
@@ -38,7 +38,7 @@ func TestParsingLetStatements2(t *testing.T) {
 	if e != nil {
 		//t.Error(e)
 	}
-	program, _, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 	}
@@ -48,8 +48,8 @@ func TestParsingLetStatements2(t *testing.T) {
 
 	expected := "LET a = 5 + (3 * (3 * (4 + 2)))"
 
-	if !IsEqual(program.ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	if !IsEqual(program["root"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
 	}
 }
 func TestParsingLetStatementsWithoutSemicolon(t *testing.T) {
@@ -59,7 +59,7 @@ func TestParsingLetStatementsWithoutSemicolon(t *testing.T) {
 	if e != nil {
 		//t.Error(e)
 	}
-	program, _, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e == nil {
 		t.Error("expected error")
 	}
@@ -76,15 +76,15 @@ func TestParsingWithMoreLetStatements(t *testing.T) {
 	if e != nil {
 		//t.Error(e)
 	}
-	program, _, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 	}
 	expected := `
 	LET a = 5 + (3 * (3 * (4 + 2)))
 	LET b = 2`
-	if !IsEqual(program.ToString(), expected) {
-		t.Error("error parsing", "expected:", expected, "\ngot: \n", program.ToString())
+	if !IsEqual(program["root"].ToString(), expected) {
+		t.Error("error parsing", "expected:", expected, "\ngot: \n", program["root"].ToString())
 	}
 }
 func TestParsingLetWithCallFunc(t *testing.T) {
@@ -95,14 +95,14 @@ func TestParsingLetWithCallFunc(t *testing.T) {
 	if e != nil {
 		//t.Error(e)
 	}
-	program, _, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 	}
 	expected := `
 	LET a = Pippo("ciao","frfr",3,)`
-	if !IsEqual(program.ToString(), expected) {
-		t.Error("error parsing", "expected:", expected, "\ngot: \n", program.ToString())
+	if !IsEqual(program["root"].ToString(), expected) {
+		t.Error("error parsing", "expected:", expected, "\ngot: \n", program["root"].ToString())
 	}
 }
 func TestParsingLetWithoutEqual(t *testing.T) {
@@ -113,7 +113,7 @@ func TestParsingLetWithoutEqual(t *testing.T) {
 	if e != nil {
 		//t.Error(e)
 	}
-	_, _, e = ParsingStatement(&lexer, Token.END)
+	_, e = ParsingStatement(&lexer, Token.END)
 	if e == nil {
 		t.Error("expected error")
 	}
@@ -126,7 +126,7 @@ func TestParsingLetWithoutEND(t *testing.T) {
 	if e != nil {
 		//t.Error(e)
 	}
-	_, _, e = ParsingStatement(&lexer, Token.END)
+	_, e = ParsingStatement(&lexer, Token.END)
 	if e == nil {
 		t.Error("expected error")
 	}
@@ -141,7 +141,7 @@ func TestParseExpresion_IF(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	program, _, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 		return
@@ -150,8 +150,8 @@ func TestParseExpresion_IF(t *testing.T) {
 	IF ( x > 0 ) {
 		LET x = x + 1		
 	}`
-	if !IsEqual(program.ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	if !IsEqual(program["root"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
 	}
 }
 func TestParseExpresion_IFANDELSE(t *testing.T) {
@@ -166,7 +166,7 @@ func TestParseExpresion_IFANDELSE(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	program, _, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 		return
@@ -177,8 +177,8 @@ func TestParseExpresion_IFANDELSE(t *testing.T) {
 	} ELSE {
 		LET a = prova()
 	}`
-	if !IsEqual(program.ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	if !IsEqual(program["root"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
 	}
 }
 func TestParseExpresion_WITHWORD(t *testing.T) {
@@ -193,7 +193,7 @@ func TestParseExpresion_WITHWORD(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	program, _, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 		return
@@ -204,8 +204,8 @@ func TestParseExpresion_WITHWORD(t *testing.T) {
 	} ELSE {
 		a = prova()
 	}`
-	if !IsEqual(program.ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	if !IsEqual(program["root"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
 	}
 }
 func TestParseExpresion_CallFunc(t *testing.T) {
@@ -216,15 +216,15 @@ func TestParseExpresion_CallFunc(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	program, _, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 		return
 	}
 	expected := `
 	Prova("cioa","frfr",3,)`
-	if !IsEqual(program.ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	if !IsEqual(program["root"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
 	}
 }
 func TestParseExpresion_FuncDefinition(t *testing.T) {
@@ -237,7 +237,7 @@ func TestParseExpresion_FuncDefinition(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	_, funcs, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 		return
@@ -247,8 +247,8 @@ func TestParseExpresion_FuncDefinition(t *testing.T) {
 	        Prova("cioa","frfr",3,)
 	
 	}`
-	if !IsEqual(funcs["prova"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", funcs["prova"].ToString())
+	if !IsEqual(program["prova"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["prova"].ToString())
 	}
 }
 func TestParseExpresion_TwoFuncDefinition(t *testing.T) {
@@ -264,7 +264,7 @@ func TestParseExpresion_TwoFuncDefinition(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	_, funcs, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 		return
@@ -274,16 +274,16 @@ func TestParseExpresion_TwoFuncDefinition(t *testing.T) {
 	        Prova("cioa","frfr",3,)
 	
 	}`
-	if !IsEqual(funcs["prova"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", funcs["prova"].ToString())
+	if !IsEqual(program["prova"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["prova"].ToString())
 	}
 	expected = `
 	Ff pippo ( a, b, c ) {
                 LET a = 3 + 4
 
         }`
-	if !IsEqual(funcs["pippo"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", funcs["pippo"].ToString())
+	if !IsEqual(program["pippo"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["pippo"].ToString())
 	}
 }
 func TestParseExpresion_FuncDefinitionWithCall(t *testing.T) {
@@ -297,7 +297,7 @@ func TestParseExpresion_FuncDefinitionWithCall(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	program, funcs, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 		return
@@ -310,11 +310,11 @@ func TestParseExpresion_FuncDefinitionWithCall(t *testing.T) {
 	expected := `
 	prova("dio",) 
 	`
-	if !IsEqual(funcs["prova"].ToString(), expectedFunc) {
-		t.Error("error parsing", "expected: ", expectedFunc, "got: ", funcs["prova"].ToString())
+	if !IsEqual(program["prova"].ToString(), expectedFunc) {
+		t.Error("error parsing", "expected: ", expectedFunc, "got: ", program["prova"].ToString())
 	}
-	if !IsEqual(program.ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	if !IsEqual(program["root"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
 	}
 }
 func TestParseExpresion_All(t *testing.T) {
@@ -333,7 +333,7 @@ func TestParseExpresion_All(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	program, funcs, e := ParsingStatement(&lexer, Token.END)
+	program, e := ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error(e)
 		return
@@ -351,11 +351,11 @@ func TestParseExpresion_All(t *testing.T) {
         } ELSE {
                 a = prova(2 * (3 + 4),)
         }	`
-	if !IsEqual(funcs["prova"].ToString(), expectedFunc) {
-		t.Error("error parsing", "expected: ", expectedFunc, "got: ", funcs["prova"].ToString())
+	if !IsEqual(program["prova"].ToString(), expectedFunc) {
+		t.Error("error parsing", "expected: ", expectedFunc, "got: ", program["prova"].ToString())
 	}
-	if !IsEqual(program.ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	if !IsEqual(program["root"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
 	}
 }
 func TestParseExpresion_ErrorDefinitionShouldFail(t *testing.T) {
@@ -374,7 +374,7 @@ func TestParseExpresion_ErrorDefinitionShouldFail(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	_, _, e = ParsingStatement(&lexer, Token.END)
+	_, e = ParsingStatement(&lexer, Token.END)
 	if e == nil {
 		t.Error("expected error parsing")
 		return
@@ -396,7 +396,7 @@ func TestParseExpresion_ErrorDefinition2ShouldFail(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	_, _, e = ParsingStatement(&lexer, Token.END)
+	_, e = ParsingStatement(&lexer, Token.END)
 	if e == nil {
 		t.Error("expected error parsing")
 		return
