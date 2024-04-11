@@ -104,3 +104,11 @@ func (s FuncDeclarationStatement) ToString() string {
 	r += "\n}"
 	return r
 }
+
+type ReturnStatement struct {
+	Expresion Expresions.IExpresion
+}
+
+func (s ReturnStatement) ToString() string {
+	return "RETURN " + s.Expresion.ToString()
+}
