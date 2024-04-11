@@ -58,8 +58,6 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (map[string
 				return nil, e
 			}
 			head.addStatement(runS)
-			program["root"] = main
-			return program, nil
 		default:
 			if slices.Contains(exitTokens, l.LookCurrent().Type) {
 				program["root"] = main
