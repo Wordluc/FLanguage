@@ -51,7 +51,7 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (map[string
 			}
 			head.addStatement(letS)
 			head.addNext(&StatementNode{})
-			head = head.Next //Inserire return statement
+			head = head.Next
 		case Token.RETURN:
 			runS, e := parseReturnStatement(l)
 			if e != nil {
