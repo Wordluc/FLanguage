@@ -402,3 +402,56 @@ func TestParseExpresion_ErrorDefinition2ShouldFail(t *testing.T) {
 		return
 	}
 }
+func TestParseReturn(t *testing.T) {
+	ist := `Ff prova (a){
+		Prova("cioa","frfr",3);
+		ret a;
+	}
+	END`
+
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `
+	Ff prova ( a ) {
+	        Prova("cioa","frfr",3,)
+		RETURN a
+	}`
+	if !IsEqual(program["prova"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["prova"].ToString())
+	}
+
+}
+func TestParseReturn_Expresion(t *testing.T) {
+
+	ist := `Ff prova (a){
+		Prova("cioa","frfr",3);
+		ret a*3-2+(4/2);
+	}
+	END`
+
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `
+	Ff prova ( a ) {
+                Prova("cioa","frfr",3,)
+                RETURN ((a * 3) - 2) + (4 / 2)
+	}`
+	if !IsEqual(program["prova"].ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program["prova"].ToString())
+	}
+
+}
