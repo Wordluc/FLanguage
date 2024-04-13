@@ -10,7 +10,7 @@ type LetObject struct {
 }
 
 func (l *LetObject) Eval() (IObject, error) {
-	return l.Eval()
+	return l.Value.Eval()
 }
 
 type StringObject struct {
