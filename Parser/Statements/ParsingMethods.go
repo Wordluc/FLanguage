@@ -7,10 +7,9 @@ import (
 	"slices"
 )
 
-func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (map[string]IStatement, error) {
-	program := make(map[string]IStatement)
-	main := &StatementNode{}
-	head := main
+func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement, error) {
+	program := &StatementNode{}
+	head := program
 	for {
 		switch l.LookCurrent().Type {
 		case Token.FUNC:
@@ -18,7 +17,9 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (map[string
 			if e != nil {
 				return nil, e
 			}
-			program[f.(FuncDeclarationStatement).Identifier] = f
+			head.addStatement(f)
+			head.addNext(&StatementNode{})
+			head = head.Next
 		case Token.LET:
 			letS, e := parseLetStatement(l)
 			if e != nil {
@@ -62,7 +63,6 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (map[string
 			head = head.Next
 		default:
 			if slices.Contains(exitTokens, l.LookCurrent().Type) {
-				program["root"] = main
 				return program, nil
 			}
 			return nil, errors.New("ParsingStatement: unexpected statement token,got:" + l.LookCurrent().Value)

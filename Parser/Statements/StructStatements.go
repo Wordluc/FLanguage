@@ -19,7 +19,7 @@ func (s *StatementNode) addNext(next *StatementNode) {
 func (s *StatementNode) addStatement(statement IStatement) {
 	s.Statement = statement
 }
-func (s *StatementNode) ToString() string {
+func (s StatementNode) ToString() string {
 	r := "\t"
 	if s.Statement != nil {
 		r += s.Statement.ToString()

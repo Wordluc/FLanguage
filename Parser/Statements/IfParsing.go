@@ -39,7 +39,7 @@ func parseIfStatement(l *Lexer.Lexer) (IStatement, error) {
 	}
 	l.IncrP()
 	program, e := ParsingStatement(l, Token.CLOSE_GRAP_BRACKET)
-	ifExpr.Body = program["root"]
+	ifExpr.Body = program
 	if e != nil {
 		return nil, e
 	}
@@ -64,7 +64,7 @@ func parseIfStatement(l *Lexer.Lexer) (IStatement, error) {
 	if e != nil {
 		return nil, e
 	}
-	ifExpr.Else = program["root"]
+	ifExpr.Else = program
 	l.IncrP()
 	return ifExpr, nil
 }

@@ -11,6 +11,7 @@ import (
 func IsEqual(a, b string) bool {
 	return slices.Equal(strings.Fields(a), strings.Fields(b))
 }
+
 func TestParsingLetStatements(t *testing.T) {
 
 	ist := "let a = 5;END"
@@ -27,10 +28,11 @@ func TestParsingLetStatements(t *testing.T) {
 	}
 
 	expected := "LET a = 5"
-	if !IsEqual(program["root"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
 func TestParsingLetStatements2(t *testing.T) {
 
 	ist := "let a = 5+3*(3*(4+2));END"
@@ -48,10 +50,11 @@ func TestParsingLetStatements2(t *testing.T) {
 
 	expected := "LET a = 5 + (3 * (3 * (4 + 2)))"
 
-	if !IsEqual(program["root"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
 func TestParsingLetStatementsWithoutSemicolon(t *testing.T) {
 
 	ist := "let a = 5+3*(3*(4+2))END"
@@ -67,6 +70,7 @@ func TestParsingLetStatementsWithoutSemicolon(t *testing.T) {
 		t.Error("expected not program")
 	}
 }
+
 func TestParsingWithMoreLetStatements(t *testing.T) {
 
 	ist := `let a = 5+3*(3*(4+2));
@@ -83,10 +87,11 @@ func TestParsingWithMoreLetStatements(t *testing.T) {
 	expected := `
 	LET a = 5 + (3 * (3 * (4 + 2)))
 	LET b = 2`
-	if !IsEqual(program["root"].ToString(), expected) {
-		t.Error("error parsing", "expected:", expected, "\ngot: \n", program["root"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected:", expected, "\ngot: \n", program.ToString())
 	}
 }
+
 func TestParsingLetWithCallFunc(t *testing.T) {
 
 	ist := `let a = Pippo("ciao","frfr",3);
@@ -101,10 +106,11 @@ func TestParsingLetWithCallFunc(t *testing.T) {
 	}
 	expected := `
 	LET a = Pippo("ciao","frfr",3,)`
-	if !IsEqual(program["root"].ToString(), expected) {
-		t.Error("error parsing", "expected:", expected, "\ngot: \n", program["root"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected:", expected, "\ngot: \n", program.ToString())
 	}
 }
+
 func TestParsingLetWithoutEqual(t *testing.T) {
 
 	ist := `let a Pippo("ciao","frfr",3);
@@ -118,6 +124,7 @@ func TestParsingLetWithoutEqual(t *testing.T) {
 		t.Error("expected error")
 	}
 }
+
 func TestParsingLetWithoutEND(t *testing.T) {
 
 	ist := `let a= Pippo("ciao","frfr",3);
@@ -131,6 +138,7 @@ func TestParsingLetWithoutEND(t *testing.T) {
 		t.Error("expected error")
 	}
 }
+
 func TestParseExpresion_IF(t *testing.T) {
 	ist := `
 	if (x > 0) {
@@ -150,10 +158,11 @@ func TestParseExpresion_IF(t *testing.T) {
 	IF ( x > 0 ) {
 		LET x = x + 1		
 	}`
-	if !IsEqual(program["root"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
 func TestParseExpresion_IFANDELSE(t *testing.T) {
 	ist := `
 	if (x > 0) {
@@ -177,10 +186,11 @@ func TestParseExpresion_IFANDELSE(t *testing.T) {
 	} ELSE {
 		LET a = prova()
 	}`
-	if !IsEqual(program["root"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
 func TestParseExpresion_WITHWORD(t *testing.T) {
 	ist := `
 	if (x > 0) {
@@ -204,10 +214,11 @@ func TestParseExpresion_WITHWORD(t *testing.T) {
 	} ELSE {
 		a = prova()
 	}`
-	if !IsEqual(program["root"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
 func TestParseExpresion_CallFunc(t *testing.T) {
 	ist := `
 	Prova("cioa","frfr",3);
@@ -223,10 +234,11 @@ func TestParseExpresion_CallFunc(t *testing.T) {
 	}
 	expected := `
 	Prova("cioa","frfr",3,)`
-	if !IsEqual(program["root"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
 func TestParseExpresion_FuncDefinition(t *testing.T) {
 	ist := `
 	Ff prova (a){
@@ -247,10 +259,11 @@ func TestParseExpresion_FuncDefinition(t *testing.T) {
 	        Prova("cioa","frfr",3,)
 	
 	}`
-	if !IsEqual(program["prova"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["prova"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
 func TestParseExpresion_TwoFuncDefinition(t *testing.T) {
 	ist := `
 	Ff prova (a){
@@ -270,22 +283,19 @@ func TestParseExpresion_TwoFuncDefinition(t *testing.T) {
 		return
 	}
 	expected := `
-	Ff prova ( a ) {
-	        Prova("cioa","frfr",3,)
-	
-	}`
-	if !IsEqual(program["prova"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["prova"].ToString())
-	}
-	expected = `
-	Ff pippo ( a, b, c ) {
+	 Ff prova ( a ) {
+                Prova("cioa","frfr",3,)
+
+        }
+                Ff pippo ( a, b, c ) {
                 LET a = 3 + 4
 
         }`
-	if !IsEqual(program["pippo"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["pippo"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
 func TestParseExpresion_FuncDefinitionWithCall(t *testing.T) {
 	ist := `
 	Ff prova (a){
@@ -302,21 +312,18 @@ func TestParseExpresion_FuncDefinitionWithCall(t *testing.T) {
 		t.Error(e)
 		return
 	}
-	expectedFunc := `
+	expected := `
 	Ff prova ( a ) {
 	        Prova("cioa","frfr",3,)
 	
-	}`
-	expected := `
-	prova("dio",) 
-	`
-	if !IsEqual(program["prova"].ToString(), expectedFunc) {
-		t.Error("error parsing", "expected: ", expectedFunc, "got: ", program["prova"].ToString())
 	}
-	if !IsEqual(program["root"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
+	prova("dio",)`
+
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
 func TestParseExpresion_All(t *testing.T) {
 	ist := `
 	Ff prova (a){
@@ -339,11 +346,12 @@ func TestParseExpresion_All(t *testing.T) {
 		return
 	}
 	expectedFunc := `
+	`
+	expected := `
 	Ff prova ( a ) {
 	        Prova("cioa","frfr",3,)
 	
-	}`
-	expected := `
+	}
 	prova("dio",)
         IF ( x > 0 ) {
                 x = x + 1
@@ -351,13 +359,11 @@ func TestParseExpresion_All(t *testing.T) {
         } ELSE {
                 a = prova(2 * (3 + 4),)
         }	`
-	if !IsEqual(program["prova"].ToString(), expectedFunc) {
-		t.Error("error parsing", "expected: ", expectedFunc, "got: ", program["prova"].ToString())
-	}
-	if !IsEqual(program["root"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["root"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expectedFunc, "got: ", program.ToString())
 	}
 }
+
 func TestParseExpresion_ErrorDefinitionShouldFail(t *testing.T) {
 	ist := `
 	Ff (a){
@@ -380,6 +386,7 @@ func TestParseExpresion_ErrorDefinitionShouldFail(t *testing.T) {
 		return
 	}
 }
+
 func TestParseExpresion_ErrorDefinition2ShouldFail(t *testing.T) {
 	ist := `
 	Ff prova a){
@@ -402,6 +409,7 @@ func TestParseExpresion_ErrorDefinition2ShouldFail(t *testing.T) {
 		return
 	}
 }
+
 func TestParseReturn(t *testing.T) {
 	ist := `Ff prova (a){
 		Prova("cioa","frfr",3);
@@ -423,11 +431,12 @@ func TestParseReturn(t *testing.T) {
 	        Prova("cioa","frfr",3,)
 		RETURN a
 	}`
-	if !IsEqual(program["prova"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["prova"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 
 }
+
 func TestParseReturn_Expresion(t *testing.T) {
 
 	ist := `Ff prova (a){
@@ -450,8 +459,8 @@ func TestParseReturn_Expresion(t *testing.T) {
                 Prova("cioa","frfr",3,)
                 RETURN ((a * 3) - 2) + (4 / 2)
 	}`
-	if !IsEqual(program["prova"].ToString(), expected) {
-		t.Error("error parsing", "expected: ", expected, "got: ", program["prova"].ToString())
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 
 }
