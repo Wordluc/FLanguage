@@ -13,7 +13,7 @@ func ParsingFuncDeclaration(lexer *Lexer.Lexer, exitTokens ...Token.TokenType) (
 		return nil, e
 	}
 	if curToken.Type != Token.WORD {
-		return nil, errors.New("ParsingFuncDeclaration: expected 'WORD' token,error Identifier")
+		return nil, errors.New("ParsingFuncDeclaration: expected 'WORD' token,got:" + curToken.Value)
 	}
 	funcDeclaration.Identifier = curToken.Value
 	curToken, e = lexer.NextToken()
@@ -23,6 +23,7 @@ func ParsingFuncDeclaration(lexer *Lexer.Lexer, exitTokens ...Token.TokenType) (
 	if curToken.Type != Token.OPEN_CIRCLE_BRACKET {
 		return nil, errors.New("ParsingFuncDeclaration: expected '(' token,error Parameters")
 	}
+
 	funcDeclaration.Params, e = ParseParms(lexer)
 	if e != nil {
 		return nil, e
@@ -34,7 +35,7 @@ func ParsingFuncDeclaration(lexer *Lexer.Lexer, exitTokens ...Token.TokenType) (
 
 	lexer.IncrP()
 	program, e := ParsingStatement(lexer, Token.CLOSE_GRAP_BRACKET)
-	funcDeclaration.Body = program["root"]
+	funcDeclaration.Body = program
 	if e != nil {
 		return nil, e
 	}

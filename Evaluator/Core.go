@@ -9,17 +9,18 @@ import (
 	"strconv"
 )
 
-type VariableEnvironment struct {
+type Environment struct {
 	variables map[string]IObject
-	externals *VariableEnvironment
+	functions map[string]Statements.FuncDeclarationStatement
+	internals *Environment
 }
 
-func (v *VariableEnvironment) AddVariable(name string, value IObject) error {
+func (v *Environment) AddVariable(name string, value IObject) error {
 	v.variables[name] = value
 	return nil //check if already exists
 }
 
-func (v *VariableEnvironment) SetVariable(name string, value IObject) error {
+func (v *Environment) SetVariable(name string, value IObject) error {
 	if v.variables[name] == nil {
 		return errors.New("variable not defined")
 	}
@@ -27,11 +28,20 @@ func (v *VariableEnvironment) SetVariable(name string, value IObject) error {
 	return nil
 }
 
-func (v *VariableEnvironment) GetVariable(name string) (IObject, error) {
+func (v *Environment) GetVariable(name string) (IObject, error) {
 	return v.variables[name], nil
 }
 
-func Eval(program *Statements.StatementNode, env *VariableEnvironment) (IObject, error) {
+func (v *Environment) GetFunction(name string) (Statements.FuncDeclarationStatement, error) {
+	return v.functions[name], nil
+}
+
+func (v *Environment) SetFunction(name string, value Statements.FuncDeclarationStatement) error {
+	v.functions[name] = value
+	return nil //check if already exists
+}
+
+func Eval(program *Statements.StatementNode, env *Environment) (IObject, error) {
 	r, e := evalStatement(program.Statement, env)
 	if e != nil {
 		return nil, e
@@ -50,7 +60,7 @@ func Eval(program *Statements.StatementNode, env *VariableEnvironment) (IObject,
 	return Eval(program.Next, env)
 }
 
-func evalStatement(statement Statements.IStatement, env *VariableEnvironment) (IObject, error) {
+func evalStatement(statement Statements.IStatement, env *Environment) (IObject, error) {
 	switch statement.(type) {
 	case *Statements.LetStatement:
 		value, err := evalExpresion(statement.(*Statements.LetStatement).Expresion, env)
@@ -67,6 +77,16 @@ func evalStatement(statement Statements.IStatement, env *VariableEnvironment) (I
 			Value: value,
 		}
 		return ob, nil
+	case Statements.FuncDeclarationStatement:
+		env.SetFunction(statement.(Statements.FuncDeclarationStatement).Identifier, statement.(Statements.FuncDeclarationStatement))
+		return &ReturnObject{}, nil
+	case Statements.CallFuncStatement: //to comple
+		value, err := evalExpresion(statement.(Statements.CallFuncStatement).Expresion, env)
+		if err != nil {
+			return nil, err
+		}
+
+		return value, nil
 	case *Statements.ReturnStatement:
 		value, err := evalExpresion(statement.(Statements.ReturnStatement).Expresion, env)
 		if err != nil {
@@ -88,8 +108,32 @@ func evalStatement(statement Statements.IStatement, env *VariableEnvironment) (I
 	return nil, errors.New("invalid statement" + reflect.TypeOf(statement).String())
 }
 
-func evalExpresion(expresion Expresions.IExpresion, env *VariableEnvironment) (IObject, error) {
+func evalCallFuncStatement(expression Expresions.ExpresionCallFunc, env *Environment) (IObject, error) {
+	env.internals = &Environment{
+		variables: make(map[string]IObject),
+
+		functions: make(map[string]Statements.FuncDeclarationStatement),
+	}
+	for i, v := range expression.Values {
+		value, e := evalExpresion(v, env)
+		if e != nil {
+			return nil, e
+		}
+		env.internals.AddVariable(strconv.Itoa(i), value)
+	}
+
+	return Eval(env.functions[expression.NameFunc].Body.(*Statements.StatementNode), env.internals) //env.functions[expCallFunc.NameFunc]
+}
+
+func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, error) {
 	switch expresion.(type) {
+	case *Expresions.ExpresionCallFunc:
+		v, e := evalCallFuncStatement(*expresion.(*Expresions.ExpresionCallFunc), env)
+		if e != nil {
+			return nil, e
+		}
+
+		return v, nil
 	case Expresions.ExpresionLeaf:
 		exp := expresion.(Expresions.ExpresionLeaf)
 		switch exp.Type {
