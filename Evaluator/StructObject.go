@@ -36,3 +36,11 @@ type ReturnObject struct {
 func (r ReturnObject) Eval() (IObject, error) {
 	return r, nil
 }
+
+type BoolObject struct {
+	Value bool
+}
+
+func (b BoolObject) Eval() (IObject, error) {
+	return b, nil
+}

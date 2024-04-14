@@ -175,3 +175,98 @@ func TestCallFuncWithoutReturn(t *testing.T) {
 		t.Error("should not return anything")
 	}
 }
+
+func TestBooleanOp(t *testing.T) {
+
+	ist := `
+	ret 3>2;
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	program, e := Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error("eval fallita", e)
+	}
+	val := (program.(*ReturnObject).Value)
+	v, _ := val.(*BoolObject)
+	if !v.Value {
+		t.Error("3 is greater than 2")
+	}
+
+}
+
+func TestNumberComparison(t *testing.T) {
+
+	ist := `
+	let a=3==3;
+	let b=3==2;
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error("eval fallita", e)
+	}
+	a, _ := env.GetVariable("a")
+	b, _ := env.GetVariable("b")
+	if !a.(*BoolObject).Value {
+		t.Error("should be true")
+	}
+	if b.(*BoolObject).Value {
+		t.Error("should be false")
+	}
+
+}
+
+func TestStringComparison(t *testing.T) {
+
+	ist := `
+	let a="ffff"!="f";
+	let b="ciao"=="ciao";
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error("eval fallita", e)
+	}
+	a, _ := env.GetVariable("a")
+	b, _ := env.GetVariable("b")
+	if !a.(*BoolObject).Value {
+		t.Error("should be true, ffff != f")
+	}
+	if !b.(*BoolObject).Value {
+		t.Error("should be true, ciao==ciao")
+	}
+
+}
