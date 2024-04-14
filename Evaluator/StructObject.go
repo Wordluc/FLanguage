@@ -33,6 +33,6 @@ type ReturnObject struct {
 	Value IObject
 }
 
-func (r *ReturnObject) Eval() (IObject, error) {
+func (r ReturnObject) Eval() (IObject, error) {
 	return r, nil
 }
