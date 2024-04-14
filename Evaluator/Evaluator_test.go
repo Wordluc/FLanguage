@@ -90,6 +90,7 @@ func TestAssigmentAndReuse(t *testing.T) {
 func TestCallFuncSetVariable(t *testing.T) {
 
 	ist := `
+
 	Ff prova (){
 	   let a = 5+3*(3*(4+2));		
 	}
@@ -120,6 +121,7 @@ func TestCallFuncSetVariable(t *testing.T) {
 func TestCallFuncReturn(t *testing.T) {
 
 	ist := `
+
 	Ff prova (){
 	   let a = 5+3*(3*(4+2));		
 	   ret a;
@@ -142,7 +144,7 @@ func TestCallFuncReturn(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	if (program.(*ReturnObject).Value.(*NumberObject).Value) != 59 {
+	if (program.(*NumberObject).Value) != 59 {
 		t.Errorf("value is not %v got %v", 59, program.(*ReturnObject).Value.(*NumberObject).Value)
 	}
 }
@@ -150,6 +152,7 @@ func TestCallFuncReturn(t *testing.T) {
 func TestCallFuncWithoutReturn(t *testing.T) {
 
 	ist := `
+
 	Ff prova (){
 	   let a = 5+3*(3*(4+2));		
 	}
@@ -171,7 +174,7 @@ func TestCallFuncWithoutReturn(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	if (program.(*ReturnObject).Value) != nil {
+	if (program) != nil {
 		t.Error("should not return anything")
 	}
 }
@@ -298,6 +301,7 @@ func TestMultipleDeclarationWtihSameName(t *testing.T) {
 		t.Error("should have error")
 	}
 }
+
 func TestAssigmentDifferentValue(t *testing.T) {
 
 	ist := `
@@ -319,5 +323,109 @@ func TestAssigmentDifferentValue(t *testing.T) {
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e == nil {
 		t.Error("should have error")
+	}
+}
+
+func TestUseResultFunction(t *testing.T) {
+	ist := `
+
+	Ff add(){
+		ret 3;
+	}
+	let a=2+add();
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	v, _ := env.GetVariable("a")
+	if v.(*NumberObject).Value != 5 {
+		t.Error("should be 5,got:", v)
+	}
+}
+
+func TestSumStrings(t *testing.T) {
+	ist := `
+	let a="ciao "+"bene";
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	v, _ := env.GetVariable("a")
+	if v.(*StringObject).Value != "ciao bene" {
+		t.Error("should be ciao bene ,got:", v.(*StringObject).Value)
+	}
+}
+
+func TestSumStringsFromFunc(t *testing.T) {
+	ist := `
+
+	Ff getString(){
+		ret "prova";
+	}
+	let a="ciao "+getString();
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	v, _ := env.GetVariable("a")
+	if v.(*StringObject).Value != "ciao prova" {
+		t.Error("should be ciao bene ,got:", v.(*StringObject).Value)
+	}
+}
+
+func TestPassValueThroughtFunc(t *testing.T) {
+	ist := `
+
+	Ff getValue(n){
+		ret n+1;
+	}
+	let a=getValue(3);
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	v, _ := env.GetVariable("a")
+	if v.(*NumberObject).Value != 4 {
+		t.Error("should be 4 ,got:", v.(*NumberObject).Value)
 	}
 }
