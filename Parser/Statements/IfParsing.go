@@ -19,18 +19,13 @@ func parseIfStatement(l *Lexer.Lexer) (IStatement, error) {
 		return nil, errors.New("parseIfStatement: expected '(' token")
 	}
 	l.IncrP()
-	ifExpr.FirstExpresion, e = Expresions.ParseExpresion(l,
-		Token.EQUAL, Token.LESS_EQUAL, Token.GREATER_EQUAL, Token.NOT_EQUAL, Token.GREATER, Token.LESS) //== <= >= !=
+	ifExpr.Expresion, e = Expresions.ParseExpresion(l,
+		Token.CLOSE_CIRCLE_BRACKET)
 	if e != nil {
 		return nil, e
 	}
 	curToken = l.LookCurrent()
-	ifExpr.ConditionType = curToken.Type
-	ifExpr.ConditionValue = curToken.Value
 	curToken, e = l.NextToken()
-	ifExpr.LastExpresion, e = Expresions.ParseExpresion(l, Token.CLOSE_CIRCLE_BRACKET)
-	curToken, e = l.NextToken()
-
 	if e != nil {
 		return nil, e
 	}
