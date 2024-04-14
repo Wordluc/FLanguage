@@ -9,10 +9,15 @@ import (
 	"strconv"
 )
 
+//-la funzione ha accesso alle variabili del chiamante<--chose
+//-la funzione non ha accesso alle variabili del chiamante
+//-la funzione ha accesso solo ad alcune funzioni del chiamante
+
 type Environment struct {
 	variables map[string]IObject
 	functions map[string]Statements.FuncDeclarationStatement
-	internals *Environment
+	//Environment caller
+	internals *Environment //change, i want have access to calling Environment, so in a function i can use a global variable
 }
 
 func (v *Environment) AddVariable(name string, value IObject) error {
@@ -27,6 +32,7 @@ func (v *Environment) SetVariable(name string, value IObject) error {
 	if v.variables[name] == nil {
 		return errors.New("variable not defined")
 	}
+
 	if reflect.TypeOf(v.variables[name]) != reflect.TypeOf(value) {
 		return errors.New("should have same type")
 	}
@@ -52,7 +58,7 @@ func Eval(program *Statements.StatementNode, env *Environment) (IObject, error) 
 	if e != nil {
 		return nil, e
 	}
-	_, isReturn := program.Statement.(Statements.ReturnStatement)
+	_, isReturn := program.Statement.(*Statements.ReturnStatement)
 	if isReturn {
 		return r, nil
 	}
@@ -68,6 +74,7 @@ func Eval(program *Statements.StatementNode, env *Environment) (IObject, error) 
 }
 
 func evalStatement(statement Statements.IStatement, env *Environment) (IObject, error) {
+
 	switch statement.(type) {
 	case *Statements.LetStatement:
 		value, err := evalExpresion(statement.(*Statements.LetStatement).Expresion, env)
@@ -124,28 +131,37 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 func evalCallFuncStatement(expression Expresions.ExpresionCallFunc, env *Environment) (IObject, error) {
 	env.internals = &Environment{
 		variables: make(map[string]IObject),
-
 		functions: make(map[string]Statements.FuncDeclarationStatement),
+	}
+	fun, e := env.GetFunction(expression.NameFunc)
+
+	if len(fun.Params) != len(expression.Values) {
+		return nil, errors.New("not enough parms")
 	}
 	for i, v := range expression.Values {
 		value, e := evalExpresion(v, env)
 		if e != nil {
 			return nil, e
 		}
-		env.internals.AddVariable(strconv.Itoa(i), value)
+		env.internals.AddVariable(fun.Params[i], value)
 	}
-	valExp, e := Eval(env.functions[expression.NameFunc].Body.(*Statements.StatementNode), env.internals)
 	if e != nil {
 		return nil, e
 	}
-	_, isReturn := valExp.(*ReturnObject)
-	if !isReturn {
-		return &ReturnObject{}, nil
+	valExp, e := Eval(fun.Body.(*Statements.StatementNode), env.internals)
+	if e != nil {
+		return nil, e
+
 	}
-	return valExp, nil //env.functions[expCallFunc.NameFunc]
+	v, isReturn := valExp.(*ReturnObject)
+	if !isReturn {
+		return nil, nil
+	}
+	return v.Value, nil
 }
 
 func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, error) {
+
 	switch expresion.(type) {
 	case *Expresions.ExpresionCallFunc:
 		v, e := evalCallFuncStatement(*expresion.(*Expresions.ExpresionCallFunc), env)
@@ -179,8 +195,7 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 				Value: exp.Value == "true",
 			}
 			return ob, nil
-		} //insert callfunc
-
+		}
 	case Expresions.ExpresionNode:
 		left, e := evalExpresion(expresion.(Expresions.ExpresionNode).LeftExpresion, env)
 		if e != nil {
@@ -202,6 +217,7 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 }
 
 func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, error) {
+
 	switch left.(type) {
 	case *NumberObject:
 		valueLeft := left.(*NumberObject).Value
@@ -221,13 +237,12 @@ func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, er
 			return &BoolObject{Value: valueLeft < valueRight}, nil
 		case Token.EQUAL:
 			return &BoolObject{Value: valueLeft == valueRight}, nil
+		case Token.NOT_EQUAL:
+			return &BoolObject{Value: valueLeft != valueRight}, nil
 		case Token.GREATER_EQUAL:
 			return &BoolObject{Value: valueLeft >= valueRight}, nil
 		case Token.LESS_EQUAL:
 			return &BoolObject{Value: valueLeft <= valueRight}, nil
-		case Token.NOT_EQUAL:
-			return &BoolObject{Value: valueLeft != valueRight}, nil
-
 		}
 	case *StringObject:
 		valueLeft := left.(*StringObject).Value
