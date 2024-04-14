@@ -4,7 +4,7 @@ import "strings"
 
 func GetRegex() string {
 	r := strings.Builder{}
-	r.WriteString(`\w+\(|`)                          //Parole
+	//	r.WriteString(`\w+\(|`)                          //Parole
 	r.WriteString(`\w+|`)                            //Parole
 	r.WriteString(`\/\*|\*\/|`)                      //Commenti multi linea
 	r.WriteString(`\/{1,2}|`)                        //Commenti mono linea

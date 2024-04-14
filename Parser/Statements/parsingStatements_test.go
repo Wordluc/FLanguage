@@ -366,14 +366,14 @@ func TestParseExpresion_All(t *testing.T) {
 
 func TestParseExpresion_ErrorDefinitionShouldFail(t *testing.T) {
 	ist := `
-	Ff (a){
+	Ff(a){
 		Prova("cioa","frfr",3);
 	}
 	prova("dio");
 	if (x > 0) {
 		x = x + 1;	
 	}else{
-		a=prova();
+		a=prova ();
 	}
 	END`
 	lexer, e := Lexer.New([]byte(ist))

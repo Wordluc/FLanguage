@@ -14,12 +14,15 @@ func And(e error, s string) error {
 	v := e.Error()
 	return errors.New(v + " " + s)
 }
+
 func IsAValidBrach(token Token.Token) bool {
-	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET || token.Type == Token.CALL_FUNC || token.Type == Token.NUMBER
+	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET || token.Type == Token.NUMBER
 }
+
 func IsAValidOperator(token Token.Token) bool {
 	return !IsAValidBrach(token)
 }
+
 func GetParse(than Token.TokenType) (fParse, error) {
 	switch than {
 	case Token.DIV:
@@ -34,11 +37,10 @@ func GetParse(than Token.TokenType) (fParse, error) {
 		return parseLeaf, nil
 	case Token.OPEN_CIRCLE_BRACKET:
 		return parseExpresionBlock, nil
-	case Token.CALL_FUNC:
-		return parseCallFunc, nil
 	}
 	return nil, errors.New("GetParse: Operator:" + string(than) + "not implemented")
 }
+
 func ParseExpresion(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IExpresion, error) {
 	var root IExpresion
 	if exitTokens == nil {
@@ -65,8 +67,11 @@ func ParseExpresion(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IExpresion, 
 	}
 	return root, nil
 }
+
 func parseCallFunc(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
-	callFunc := &ExpresionCallFunc{NameFunc: l.LookCurrent().Value[:len(l.LookCurrent().Value)-1]}
+
+	callFunc := &ExpresionCallFunc{NameFunc: l.LookCurrent().Value}
+	l.IncrP()
 	l.IncrP()
 	for {
 		if l.LookCurrent().Type == Token.CLOSE_CIRCLE_BRACKET {
@@ -89,6 +94,7 @@ func parseCallFunc(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) 
 	l.IncrP()
 	return callFunc, nil
 }
+
 func parseExpresionBlock(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	l.IncrP()
 	block, e := ParseExpresion(l, Token.CLOSE_CIRCLE_BRACKET)
@@ -98,7 +104,15 @@ func parseExpresionBlock(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.Token
 	l.IncrP()
 	return block, nil
 }
+
 func parseLeaf(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
+	nextT, e := l.LookNext()
+	if e != nil {
+		return nil, e
+	}
+	if nextT.Type == Token.OPEN_CIRCLE_BRACKET {
+		return parseCallFunc(l, nil)
+	}
 	leaf := &ExpresionLeaf{}
 	curToken := l.LookCurrent()
 	l.IncrP()

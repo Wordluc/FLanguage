@@ -14,10 +14,10 @@ func TestLexer(t *testing.T) {
 	}
 	END
 	`
-	exp := [17]Token.TokenType{
+	exp := [18]Token.TokenType{
 		Token.LET, Token.WORD, Token.ASSIGN, Token.NUMBER, Token.DOT_COMMA,
 		Token.NUMBER, Token.PLUS, Token.NUMBER,
-		Token.FUNC, Token.CALL_FUNC, Token.CLOSE_CIRCLE_BRACKET, Token.OPEN_GRAP_BRACKET,
+		Token.FUNC, Token.WORD, Token.OPEN_CIRCLE_BRACKET, Token.CLOSE_CIRCLE_BRACKET, Token.OPEN_GRAP_BRACKET,
 		Token.RETURN, Token.WORD, Token.DOT_COMMA,
 		Token.CLOSE_GRAP_BRACKET, Token.END,
 	}
@@ -34,6 +34,7 @@ func TestLexer(t *testing.T) {
 
 	}
 }
+
 func TestLexer_Op(t *testing.T) {
 	text := `
 	*-/+;
@@ -54,6 +55,7 @@ func TestLexer_Op(t *testing.T) {
 
 	}
 }
+
 func TestLexer_CallFunc(t *testing.T) {
 	text := `
 	Prova(){
@@ -62,7 +64,7 @@ func TestLexer_CallFunc(t *testing.T) {
 	cia1o
 	`
 	exp := []Token.TokenType{
-		Token.CALL_FUNC, Token.CLOSE_CIRCLE_BRACKET, Token.OPEN_GRAP_BRACKET, Token.CLOSE_GRAP_BRACKET, Token.WORD,
+		Token.WORD, Token.OPEN_CIRCLE_BRACKET, Token.CLOSE_CIRCLE_BRACKET, Token.OPEN_GRAP_BRACKET, Token.CLOSE_GRAP_BRACKET, Token.WORD,
 	}
 	l, e := New([]byte(text))
 	if e != nil {
@@ -77,6 +79,7 @@ func TestLexer_CallFunc(t *testing.T) {
 
 	}
 }
+
 func TestWordError(t *testing.T) {
 	text := `
 	33r
@@ -90,6 +93,7 @@ func TestWordError(t *testing.T) {
 		t.Errorf("errore parsing: got %v instead %v", got.Type, Token.STRING)
 	}
 }
+
 func TestString(t *testing.T) {
 	text := `
 	"prova" "fff"
@@ -115,6 +119,7 @@ func TestString(t *testing.T) {
 
 	}
 }
+
 func TestCompare(t *testing.T) {
 	text := `
 	== != < > <= >=
@@ -139,6 +144,7 @@ func TestCompare(t *testing.T) {
 
 	}
 }
+
 func TestFuncDefinition(t *testing.T) {
 	text := `
  	Ff (a, b, c) {
@@ -151,9 +157,9 @@ func TestFuncDefinition(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	exp := [14]Token.TokenType{
+	exp := [15]Token.TokenType{
 		Token.FUNC, Token.OPEN_CIRCLE_BRACKET, Token.WORD, Token.COMMA, Token.WORD, Token.COMMA, Token.WORD, Token.CLOSE_CIRCLE_BRACKET,
-		Token.OPEN_GRAP_BRACKET, Token.CALL_FUNC, Token.CLOSE_CIRCLE_BRACKET, Token.DOT_COMMA, Token.CLOSE_GRAP_BRACKET, Token.END,
+		Token.OPEN_GRAP_BRACKET, Token.WORD, Token.OPEN_CIRCLE_BRACKET, Token.CLOSE_CIRCLE_BRACKET, Token.DOT_COMMA, Token.CLOSE_GRAP_BRACKET, Token.END,
 	}
 	if e != nil {
 		t.Error("creazione Lexer fallita")
