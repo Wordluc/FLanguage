@@ -16,6 +16,9 @@ type Environment struct {
 }
 
 func (v *Environment) AddVariable(name string, value IObject) error {
+	if v.variables[name] != nil {
+		return errors.New("variable already exists:" + name)
+	}
 	v.variables[name] = value
 	return nil //check if already exists
 }
@@ -23,6 +26,9 @@ func (v *Environment) AddVariable(name string, value IObject) error {
 func (v *Environment) SetVariable(name string, value IObject) error {
 	if v.variables[name] == nil {
 		return errors.New("variable not defined")
+	}
+	if reflect.TypeOf(v.variables[name]) != reflect.TypeOf(value) {
+		return errors.New("should have same type")
 	}
 	v.variables[name] = value
 	return nil
@@ -101,7 +107,10 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		if err != nil {
 			return nil, err
 		}
-		env.SetVariable(statement.(Statements.AssignExpresionStatement).Identifier, value)
+		e := env.SetVariable(statement.(Statements.AssignExpresionStatement).Identifier, value)
+		if e != nil {
+			return nil, e
+		}
 		ob := &LetObject{
 			Name:  statement.(Statements.AssignExpresionStatement).Identifier,
 			Value: value,

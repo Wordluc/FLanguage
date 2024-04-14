@@ -274,3 +274,50 @@ func TestStringComparison(t *testing.T) {
 		t.Error("should be true, 3>=3")
 	}
 }
+
+func TestMultipleDeclarationWtihSameName(t *testing.T) {
+
+	ist := `
+	let a="ffff"!="f";
+	let a="ciao"=="ciao";
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e == nil {
+		t.Error("should have error")
+	}
+}
+func TestAssigmentDifferentValue(t *testing.T) {
+
+	ist := `
+	let a="ffff"!="f";
+	a="ciao";
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e == nil {
+		t.Error("should have error")
+	}
+}
