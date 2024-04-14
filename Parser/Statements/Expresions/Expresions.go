@@ -33,12 +33,15 @@ func PrintLeafOrExpresion(e IExpresion) string {
 		return "(" + e.ToString() + ")"
 	}
 }
+
 func (e *ExpresionNode) SetLeft(left IExpresion) {
 	e.LeftExpresion = left
 }
+
 func (e *ExpresionNode) SetRight(right IExpresion) {
 	e.RightExpresion = right
 }
+
 func (e *ExpresionNode) SetOperator(operator Token.Token) {
 	e.Operator = operator
 	e.OperatorValue = operator.Value
@@ -93,4 +96,19 @@ func (e ExpresionCallFunc) ToString() string {
 	}
 	r += ")"
 	return r
+}
+
+type ExpresionBoolean struct {
+	Value bool
+}
+
+func (e ExpresionBoolean) Set(value string) ExpresionBoolean {
+	e.Value = value == "true"
+	return e
+}
+func (e ExpresionBoolean) ToString() string {
+	if e.Value {
+		return "TRUE"
+	}
+	return "FALSE"
 }

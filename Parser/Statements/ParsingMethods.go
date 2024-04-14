@@ -53,14 +53,6 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 			head.addStatement(res)
 			head.addNext(&StatementNode{})
 			head = head.Next
-			//		case Token.CALL_FUNC:
-			//			letS, e := parseCallFunc(l)
-			//			if e != nil {
-			//				return nil, e
-			//			}
-			//			head.addStatement(letS)
-			//			head.addNext(&StatementNode{})
-			//			head = head.Next
 		case Token.RETURN:
 			runS, e := parseReturnStatement(l)
 			if e != nil {
