@@ -5,6 +5,7 @@ import (
 	"FLanguage/Parser/Statements"
 	"FLanguage/Parser/Statements/Expresions"
 	"errors"
+	"fmt"
 	"reflect"
 	"strconv"
 )
@@ -79,20 +80,22 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		return ob, nil
 	case Statements.FuncDeclarationStatement:
 		env.SetFunction(statement.(Statements.FuncDeclarationStatement).Identifier, statement.(Statements.FuncDeclarationStatement))
-		return &ReturnObject{}, nil
+		return nil, nil
 	case Statements.CallFuncStatement: //to comple
 		value, err := evalExpresion(statement.(Statements.CallFuncStatement).Expresion, env)
 		if err != nil {
 			return nil, err
 		}
-
 		return value, nil
 	case *Statements.ReturnStatement:
-		value, err := evalExpresion(statement.(Statements.ReturnStatement).Expresion, env)
+		value, err := evalExpresion(statement.(*Statements.ReturnStatement).Expresion, env)
 		if err != nil {
 			return nil, err
 		}
-		return value, nil
+		ob := &ReturnObject{
+			Value: value,
+		}
+		return ob, nil
 	case Statements.AssignExpresionStatement:
 		value, err := evalExpresion(statement.(Statements.AssignExpresionStatement).Expresion, env)
 		if err != nil {
@@ -121,8 +124,16 @@ func evalCallFuncStatement(expression Expresions.ExpresionCallFunc, env *Environ
 		}
 		env.internals.AddVariable(strconv.Itoa(i), value)
 	}
-
-	return Eval(env.functions[expression.NameFunc].Body.(*Statements.StatementNode), env.internals) //env.functions[expCallFunc.NameFunc]
+	valExp, e := Eval(env.functions[expression.NameFunc].Body.(*Statements.StatementNode), env.internals)
+	if e != nil {
+		return nil, e
+	}
+	_, isReturn := valExp.(*ReturnObject)
+	if !isReturn {
+		fmt.Println(valExp)
+		return &ReturnObject{}, nil
+	}
+	return valExp, nil //env.functions[expCallFunc.NameFunc]
 }
 
 func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, error) {
