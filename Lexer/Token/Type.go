@@ -24,7 +24,6 @@ const (
 	CLOSE_CIRCLE_BRACKET
 	OPEN_GRAP_BRACKET
 	CLOSE_GRAP_BRACKET
-	CALL_FUNC
 	IF
 	OPEN_COMM
 	CLOSE_COMM
@@ -98,9 +97,6 @@ func GetTokenType(typeF string) TokenType {
 	case "else":
 		return ELSE
 	default:
-		if isValidCallFunc(typeF) {
-			return CALL_FUNC
-		}
 		if isValidString(typeF) {
 			return STRING
 		}
@@ -119,17 +115,14 @@ var isAWord = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]*$`)
 
 var isANumber = regexp.MustCompile(`^[0-9_]+$`)
 
-var isACallFunc = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]*\($`)
-
 func isValidWord(value string) bool {
 	return isAWord.MatchString(string(value))
 }
+
 func isValidNumber(value string) bool {
 	return isANumber.MatchString(string(value))
 }
-func isValidCallFunc(value string) bool {
-	return isACallFunc.MatchString(string(value))
-}
+
 func isValidString(value string) bool {
 	if value[0] == '"' && value[len(value)-1] == '"' {
 		return true
