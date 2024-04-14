@@ -243,6 +243,7 @@ func TestStringComparison(t *testing.T) {
 	ist := `
 	let a="ffff"!="f";
 	let b="ciao"=="ciao";
+	let c=3>=3;
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
@@ -262,11 +263,14 @@ func TestStringComparison(t *testing.T) {
 	}
 	a, _ := env.GetVariable("a")
 	b, _ := env.GetVariable("b")
+	c, _ := env.GetVariable("c")
 	if !a.(*BoolObject).Value {
 		t.Error("should be true, ffff != f")
 	}
 	if !b.(*BoolObject).Value {
 		t.Error("should be true, ciao==ciao")
 	}
-
+	if !c.(*BoolObject).Value {
+		t.Error("should be true, 3>=3")
+	}
 }
