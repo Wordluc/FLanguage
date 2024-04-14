@@ -5,7 +5,6 @@ import (
 	"FLanguage/Parser/Statements"
 	"FLanguage/Parser/Statements/Expresions"
 	"errors"
-	"fmt"
 	"reflect"
 	"strconv"
 )
@@ -56,6 +55,7 @@ func Eval(program *Statements.StatementNode, env *Environment) (IObject, error) 
 		return r, nil
 	}
 	if program.Next.Statement == nil {
+
 		return r, nil
 	}
 	return Eval(program.Next, env)
@@ -130,7 +130,6 @@ func evalCallFuncStatement(expression Expresions.ExpresionCallFunc, env *Environ
 	}
 	_, isReturn := valExp.(*ReturnObject)
 	if !isReturn {
-		fmt.Println(valExp)
 		return &ReturnObject{}, nil
 	}
 	return valExp, nil //env.functions[expCallFunc.NameFunc]
@@ -165,7 +164,11 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 				Value: exp.Value,
 			}
 			return ob, nil
-
+		case Token.BOOLEAN:
+			ob := &BoolObject{
+				Value: exp.Value == "true",
+			}
+			return ob, nil
 		} //insert callfunc
 
 	case Expresions.ExpresionNode:
@@ -202,6 +205,19 @@ func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, er
 			return &NumberObject{valueLeft / valueRight}, nil
 		case Token.MULT:
 			return &NumberObject{valueLeft * valueRight}, nil
+		case Token.GREATER:
+			return &BoolObject{Value: valueLeft > valueRight}, nil
+		case Token.LESS:
+			return &BoolObject{Value: valueLeft < valueRight}, nil
+		case Token.EQUAL:
+			return &BoolObject{Value: valueLeft == valueRight}, nil
+		case Token.GREATER_EQUAL:
+			return &BoolObject{Value: valueLeft >= valueRight}, nil
+		case Token.LESS_EQUAL:
+			return &BoolObject{Value: valueLeft <= valueRight}, nil
+		case Token.NOT_EQUAL:
+			return &BoolObject{Value: valueLeft != valueRight}, nil
+
 		}
 	case *StringObject:
 		valueLeft := left.(*StringObject).Value
@@ -209,6 +225,18 @@ func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, er
 		switch operator.Type {
 		case Token.PLUS:
 			return &StringObject{valueLeft + valueRight}, nil
+		case Token.EQUAL:
+			return &BoolObject{valueLeft == valueRight}, nil
+		case Token.NOT_EQUAL:
+			return &BoolObject{valueLeft != valueRight}, nil
+		}
+	case *BoolObject:
+		valueLeft := left.(*BoolObject).Value
+		valueRight := right.(*BoolObject).Value
+		if operator.Type == Token.EQUAL {
+			return &BoolObject{
+				Value: valueLeft == valueRight,
+			}, nil
 		}
 	}
 	return nil, errors.New("invalid operation")
