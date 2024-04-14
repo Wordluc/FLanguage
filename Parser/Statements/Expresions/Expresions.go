@@ -97,18 +97,3 @@ func (e ExpresionCallFunc) ToString() string {
 	r += ")"
 	return r
 }
-
-type ExpresionBoolean struct {
-	Value bool
-}
-
-func (e ExpresionBoolean) Set(value string) ExpresionBoolean {
-	e.Value = value == "true"
-	return e
-}
-func (e ExpresionBoolean) ToString() string {
-	if e.Value {
-		return "TRUE"
-	}
-	return "FALSE"
-}

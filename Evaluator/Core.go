@@ -108,6 +108,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		}
 		return ob, nil
 	}
+	//todo: inserire if statement
 	return nil, errors.New("invalid statement" + reflect.TypeOf(statement).String())
 }
 

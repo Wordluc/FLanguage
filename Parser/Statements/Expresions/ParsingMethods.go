@@ -16,7 +16,7 @@ func And(e error, s string) error {
 }
 
 func IsAValidBrach(token Token.Token) bool {
-	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET || token.Type == Token.NUMBER
+	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET || token.Type == Token.NUMBER || token.Type == Token.STRING
 }
 
 func IsAValidOperator(token Token.Token) bool {
@@ -114,10 +114,6 @@ func parseLeaf(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IEx
 		return parseCallFunc(l, nil)
 	}
 	curToken := l.LookCurrent()
-	if curToken.Type == Token.BOOLEAN {
-		l.IncrP()
-		return ExpresionBoolean{}.Set(curToken.Value), nil
-	}
 	leaf := &ExpresionLeaf{}
 	l.IncrP()
 	return leaf.New(curToken), nil

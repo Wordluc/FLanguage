@@ -173,3 +173,32 @@ func TestFuncDefinition(t *testing.T) {
 
 	}
 }
+
+func TestBoolean(t *testing.T) {
+	text := `
+ 	2>3
+	true
+ 	END
+	`
+
+	l, e := New([]byte(text))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	exp := [5]Token.TokenType{
+		Token.NUMBER, Token.GREATER, Token.NUMBER,
+		Token.BOOLEAN,
+		Token.END,
+	}
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	for _, i := range exp {
+		got := l.LookCurrent()
+		if got.Type != Token.TokenType(i) {
+			t.Errorf("errore parsing: got %v instead %v", got.Type, Token.TokenType(i))
+		}
+		l.IncrP()
+
+	}
+}
