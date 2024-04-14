@@ -32,7 +32,6 @@ const (
 	DOT_COMMA
 	DOUBLE_QUOTE
 	SINGLE_QUOTE
-	ERROR_L TokenType = 255
 	GREATER
 	LESS
 	GREATER_EQUAL
@@ -40,6 +39,7 @@ const (
 	NOT_EQUAL
 	EQUAL
 	ELSE
+	ERROR_L TokenType = 255
 )
 
 func GetTokenType(typeF string) TokenType {

@@ -27,9 +27,9 @@ func GetParse(than Token.TokenType) (fParse, error) {
 	switch than {
 	case Token.DIV:
 		return parseTree, nil
-	case Token.MULT:
+	case Token.MULT, Token.MINUS:
 		return parseTree, nil
-	case Token.MINUS:
+	case Token.EQUAL, Token.NOT_EQUAL, Token.LESS, Token.GREATER, Token.LESS_EQUAL, Token.GREATER_EQUAL:
 		return parseTree, nil
 	case Token.PLUS:
 		return parseTree, nil

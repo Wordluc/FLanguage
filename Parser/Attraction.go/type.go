@@ -22,8 +22,8 @@ func GetForce(than Token.TokenType) (Force, error) {
 		return F5, nil
 	case Token.CLOSE_CIRCLE_BRACKET:
 		return F5, nil
-	case Token.WORD:
-		return F0, nil
+	case Token.NOT_EQUAL, Token.EQUAL, Token.LESS, Token.GREATER, Token.LESS_EQUAL, Token.GREATER_EQUAL:
+		return F1, nil
 	case Token.PLUS:
 		return F2, nil
 	case Token.MINUS:

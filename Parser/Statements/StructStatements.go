@@ -1,7 +1,6 @@
 package Statements
 
 import (
-	"FLanguage/Lexer/Token"
 	"FLanguage/Parser/Statements/Expresions"
 )
 
@@ -16,6 +15,7 @@ type StatementNode struct {
 func (s *StatementNode) addNext(next *StatementNode) {
 	s.Next = next
 }
+
 func (s *StatementNode) addStatement(statement IStatement) {
 	s.Statement = statement
 }
@@ -40,19 +40,14 @@ func (s LetStatement) ToString() string {
 }
 
 type IfStatement struct {
-	FirstExpresion Expresions.IExpresion
-	ConditionType  Token.TokenType
-	ConditionValue string
-	LastExpresion  Expresions.IExpresion
-	Body           IStatement
-	Else           IStatement
+	Expresion Expresions.IExpresion
+	Body      IStatement
+	Else      IStatement
 }
 
 func (s IfStatement) ToString() string {
 	r := "IF ( "
-	r += s.FirstExpresion.ToString() + " "
-	r += s.ConditionValue + " "
-	r += s.LastExpresion.ToString() + " ) "
+	r += s.Expresion.ToString() + " ) "
 	r += "{\n"
 	if s.Body != nil {
 		r += s.Body.ToString()
