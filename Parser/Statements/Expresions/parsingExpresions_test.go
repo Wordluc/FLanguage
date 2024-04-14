@@ -247,7 +247,21 @@ func TestParseBooleanExpresion_ShouldPass(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
-
+func TestParseBooleanValue_ShouldPass(t *testing.T) {
+	ist := "true;"
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	if e != nil {
+		t.Error(e)
+	}
+	expected := "TRUE"
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
 func TestParseBooleanComplexExpresion_ShouldPass(t *testing.T) {
 	ist := "4*2>4+1;"
 	lexer, e := Lexer.New([]byte(ist))

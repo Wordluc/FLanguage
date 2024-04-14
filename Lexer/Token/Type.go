@@ -39,6 +39,7 @@ const (
 	NOT_EQUAL
 	EQUAL
 	ELSE
+	BOOLEAN
 	ERROR_L TokenType = 255
 )
 
@@ -70,6 +71,8 @@ func GetTokenType(typeF string) TokenType {
 		return CLOSE_GRAP_BRACKET
 	case "if":
 		return IF
+	case "else":
+		return ELSE
 	case "END":
 		return END
 	case "/*":
@@ -94,8 +97,9 @@ func GetTokenType(typeF string) TokenType {
 		return NOT_EQUAL
 	case "==":
 		return EQUAL
-	case "else":
-		return ELSE
+	case "true", "false":
+		return BOOLEAN
+
 	default:
 		if isValidString(typeF) {
 			return STRING

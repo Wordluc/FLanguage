@@ -33,7 +33,7 @@ func GetParse(than Token.TokenType) (fParse, error) {
 		return parseTree, nil
 	case Token.PLUS:
 		return parseTree, nil
-	case Token.WORD, Token.NUMBER, Token.STRING:
+	case Token.WORD, Token.NUMBER, Token.STRING, Token.BOOLEAN:
 		return parseLeaf, nil
 	case Token.OPEN_CIRCLE_BRACKET:
 		return parseExpresionBlock, nil
@@ -113,8 +113,12 @@ func parseLeaf(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IEx
 	if nextT.Type == Token.OPEN_CIRCLE_BRACKET {
 		return parseCallFunc(l, nil)
 	}
-	leaf := &ExpresionLeaf{}
 	curToken := l.LookCurrent()
+	if curToken.Type == Token.BOOLEAN {
+		l.IncrP()
+		return ExpresionBoolean{}.Set(curToken.Value), nil
+	}
+	leaf := &ExpresionLeaf{}
 	l.IncrP()
 	return leaf.New(curToken), nil
 }
