@@ -429,3 +429,61 @@ func TestPassValueThroughtFunc(t *testing.T) {
 		t.Error("should be 4 ,got:", v.(*NumberObject).Value)
 	}
 }
+
+func TestIfStatement(t *testing.T) {
+	ist := `
+
+	let a=2;
+
+	if (4>2){
+	   a=a+2;
+	}
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	v, _ := env.GetVariable("a")
+	if v.(*NumberObject).Value != 4 {
+		t.Error("should be 4 ,got:", v.(*NumberObject).Value)
+	}
+}
+
+func TestElseStatement(t *testing.T) {
+	ist := `
+
+	let a=2;
+
+	if (4<2){
+	   a=a+2;
+	}else{
+	   a=a*4;	
+	}
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	v, _ := env.GetVariable("a")
+	if v.(*NumberObject).Value != 8 {
+		t.Error("should be 8 ,got:", v.(*NumberObject).Value)
+	}
+}

@@ -226,7 +226,7 @@ func TestParseExpresion_StringParameter(t *testing.T) {
 		t.Error(e)
 		return
 	}
-	expected := "(prova(3 + 3,'ciao',)) + (3 * 4)"
+	expected := `(prova(3 + 3,"ciao",)) + (3 * 4)`
 	if program.ToString() != expected {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
@@ -310,7 +310,7 @@ func TestParseStringComparison(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	expected := "'ciao' == 'ciao'"
+	expected := `"ciao" == "ciao"`
 	if program.ToString() != expected {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}

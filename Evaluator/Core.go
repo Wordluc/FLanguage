@@ -123,6 +123,24 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 			Value: value,
 		}
 		return ob, nil
+	case *Statements.IfStatement:
+		ifStat := statement.(*Statements.IfStatement)
+		obCondition, _ := evalExpresion(ifStat.Expresion, env)
+
+		cond, isBool := obCondition.(*BoolObject)
+		if !isBool {
+			return nil, errors.New("invalid condition")
+		}
+		if cond.Value {
+			v, e := Eval(ifStat.Body.(*Statements.StatementNode), env)
+			return v, e
+		} else {
+			if ifStat.Else == nil {
+				return nil, nil
+			}
+			return Eval(ifStat.Else.(*Statements.StatementNode), env)
+		}
+
 	}
 	//todo: inserire if statement
 	return nil, errors.New("invalid statement" + reflect.TypeOf(statement).String())

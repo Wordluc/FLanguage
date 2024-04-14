@@ -26,6 +26,7 @@ func (e ExpresionNode) ToString() string {
 	return r
 }
 func PrintLeafOrExpresion(e IExpresion) string {
+
 	switch e.(type) {
 	case ExpresionLeaf:
 		return e.ToString()
@@ -66,13 +67,20 @@ type ExpresionLeaf struct {
 }
 
 func (e ExpresionLeaf) ToString() string {
+	if e.Type == Token.STRING {
+		return `"` + e.Value + `"`
+	}
 	return e.Value
 }
 
 func (_ ExpresionLeaf) New(t Token.Token) ExpresionLeaf {
 	e := ExpresionLeaf{}
 	e.Type = t.Type
-	e.Value = t.Value
+	if e.Type == Token.STRING {
+		e.Value = t.Value[1 : len(t.Value)-1]
+	} else {
+		e.Value = t.Value
+	}
 	return e
 }
 
@@ -88,6 +96,7 @@ func (e ExpresionCallFunc) ToString() string {
 	r := e.NameFunc + "("
 	i := 0
 	for {
+
 		if i == len(e.Values) {
 			break
 		}
