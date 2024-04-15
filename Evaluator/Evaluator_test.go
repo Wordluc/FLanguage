@@ -487,3 +487,58 @@ func TestElseStatement(t *testing.T) {
 		t.Error("should be 8 ,got:", v.(*NumberObject).Value)
 	}
 }
+
+func TestCombineStringAndNumber(t *testing.T) {
+	ist := `
+
+	let a="ciao per";
+	a=a+2;
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	a, _ := env.GetVariable("a")
+	if a.(*StringObject).Value != "ciao per2" {
+		t.Error("should be 'ciao per2' ,got:", a.(*StringObject).Value)
+	}
+}
+
+func TestCombineNumberAndString(t *testing.T) {
+	ist := `
+
+	let a=2+"ciao per";
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), internals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	a, _ := env.GetVariable("a")
+	if a.(*StringObject).Value != "2ciao per" {
+		t.Error("should be '2ciao per' ,got:", a.(*StringObject).Value)
+	}
+}
