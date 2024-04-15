@@ -58,7 +58,7 @@ func Eval(program *Statements.StatementNode, env *Environment) (IObject, error) 
 	if e != nil {
 		return nil, e
 	}
-	_, isReturn := program.Statement.(*Statements.ReturnStatement)
+	_, isReturn := r.(*ReturnObject)
 	if isReturn {
 		return r, nil
 	}
@@ -149,9 +149,12 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 func evalCallFuncStatement(expression Expresions.ExpresionCallFunc, env *Environment) (IObject, error) {
 	env.internals = &Environment{
 		variables: make(map[string]IObject),
-		functions: make(map[string]Statements.FuncDeclarationStatement),
+		functions: env.functions,
 	}
 	fun, e := env.GetFunction(expression.NameFunc)
+	if e != nil {
+		return nil, e
+	}
 
 	if len(fun.Params) != len(expression.Values) {
 		return nil, errors.New("not enough parms")
@@ -162,9 +165,6 @@ func evalCallFuncStatement(expression Expresions.ExpresionCallFunc, env *Environ
 			return nil, e
 		}
 		env.internals.AddVariable(fun.Params[i], value)
-	}
-	if e != nil {
-		return nil, e
 	}
 	valExp, e := Eval(fun.Body.(*Statements.StatementNode), env.internals)
 	if e != nil {
