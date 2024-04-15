@@ -27,6 +27,7 @@ const (
 	IF
 	OPEN_COMM
 	CLOSE_COMM
+	LINE_COMM
 	DOT
 	COMMA
 	DOT_COMMA
@@ -101,12 +102,17 @@ func GetTokenType(typeF string) TokenType {
 		return BOOLEAN
 
 	default:
+		if isASingleLineComment(typeF) {
+			return LINE_COMM
+		}
 		if isValidString(typeF) {
 			return STRING
 		}
+
 		if isValidWord(typeF) {
 			return WORD
 		}
+
 		if isValidNumber(typeF) {
 			return NUMBER
 		}
@@ -118,7 +124,11 @@ func GetTokenType(typeF string) TokenType {
 var isAWord = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]*$`)
 
 var isANumber = regexp.MustCompile(`^[0-9_]+$`)
+var isALineComment = regexp.MustCompile(`^\/\/[^\n]*$`)
 
+func isASingleLineComment(value string) bool {
+	return isALineComment.MatchString(string(value))
+}
 func isValidWord(value string) bool {
 	return isAWord.MatchString(string(value))
 }
