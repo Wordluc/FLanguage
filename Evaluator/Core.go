@@ -9,31 +9,28 @@ import (
 	"strconv"
 )
 
-//-la funzione ha accesso alle variabili del chiamante<--chose
-//-la funzione non ha accesso alle variabili del chiamante
-//-la funzione ha accesso solo ad alcune funzioni del chiamante
-
 type Environment struct {
 	variables map[string]IObject
 	functions map[string]Statements.FuncDeclarationStatement
-	//Environment caller
-	internals *Environment //change, i want have access to calling Environment, so in a function i can use a global variable
+	externals *Environment
 }
 
 func (v *Environment) AddVariable(name string, value IObject) error {
-	if v.variables[name] != nil {
+	_, exist := v.variables[name]
+	if exist {
 		return errors.New("variable already exists:" + name)
 	}
 	v.variables[name] = value
-	return nil //check if already exists
+	return nil
 }
 
 func (v *Environment) SetVariable(name string, value IObject) error {
-	if v.variables[name] == nil {
+	variable, exist := v.variables[name]
+	if !exist {
 		return errors.New("variable not defined")
 	}
 
-	if reflect.TypeOf(v.variables[name]) != reflect.TypeOf(value) {
+	if reflect.TypeOf(variable) != reflect.TypeOf(value) {
 		return errors.New("should have same type")
 	}
 	v.variables[name] = value
@@ -41,16 +38,37 @@ func (v *Environment) SetVariable(name string, value IObject) error {
 }
 
 func (v *Environment) GetVariable(name string) (IObject, error) {
-	return v.variables[name], nil
+	variable, exist := v.variables[name]
+	if !exist {
+		variable, existEx := v.externals.GetVariable(name)
+		if existEx != nil {
+			return nil, errors.New("variable not defined")
+		}
+		return variable, nil
+	}
+	return variable, nil
 }
 
 func (v *Environment) GetFunction(name string) (Statements.FuncDeclarationStatement, error) {
-	return v.functions[name], nil
+	funct, exist := v.functions[name]
+	if !exist {
+		funct, existEx := v.externals.GetFunction(name)
+		if existEx != nil {
+			return Statements.FuncDeclarationStatement{}, errors.New("function not defined")
+		}
+		return funct, nil
+	}
+	return funct, nil
 }
 
 func (v *Environment) SetFunction(name string, value Statements.FuncDeclarationStatement) error {
+	_, exist := v.functions[name]
+	if exist {
+		return errors.New("function already exists:" + name)
+	}
 	v.functions[name] = value
-	return nil //check if already exists
+	return nil
+
 }
 
 func Eval(program *Statements.StatementNode, env *Environment) (IObject, error) {
@@ -147,9 +165,10 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 }
 
 func evalCallFuncStatement(expression Expresions.ExpresionCallFunc, env *Environment) (IObject, error) {
-	env.internals = &Environment{
+	envFunc := &Environment{
 		variables: make(map[string]IObject),
-		functions: env.functions,
+		functions: make(map[string]Statements.FuncDeclarationStatement),
+		externals: env,
 	}
 	fun, e := env.GetFunction(expression.NameFunc)
 	if e != nil {
@@ -164,9 +183,9 @@ func evalCallFuncStatement(expression Expresions.ExpresionCallFunc, env *Environ
 		if e != nil {
 			return nil, e
 		}
-		env.internals.AddVariable(fun.Params[i], value)
+		envFunc.AddVariable(fun.Params[i], value)
 	}
-	valExp, e := Eval(fun.Body.(*Statements.StatementNode), env.internals)
+	valExp, e := Eval(fun.Body.(*Statements.StatementNode), envFunc)
 	if e != nil {
 		return nil, e
 
