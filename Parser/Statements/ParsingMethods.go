@@ -61,7 +61,18 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 			head.addStatement(runS)
 			head.addNext(&StatementNode{})
 			head = head.Next
+		case Token.OPEN_COMM:
+			for {
+				l.IncrP()
+				if l.LookCurrent().Type == Token.CLOSE_COMM {
+					l.IncrP()
+					break
+				}
+			}
+		case Token.LINE_COMM:
+			l.IncrP()
 		default:
+
 			if slices.Contains(exitTokens, l.LookCurrent().Type) {
 				return program, nil
 			}
