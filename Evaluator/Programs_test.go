@@ -9,7 +9,7 @@ import (
 
 func TestFunctionFactorial(t *testing.T) {
 	ist := `
-
+	//Calcola il fattoriale di un Number
 	Ff factorial(x) {
 
 		if (x == 0) {
@@ -20,6 +20,7 @@ func TestFunctionFactorial(t *testing.T) {
 	}
 
 	let a = factorial(5);
+	//Token che indica la fine del programma
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
@@ -49,7 +50,10 @@ func TestFunctionFactorial(t *testing.T) {
 
 func TestFunctionFibonacci(t *testing.T) {
 	ist := `
-
+	/*
+	Dato un numero 
+	calcola il valore della serie
+	*/
 	Ff fibonacci(x) {
 
 		if (x == 0) {
@@ -59,7 +63,7 @@ func TestFunctionFibonacci(t *testing.T) {
 		if (x == 1) {
 			ret 1;
 		}
-
+		//Continua la ricorsione
 		ret fibonacci(x-1) + fibonacci(x-2);
 	}
 
