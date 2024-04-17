@@ -11,6 +11,7 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (IO
 		variables: make(map[string]IObject),
 		functions: make(map[string]*Statements.FuncDeclarationStatement),
 		externals: env,
+		innerFunc: env.innerFunc,
 	}
 	funcInnerObject, ok := env.GetInnerFunc(expression.NameFunc)
 	if ok == nil {
