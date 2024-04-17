@@ -8,10 +8,19 @@ import (
 
 type Environment struct {
 	variables map[string]IObject
-	functions map[string]Statements.FuncDeclarationStatement
+	functions map[string]*Statements.FuncDeclarationStatement
+	innerFunc map[string]InnerFuncObject
 	externals *Environment
 }
 
+func NewEnvironment() *Environment {
+	return &Environment{
+		variables: make(map[string]IObject),
+		functions: make(map[string]*Statements.FuncDeclarationStatement),
+		innerFunc: make(map[string]InnerFuncObject),
+		externals: nil,
+	}
+}
 func (v *Environment) AddVariable(name string, value IObject) error {
 	_, exist := v.variables[name]
 	if exist {
@@ -46,19 +55,19 @@ func (v *Environment) GetVariable(name string) (IObject, error) {
 	return variable, nil
 }
 
-func (v *Environment) GetFunction(name string) (Statements.FuncDeclarationStatement, error) {
+func (v *Environment) GetFunction(name string) (*Statements.FuncDeclarationStatement, error) {
 	funct, exist := v.functions[name]
 	if !exist {
 		funct, existEx := v.externals.GetFunction(name)
 		if existEx != nil {
-			return Statements.FuncDeclarationStatement{}, errors.New("function not defined")
+			return nil, errors.New("function not defined")
 		}
 		return funct, nil
 	}
 	return funct, nil
 }
 
-func (v *Environment) SetFunction(name string, value Statements.FuncDeclarationStatement) error {
+func (v *Environment) SetFunction(name string, value *Statements.FuncDeclarationStatement) error {
 	_, exist := v.functions[name]
 	if exist {
 		return errors.New("function already exists:" + name)
@@ -66,4 +75,21 @@ func (v *Environment) SetFunction(name string, value Statements.FuncDeclarationS
 	v.functions[name] = value
 	return nil
 
+}
+
+func (v *Environment) SetInnerFunc(name string, value InnerFuncObject) error {
+	_, exist := v.innerFunc[name]
+	if exist {
+		return errors.New("function already exists:" + name)
+	}
+	v.innerFunc[name] = value
+	return nil
+}
+
+func (v *Environment) GetInnerFunc(name string) (*InnerFuncObject, error) {
+	funct, exist := v.innerFunc[name]
+	if !exist {
+		return nil, errors.New("function not defined")
+	}
+	return &funct, nil
 }

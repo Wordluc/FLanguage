@@ -53,3 +53,10 @@ type ArrayObject struct {
 func (a ArrayObject) Eval() (IObject, error) {
 	return a, nil
 }
+
+type InnerFunc func(env *Environment) (IObject, error)
+
+type InnerFuncObject struct {
+	NameParams []string
+	innerfunc  InnerFunc
+}

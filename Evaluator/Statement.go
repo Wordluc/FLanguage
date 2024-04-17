@@ -25,9 +25,10 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		}
 		return ob, nil
 	case Statements.FuncDeclarationStatement:
-		env.SetFunction(statement.(Statements.FuncDeclarationStatement).Identifier, statement.(Statements.FuncDeclarationStatement))
+		funcStat, _ := statement.(Statements.FuncDeclarationStatement)
+		env.SetFunction(statement.(Statements.FuncDeclarationStatement).Identifier, &funcStat)
 		return nil, nil
-	case Statements.CallFuncStatement: //to comple
+	case Statements.CallFuncStatement:
 		value, err := evalExpresion(statement.(Statements.CallFuncStatement).Expresion, env)
 		if err != nil {
 			return nil, err
