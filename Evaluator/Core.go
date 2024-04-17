@@ -245,8 +245,29 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 		return evalBinaryExpresion(left, right, expresion.(Expresions.ExpresionNode).Operator)
 		//case Expresions.ExpresionCallFunc:
 	case *Expresions.ExpresionDeclareArray:
-		return nil, errors.New("not implemented")
+		exp := expresion.(*Expresions.ExpresionDeclareArray)
+		array := ArrayObject{}
+		for _, v := range exp.Values {
+			value, e := evalExpresion(v, env)
+			if e != nil {
+				return nil, e
+			}
+			array.Values = append(array.Values, value)
+		}
+		return array, nil
 	case *Expresions.ExpresionGetValueArray:
+		exp := expresion.(*Expresions.ExpresionGetValueArray)
+		array, e := env.GetVariable(exp.Name)
+		if e != nil {
+			return nil, e
+		}
+		valueId, e := evalExpresion(exp.ValueId, env)
+		if e != nil {
+			return nil, e
+		}
+		if valueId, ok := valueId.(*NumberObject); ok {
+			return array.(ArrayObject).Values[valueId.Value], nil
+		}
 		return nil, errors.New("not implemented")
 	}
 	return nil, errors.New("invalid expresion")
