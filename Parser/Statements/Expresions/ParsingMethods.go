@@ -37,6 +37,8 @@ func GetParse(than Token.TokenType) (fParse, error) {
 		return parseLeaf, nil
 	case Token.OPEN_CIRCLE_BRACKET:
 		return parseExpresionBlock, nil
+	case Token.OPEN_SQUARE_BRACKET:
+		return parseDeclareArray, nil
 	}
 	return nil, errors.New("GetParse: Operator:" + string(than) + "not implemented")
 }
@@ -67,34 +69,69 @@ func ParseExpresion(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IExpresion, 
 	}
 	return root, nil
 }
+func parseGetValueArray(l *Lexer.Lexer) (IExpresion, error) {
+	array := &ExpresionGetValueArray{}
+	array.NameFunc = l.LookCurrent().Value
+	l.IncrP()
+	l.IncrP()
+	value, e := ParseExpresion(l, Token.CLOSE_SQUARE_BRACKET)
+	if e != nil {
+		return nil, e
+	}
+	array.ValueId = value
+	l.IncrP()
+	return array, nil
 
-func parseCallFunc(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
+}
+func parseDeclareArray(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
+	array := &ExpresionDeclareArray{}
+	l.IncrP()
+	values, e := parseGroup(l, nil, Token.CLOSE_SQUARE_BRACKET, Token.COMMA)
+	if e != nil {
+		return nil, e
+	}
+	l.IncrP()
+	array.Value = values
+	return array, nil
+
+}
+func parseCallFunc(l *Lexer.Lexer, _ IExpresion, _ ...Token.TokenType) (IExpresion, error) {
 
 	callFunc := &ExpresionCallFunc{NameFunc: l.LookCurrent().Value}
 	l.IncrP()
 	l.IncrP()
+	parms, e := parseGroup(l, nil, Token.CLOSE_CIRCLE_BRACKET, Token.COMMA)
+	callFunc.Values = parms
+	if e != nil {
+		return nil, e
+	}
+	l.IncrP()
+	return callFunc, nil
+}
+func parseGroup(l *Lexer.Lexer, _ IExpresion, exist Token.TokenType, delimiter Token.TokenType) ([]IExpresion, error) {
+	var values []IExpresion
+
 	for {
-		if l.LookCurrent().Type == Token.CLOSE_CIRCLE_BRACKET {
+
+		if exist == l.LookCurrent().Type {
 			break
 		}
 
-		parm, e := ParseExpresion(l, Token.COMMA, Token.CLOSE_CIRCLE_BRACKET)
+		parm, e := ParseExpresion(l, delimiter, exist)
 		if e != nil {
 			return nil, e
 		}
 		if parm == nil {
 			break
 		}
-		callFunc.AddParm(parm)
-		if l.LookCurrent().Type == Token.CLOSE_CIRCLE_BRACKET {
+		values = append(values, parm)
+		if exist == l.LookCurrent().Type {
 			break
 		}
 		l.IncrP()
 	}
-	l.IncrP()
-	return callFunc, nil
+	return values, nil
 }
-
 func parseExpresionBlock(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	l.IncrP()
 	block, e := ParseExpresion(l, Token.CLOSE_CIRCLE_BRACKET)
@@ -110,8 +147,14 @@ func parseLeaf(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IEx
 	if e != nil {
 		return nil, e
 	}
-	if nextT.Type == Token.OPEN_CIRCLE_BRACKET {
-		return parseCallFunc(l, nil)
+	if l.LookCurrent().Type == Token.WORD {
+
+		if nextT.Type == Token.OPEN_CIRCLE_BRACKET {
+			return parseCallFunc(l, nil)
+		}
+		if nextT.Type == Token.OPEN_SQUARE_BRACKET {
+			return parseGetValueArray(l)
+		}
 	}
 	curToken := l.LookCurrent()
 	leaf := &ExpresionLeaf{}

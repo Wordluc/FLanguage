@@ -106,3 +106,33 @@ func (e ExpresionCallFunc) ToString() string {
 	r += ")"
 	return r
 }
+
+type ExpresionGetValueArray struct {
+	ValueId  IExpresion
+	NameFunc string
+}
+
+func (e *ExpresionGetValueArray) ToString() string {
+	return e.NameFunc + "[" + e.ValueId.ToString() + "]"
+}
+
+type ExpresionDeclareArray struct {
+	Value []IExpresion
+}
+
+func (e *ExpresionDeclareArray) AddValue(value IExpresion) {
+	e.Value = append(e.Value, value)
+}
+func (e *ExpresionDeclareArray) ToString() string {
+	r := "["
+	i := 0
+	for {
+		if i == len(e.Value) {
+			break
+		}
+		r += e.Value[i].ToString() + ","
+		i++
+	}
+	r += "]"
+	return r
+}

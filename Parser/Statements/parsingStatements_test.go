@@ -538,3 +538,29 @@ func TestParseComment(t *testing.T) {
 	}
 
 }
+func TestParseArrayAssignAndDeclaration(t *testing.T) {
+
+	ist := `
+	let ciccio=[1,2,3];
+	let a=ciccio[1];
+	END`
+
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := ` 
+	 LET ciccio = [1,2,3,]
+         LET a = ciccio[1]
+        `
+
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+
+}
