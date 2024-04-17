@@ -55,12 +55,13 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 		return evalBinaryExpresion(left, right, expresion.(Expresions.ExpresionNode).Operator)
 	case *Expresions.ExpresionDeclareArray:
 		exp := expresion.(*Expresions.ExpresionDeclareArray)
-		array := ArrayObject{}
+		array := ArrayObject{Len: 0}
 		for _, v := range exp.Values {
 			value, e := evalExpresion(v, env)
 			if e != nil {
 				return nil, e
 			}
+			array.Len++
 			array.Values = append(array.Values, value)
 		}
 		return array, nil

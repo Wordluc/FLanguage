@@ -129,3 +129,45 @@ func TestElevation(t *testing.T) {
 		t.Error("value should be 27")
 	}
 }
+
+func TestStringWithMoreCharacter(t *testing.T) {
+
+	ist := `	
+	let a = ["1","11","22222244","345","oddd"];
+	Ff search(i,max) {
+		if (i>=len(a)) {
+			ret max;
+		}
+		i=i+1;
+		if (len(a[i])>max) {
+			ret search(i,len(a[i]));
+		}else{
+			ret search(i,max);
+		}
+	}
+
+	let b = search(0,0);
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+	}
+	env := NewEnvironment()
+	LoadInnerVariable(env)
+	LoadInnerFunction(env)
+	_, e = Eval(programParse.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+
+	b, _ := env.GetVariable("b")
+	if b.(*NumberObject).Value != 8 {
+		t.Error("value should be 8,got:", b.(*NumberObject).Value)
+	}
+}

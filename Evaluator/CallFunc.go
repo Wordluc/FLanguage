@@ -11,12 +11,16 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (IO
 		variables: make(map[string]IObject),
 		functions: make(map[string]*Statements.FuncDeclarationStatement),
 		externals: env,
+		innerVar:  env.innerVar,
 		innerFunc: env.innerFunc,
 	}
 	funcInnerObject, ok := env.GetInnerFunc(expression.NameFunc)
 	if ok == nil {
-		evalParms(expression.Values, funcInnerObject.NameParams, envFunc)
-		funcInner, e := funcInnerObject.innerfunc(envFunc)
+		err := evalParms(expression.Values, funcInnerObject.NameParams, envFunc)
+		if err != nil {
+			return nil, err
+		}
+		funcInner, e := funcInnerObject.Innerfunc(envFunc)
 		if e != nil {
 			return nil, e
 		}
@@ -31,6 +35,7 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (IO
 		return nil, errors.New("not enough parms")
 	}
 	evalParms(expression.Values, fun.Params, envFunc)
+
 	valExp, e := Eval(fun.Body.(*Statements.StatementNode), envFunc)
 	if e != nil {
 		return nil, e
