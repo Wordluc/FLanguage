@@ -9,7 +9,7 @@ func GetRegex() string {
 	r.WriteString(`\/\/[^\n]*|`)                     //Commenti mono linea
 	r.WriteString(`\+{1,2}|\{1,2}|\-{1,2}|\={1,2}|`) //Operazioni aritmentiche
 	r.WriteString(`!=|\>\=?|\<\=?|`)                 //Operazioni boleani
-	r.WriteString(`[(){}]|`)
+	r.WriteString(`[(){}\[\]]|`)
 	r.WriteString(`["][^"]+["]|`)
 	r.WriteString(`['][^']+[']|`)
 	r.WriteString(`[,.:;!?\"*/]`) //Simboli

@@ -160,7 +160,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		}
 
 	}
-	//todo: inserire if statement
+	//todo: inserire l`assegnamento al array
 	return nil, errors.New("invalid statement" + reflect.TypeOf(statement).String())
 }
 
@@ -244,6 +244,10 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 		}
 		return evalBinaryExpresion(left, right, expresion.(Expresions.ExpresionNode).Operator)
 		//case Expresions.ExpresionCallFunc:
+	case *Expresions.ExpresionDeclareArray:
+		return nil, errors.New("not implemented")
+	case *Expresions.ExpresionGetValueArray:
+		return nil, errors.New("not implemented")
 	}
 	return nil, errors.New("invalid expresion")
 }

@@ -511,3 +511,29 @@ func TestCombineNumberAndString(t *testing.T) {
 		t.Error("should be '2ciao per' ,got:", a.(*StringObject).Value)
 	}
 }
+func TestDeclareAndGetFromArray(t *testing.T) {
+	ist := `
+	let a=[1,2,3,4];
+	let b=a[2];
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	b, _ := env.GetVariable("b")
+	if b.(*NumberObject).Value != 3 {
+		t.Error("should be '3' ,got:", b.(*NumberObject).Value)
+	}
+}
