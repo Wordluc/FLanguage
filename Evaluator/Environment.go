@@ -9,7 +9,7 @@ import (
 type Environment struct {
 	variables map[string]IObject
 	functions map[string]*Statements.FuncDeclarationStatement
-	innerFunc map[string]InnerFuncObject
+	innerFunc map[string]*InnerFuncObject
 	externals *Environment
 }
 
@@ -17,7 +17,7 @@ func NewEnvironment() *Environment {
 	return &Environment{
 		variables: make(map[string]IObject),
 		functions: make(map[string]*Statements.FuncDeclarationStatement),
-		innerFunc: make(map[string]InnerFuncObject),
+		innerFunc: make(map[string]*InnerFuncObject),
 		externals: nil,
 	}
 }
@@ -77,7 +77,7 @@ func (v *Environment) SetFunction(name string, value *Statements.FuncDeclaration
 
 }
 
-func (v *Environment) SetInnerFunc(name string, value InnerFuncObject) error {
+func (v *Environment) SetInnerFunc(name string, value *InnerFuncObject) error {
 	_, exist := v.innerFunc[name]
 	if exist {
 		return errors.New("function already exists:" + name)
@@ -91,5 +91,5 @@ func (v *Environment) GetInnerFunc(name string) (*InnerFuncObject, error) {
 	if !exist {
 		return nil, errors.New("function not defined")
 	}
-	return &funct, nil
+	return funct, nil
 }

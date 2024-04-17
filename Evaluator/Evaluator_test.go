@@ -576,7 +576,7 @@ func TestInnerFunc(t *testing.T) {
 	root := programParse
 
 	env := NewEnvironment()
-	env.SetInnerFunc("len", InnerFuncObject{NameParams: []string{"a"}, innerfunc: provaLen})
+	env.SetInnerFunc("len", &InnerFuncObject{NameParams: []string{"a"}, innerfunc: provaLen})
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
