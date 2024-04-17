@@ -202,3 +202,28 @@ func TestBoolean(t *testing.T) {
 
 	}
 }
+func TestArrayOp(t *testing.T) {
+	text := `
+ 	a[2]
+	d=[1,2,3]	
+	`
+
+	l, e := New([]byte(text))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	exp := [13]Token.TokenType{
+		Token.WORD, Token.OPEN_SQUARE_BRACKET, Token.NUMBER, Token.CLOSE_SQUARE_BRACKET,
+		Token.WORD, Token.ASSIGN, Token.OPEN_SQUARE_BRACKET, Token.NUMBER, Token.COMMA, Token.NUMBER, Token.COMMA, Token.NUMBER, Token.CLOSE_SQUARE_BRACKET}
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	for _, i := range exp {
+		got := l.LookCurrent()
+		if got.Type != Token.TokenType(i) {
+			t.Errorf("errore parsing: got %v instead %v", got.Type, Token.TokenType(i))
+		}
+		l.IncrP()
+
+	}
+}

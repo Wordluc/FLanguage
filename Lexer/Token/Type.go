@@ -24,6 +24,8 @@ const (
 	CLOSE_CIRCLE_BRACKET
 	OPEN_GRAP_BRACKET
 	CLOSE_GRAP_BRACKET
+	OPEN_SQUARE_BRACKET
+	CLOSE_SQUARE_BRACKET
 	IF
 	OPEN_COMM
 	CLOSE_COMM
@@ -70,6 +72,10 @@ func GetTokenType(typeF string) TokenType {
 		return OPEN_GRAP_BRACKET
 	case "}":
 		return CLOSE_GRAP_BRACKET
+	case "[":
+		return OPEN_SQUARE_BRACKET
+	case "]":
+		return CLOSE_SQUARE_BRACKET
 	case "if":
 		return IF
 	case "else":
