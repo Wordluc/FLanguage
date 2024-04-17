@@ -4,6 +4,7 @@ import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
 	"FLanguage/Parser/Statements"
+	"errors"
 	"testing"
 )
 
@@ -108,7 +109,7 @@ func TestCallFuncReturn(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	program, e := Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
@@ -138,7 +139,7 @@ func TestCallFuncWithoutReturn(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	program, e := Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
@@ -164,7 +165,7 @@ func TestBooleanOp(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	program, e := Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
@@ -194,7 +195,7 @@ func TestNumberComparison(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
@@ -228,7 +229,7 @@ func TestStringComparison(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
@@ -264,7 +265,7 @@ func TestMultipleDeclarationWtihSameName(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e == nil {
 		t.Error("should have error")
@@ -288,7 +289,7 @@ func TestAssigmentDifferentValue(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e == nil {
 		t.Error("should have error")
@@ -314,7 +315,7 @@ func TestUseResultFunction(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
 	if v.(*NumberObject).Value != 5 {
@@ -337,7 +338,7 @@ func TestSumStrings(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
 	if v.(*StringObject).Value != "ciao bene" {
@@ -364,7 +365,7 @@ func TestSumStringsFromFunc(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
 	if v.(*StringObject).Value != "ciao prova" {
@@ -391,7 +392,7 @@ func TestPassValueThroughtFunc(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
 	if v.(*NumberObject).Value != 4 {
@@ -419,7 +420,7 @@ func TestIfStatement(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
 	if v.(*NumberObject).Value != 4 {
@@ -449,7 +450,7 @@ func TestElseStatement(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
 	if v.(*NumberObject).Value != 8 {
@@ -474,7 +475,7 @@ func TestCombineStringAndNumber(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
@@ -501,7 +502,7 @@ func TestCombineNumberAndString(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
@@ -528,7 +529,7 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 	}
 	root := programParse
 
-	env := &Environment{variables: make(map[string]IObject), functions: make(map[string]Statements.FuncDeclarationStatement), externals: nil}
+	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
@@ -540,5 +541,52 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 	c, _ := env.GetVariable("c")
 	if c.(*StringObject).Value != "cioa" {
 		t.Error("should be 'cioa' ,got:", c.(*StringObject).Value)
+	}
+}
+
+func provaLen(env *Environment) (IObject, error) {
+	aObject, e := env.GetVariable("a")
+	if e != nil {
+		return nil, e
+	}
+	switch a := aObject.(type) {
+	case ArrayObject:
+		return &NumberObject{Value: (len(a.Values))}, nil
+	case *StringObject:
+		return &NumberObject{Value: (len(a.Value))}, nil
+	default:
+		return nil, errors.New("not an array or string")
+	}
+}
+func TestInnerFunc(t *testing.T) {
+	ist := `
+	let a=[1,2,3,"cioa"];
+	let b=len(a);
+	let c=len("prova");
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	env.SetInnerFunc("len", InnerFuncObject{NameParams: []string{"a"}, innerfunc: provaLen})
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	b, _ := env.GetVariable("b")
+	if b.(*NumberObject).Value != 4 {
+		t.Error("should be '4' ,got:", b.(*NumberObject).Value)
+	}
+	c, _ := env.GetVariable("c")
+	if c.(*NumberObject).Value != 5 {
+		t.Error("should be '5' ,got:", c.(*NumberObject).Value)
 	}
 }
