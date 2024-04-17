@@ -4,7 +4,6 @@ import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
 	"FLanguage/Parser/Statements"
-	"errors"
 	"testing"
 )
 
@@ -148,7 +147,64 @@ func TestCallFuncWithoutReturn(t *testing.T) {
 		t.Error("should not return anything")
 	}
 }
+func TestIncVar(t *testing.T) {
 
+	ist := `
+	let a=2;
+	a=a+1;
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	_, _ = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error("eval fallita", e)
+	}
+	v, _ := env.GetVariable("a")
+	if v.(*NumberObject).Value != 3 {
+		t.Error("value should be 3")
+	}
+
+}
+func TestIncInParm(t *testing.T) {
+
+	ist := `
+	Ff add(x){
+		ret x+1;
+	}
+	let a=add(1+2);
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	_, _ = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error("eval fallita", e)
+	}
+	v, _ := env.GetVariable("a")
+	if v.(*NumberObject).Value != 4 {
+		t.Error("value should be 4")
+	}
+
+}
 func TestBooleanOp(t *testing.T) {
 
 	ist := `
@@ -248,7 +304,7 @@ func TestStringComparison(t *testing.T) {
 	}
 }
 
-func TestMultipleDeclarationWtihSameName(t *testing.T) {
+func TestMultipleVariableDeclarationWtihSameName(t *testing.T) {
 
 	ist := `
 	let a="ffff"!="f";
@@ -399,7 +455,32 @@ func TestPassValueThroughtFunc(t *testing.T) {
 		t.Error("should be 4 ,got:", v.(*NumberObject).Value)
 	}
 }
+func TestSumStringInFunc(t *testing.T) {
+	ist := `
 
+	Ff getString(a,b){
+		ret a+b;
+	}
+	let a=getString("ciao"," prova");
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	v, _ := env.GetVariable("a")
+	if v.(*StringObject).Value != "ciao prova" {
+		t.Error("should be ciao prova ,got:", v.(*StringObject).Value)
+	}
+}
 func TestIfStatement(t *testing.T) {
 	ist := `
 
@@ -544,20 +625,6 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 	}
 }
 
-func provaLen(env *Environment) (IObject, error) {
-	aObject, e := env.GetVariable("a")
-	if e != nil {
-		return nil, e
-	}
-	switch a := aObject.(type) {
-	case ArrayObject:
-		return &NumberObject{Value: (len(a.Values))}, nil
-	case *StringObject:
-		return &NumberObject{Value: (len(a.Value))}, nil
-	default:
-		return nil, errors.New("not an array or string")
-	}
-}
 func TestInnerFunc(t *testing.T) {
 	ist := `
 	let a=[1,2,3,"cioa"];
@@ -576,7 +643,7 @@ func TestInnerFunc(t *testing.T) {
 	root := programParse
 
 	env := NewEnvironment()
-	env.SetInnerFunc("len", &InnerFuncObject{NameParams: []string{"a"}, innerfunc: provaLen})
+	LoadInnerFunction(env)
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
@@ -588,5 +655,40 @@ func TestInnerFunc(t *testing.T) {
 	c, _ := env.GetVariable("c")
 	if c.(*NumberObject).Value != 5 {
 		t.Error("should be '5' ,got:", c.(*NumberObject).Value)
+	}
+}
+func TestCreateArray(t *testing.T) {
+	ist := `
+	let a=newArray(4,NUMBER);
+	let b=len(a);
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadInnerFunction(env)
+	LoadInnerVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	b, _ := env.GetVariable("b")
+	a, _ := env.GetVariable("a")
+	if b.(*NumberObject).Value != 4 {
+		t.Error("should be '4' ,got:", b.(*NumberObject).Value)
+	}
+	if _, ok := a.(*ArrayObject); !ok {
+		t.Error("should be a array ")
+	}
+	if _, ok := a.(*ArrayObject).Values[0].(*NumberObject); !ok {
+		t.Error("should be a number")
 	}
 }

@@ -26,7 +26,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		return ob, nil
 	case Statements.FuncDeclarationStatement:
 		funcStat, _ := statement.(Statements.FuncDeclarationStatement)
-		env.SetFunction(statement.(Statements.FuncDeclarationStatement).Identifier, &funcStat)
+		env.AddFunction(statement.(Statements.FuncDeclarationStatement).Identifier, &funcStat)
 		return nil, nil
 	case Statements.CallFuncStatement:
 		value, err := evalExpresion(statement.(Statements.CallFuncStatement).Expresion, env)
@@ -52,18 +52,16 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		if e != nil {
 			return nil, e
 		}
-		ob := &LetObject{
-			Name:  statement.(Statements.AssignExpresionStatement).Identifier,
-			Value: value,
-		}
-		return ob, nil
+		return nil, nil
 	case *Statements.IfStatement:
 		ifStat := statement.(*Statements.IfStatement)
-		obCondition, _ := evalExpresion(ifStat.Expresion, env)
-
+		obCondition, e := evalExpresion(ifStat.Expresion, env)
+		if e != nil {
+			return nil, e
+		}
 		cond, isBool := obCondition.(*BoolObject)
 		if !isBool {
-			return nil, errors.New("invalid condition")
+			return nil, errors.New("invalid condition" + reflect.TypeOf(obCondition).String())
 		}
 		if cond.Value {
 			v, e := Eval(ifStat.Body.(*Statements.StatementNode), env)
