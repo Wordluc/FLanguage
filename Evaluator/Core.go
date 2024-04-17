@@ -266,7 +266,11 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 			return nil, e
 		}
 		if valueId, ok := valueId.(*NumberObject); ok {
-			return array.(ArrayObject).Values[valueId.Value], nil
+			if valueId.Value < 0 || valueId.Value >= len(array.(ArrayObject).Values) {
+				return nil, errors.New("index out of range")
+			}
+			value := array.(ArrayObject).Values[valueId.Value]
+			return value, nil
 		}
 		return nil, errors.New("not implemented")
 	}
