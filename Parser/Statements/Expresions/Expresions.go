@@ -108,29 +108,29 @@ func (e ExpresionCallFunc) ToString() string {
 }
 
 type ExpresionGetValueArray struct {
-	ValueId  IExpresion
-	NameFunc string
+	ValueId IExpresion
+	Name    string
 }
 
 func (e *ExpresionGetValueArray) ToString() string {
-	return e.NameFunc + "[" + e.ValueId.ToString() + "]"
+	return e.Name + "[" + e.ValueId.ToString() + "]"
 }
 
 type ExpresionDeclareArray struct {
-	Value []IExpresion
+	Values []IExpresion
 }
 
 func (e *ExpresionDeclareArray) AddValue(value IExpresion) {
-	e.Value = append(e.Value, value)
+	e.Values = append(e.Values, value)
 }
 func (e *ExpresionDeclareArray) ToString() string {
 	r := "["
 	i := 0
 	for {
-		if i == len(e.Value) {
+		if i == len(e.Values) {
 			break
 		}
-		r += e.Value[i].ToString() + ","
+		r += e.Values[i].ToString() + ","
 		i++
 	}
 	r += "]"

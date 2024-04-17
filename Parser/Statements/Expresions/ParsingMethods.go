@@ -71,7 +71,7 @@ func ParseExpresion(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IExpresion, 
 }
 func parseGetValueArray(l *Lexer.Lexer) (IExpresion, error) {
 	array := &ExpresionGetValueArray{}
-	array.NameFunc = l.LookCurrent().Value
+	array.Name = l.LookCurrent().Value
 	l.IncrP()
 	l.IncrP()
 	value, e := ParseExpresion(l, Token.CLOSE_SQUARE_BRACKET)
@@ -91,7 +91,7 @@ func parseDeclareArray(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenTy
 		return nil, e
 	}
 	l.IncrP()
-	array.Value = values
+	array.Values = values
 	return array, nil
 
 }

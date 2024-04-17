@@ -513,8 +513,9 @@ func TestCombineNumberAndString(t *testing.T) {
 }
 func TestDeclareAndGetFromArray(t *testing.T) {
 	ist := `
-	let a=[1,2,3,4];
+	let a=[1,2,3,"cioa"];
 	let b=a[2];
+	let c=a[3];
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
@@ -535,5 +536,9 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 	b, _ := env.GetVariable("b")
 	if b.(*NumberObject).Value != 3 {
 		t.Error("should be '3' ,got:", b.(*NumberObject).Value)
+	}
+	c, _ := env.GetVariable("c")
+	if c.(*StringObject).Value != "cioa" {
+		t.Error("should be 'cioa' ,got:", c.(*StringObject).Value)
 	}
 }

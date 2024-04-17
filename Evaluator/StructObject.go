@@ -44,3 +44,12 @@ type BoolObject struct {
 func (b BoolObject) Eval() (IObject, error) {
 	return b, nil
 }
+
+type ArrayObject struct {
+	Values []IObject
+	Type   string
+}
+
+func (a ArrayObject) Eval() (IObject, error) {
+	return a, nil
+}
