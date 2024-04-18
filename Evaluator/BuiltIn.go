@@ -91,7 +91,7 @@ func String(env *Environment) (IObject, error) {
 		return nil, errors.New("not a string")
 	}
 }
-func innerLen(env *Environment) (IObject, error) {
+func builtInLen(env *Environment) (IObject, error) {
 	aObject, e := env.GetVariable("a")
 	if e != nil {
 		return nil, e
@@ -116,18 +116,18 @@ func Input(env *Environment) (IObject, error) {
 var NUMBER = NumberObject{Value: 0}
 var STRING = StringObject{Value: ""}
 
-func LoadInnerVariable(env *Environment) error {
-	env.AddInnerVar("NUMBER", &NUMBER)
-	env.AddInnerVar("STRING", &STRING)
+func LoadBuiltInVariable(env *Environment) error {
+	env.AddBuiltInVar("NUMBER", &NUMBER)
+	env.AddBuiltInVar("STRING", &STRING)
 	return nil
 }
 
-func LoadInnerFunction(env *Environment) error {
-	env.AddInnerFunc("len", &InnerFuncObject{NameParams: []string{"a"}, Innerfunc: innerLen})
-	env.AddInnerFunc("newArray", &InnerFuncObject{NameParams: []string{"n", "type"}, Innerfunc: newArray})
-	env.AddInnerFunc("int", &InnerFuncObject{NameParams: []string{"a"}, Innerfunc: Int})
-	env.AddInnerFunc("string", &InnerFuncObject{NameParams: []string{"a"}, Innerfunc: String})
-	env.AddInnerFunc("print", &InnerFuncObject{NameParams: []string{"a"}, Innerfunc: print})
-	env.AddInnerFunc("read", &InnerFuncObject{NameParams: []string{}, Innerfunc: Input})
+func LoadBuiltInFunction(env *Environment) error {
+	env.AddBuiltInFunc("len", &BuiltInFuncObject{NameParams: []string{"a"}, BuiltInfunc: builtInLen})
+	env.AddBuiltInFunc("newArray", &BuiltInFuncObject{NameParams: []string{"n", "type"}, BuiltInfunc: newArray})
+	env.AddBuiltInFunc("int", &BuiltInFuncObject{NameParams: []string{"a"}, BuiltInfunc: Int})
+	env.AddBuiltInFunc("string", &BuiltInFuncObject{NameParams: []string{"a"}, BuiltInfunc: String})
+	env.AddBuiltInFunc("print", &BuiltInFuncObject{NameParams: []string{"a"}, BuiltInfunc: print})
+	env.AddBuiltInFunc("read", &BuiltInFuncObject{NameParams: []string{}, BuiltInfunc: Input})
 	return nil
 }

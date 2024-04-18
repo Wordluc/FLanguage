@@ -130,19 +130,19 @@ func TestElevation(t *testing.T) {
 	}
 }
 
-func TestStringWithMoreCharacter(t *testing.T) {
+func TestGetStringWithMoreCharacters(t *testing.T) {
 	ist := `	
-	let a = ["1","11","22222244","345","oddd"];
-	Ff search(i,max) {
-		if (i>=len(a)) {
-			ret max;
+	let a = ["1","11","22222244","345","oaaaa"];
+	Ff search(i,iMax) {
+		if (i==len(a)-1) {
+			ret a[iMax];
 		}
 		i=i+1;
 
-		if (len(a[i])>max) {
-			ret search(i,len(a[i]));
+		if (len(a[i])>len(a[iMax])) {
+			ret search(i,i);
 		}else{
-			ret search(i,max);
+			ret search(i,iMax);
 		}
 	}
 
@@ -159,15 +159,15 @@ func TestStringWithMoreCharacter(t *testing.T) {
 		t.Error(e)
 	}
 	env := NewEnvironment()
-	LoadInnerVariable(env)
-	LoadInnerFunction(env)
+	LoadBuiltInVariable(env)
+	LoadBuiltInFunction(env)
 	_, e = Eval(programParse.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
 
 	b, _ := env.GetVariable("b")
-	if b.(*NumberObject).Value != 8 {
-		t.Error("value should be 8,got:", b.(*NumberObject).Value)
+	if b.(*StringObject).Value != "22222244" {
+		t.Error("value should be 8,got:", b.(*StringObject).Value)
 	}
 }

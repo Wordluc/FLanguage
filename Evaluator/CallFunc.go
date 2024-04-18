@@ -8,23 +8,23 @@ import (
 
 func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (IObject, error) {
 	envFunc := &Environment{
-		variables: make(map[string]IObject),
-		functions: make(map[string]*Statements.FuncDeclarationStatement),
-		externals: env,
-		innerVar:  env.innerVar,
-		innerFunc: env.innerFunc,
+		variables:   make(map[string]IObject),
+		functions:   make(map[string]*Statements.FuncDeclarationStatement),
+		externals:   env,
+		builtInVar:  env.builtInVar,
+		builtInFunc: env.builtInFunc,
 	}
-	funcInnerObject, ok := env.GetInnerFunc(expression.NameFunc)
+	funcBuiltInObject, ok := env.GetBuiltInFunc(expression.NameFunc)
 	if ok == nil {
-		err := evalParms(expression.Values, funcInnerObject.NameParams, envFunc)
+		err := evalParms(expression.Values, funcBuiltInObject.NameParams, envFunc)
 		if err != nil {
 			return nil, err
 		}
-		funcInner, e := funcInnerObject.Innerfunc(envFunc)
+		funcBuiltIn, e := funcBuiltInObject.BuiltInfunc(envFunc)
 		if e != nil {
 			return nil, e
 		}
-		return funcInner, nil
+		return funcBuiltIn, nil
 	}
 	fun, e := env.GetFunction(expression.NameFunc)
 	if e != nil {
@@ -52,7 +52,7 @@ func evalParms(values []Expresions.IExpresion, nameParms []string, env *Environm
 
 		value, e := evalExpresion(v, env)
 		if e != nil {
-			return nil
+			return e
 		}
 		env.AddVariable(nameParms[i], value)
 	}

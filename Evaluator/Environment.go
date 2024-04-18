@@ -7,28 +7,28 @@ import (
 )
 
 type Environment struct {
-	variables map[string]IObject
-	functions map[string]*Statements.FuncDeclarationStatement
-	externals *Environment
-	innerFunc map[string]*InnerFuncObject
-	innerVar  map[string]*IObject
+	variables   map[string]IObject
+	functions   map[string]*Statements.FuncDeclarationStatement
+	externals   *Environment
+	builtInFunc map[string]*BuiltInFuncObject
+	builtInVar  map[string]*IObject
 }
 
 func NewEnvironment() *Environment {
 	return &Environment{
-		variables: make(map[string]IObject),
-		functions: make(map[string]*Statements.FuncDeclarationStatement),
-		externals: nil,
-		innerFunc: make(map[string]*InnerFuncObject),
-		innerVar:  make(map[string]*IObject),
+		variables:   make(map[string]IObject),
+		functions:   make(map[string]*Statements.FuncDeclarationStatement),
+		externals:   nil,
+		builtInFunc: make(map[string]*BuiltInFuncObject),
+		builtInVar:  make(map[string]*IObject),
 	}
 }
 func (v *Environment) AddVariable(name string, value IObject) error {
-	if _, existInner := v.variables[name]; existInner {
+	if _, exist := v.variables[name]; exist {
 		return errors.New("variable already exists:" + name)
 	}
-	if _, existInner := v.innerVar[name]; existInner {
-		return errors.New("inner variable already exists:" + name)
+	if _, existBuiltIn := v.builtInVar[name]; existBuiltIn {
+		return errors.New("builtIn variable already exists:" + name)
 	}
 	v.variables[name] = value
 	return nil
@@ -49,9 +49,9 @@ func (v *Environment) SetVariable(name string, value IObject) error {
 
 func (v *Environment) GetVariable(name string) (IObject, error) {
 
-	innerVar, exist := v.innerVar[name]
+	builtInVar, exist := v.builtInVar[name]
 	if exist {
-		return *innerVar, nil
+		return *builtInVar, nil
 	}
 	variable, exist := v.variables[name]
 	if exist {
@@ -83,8 +83,8 @@ func (v *Environment) GetFunction(name string) (*Statements.FuncDeclarationState
 }
 
 func (v *Environment) AddFunction(name string, value *Statements.FuncDeclarationStatement) error {
-	if _, ok := v.innerFunc[name]; ok {
-		return errors.New("function already exists as innerFunc:" + name)
+	if _, ok := v.builtInFunc[name]; ok {
+		return errors.New("function already exists as builtInFunc:" + name)
 	}
 	if _, ok := v.functions[name]; ok {
 		return errors.New("function already exists:" + name)
@@ -94,25 +94,25 @@ func (v *Environment) AddFunction(name string, value *Statements.FuncDeclaration
 
 }
 
-func (v *Environment) AddInnerFunc(name string, value *InnerFuncObject) error {
-	_, exist := v.innerFunc[name]
+func (v *Environment) AddBuiltInFunc(name string, value *BuiltInFuncObject) error {
+	_, exist := v.builtInFunc[name]
 	if exist {
 		return errors.New("function already exists:" + name)
 	}
-	v.innerFunc[name] = value
+	v.builtInFunc[name] = value
 	return nil
 }
 
-func (v *Environment) AddInnerVar(name string, value IObject) error {
-	if _, ok := v.innerVar[name]; ok {
+func (v *Environment) AddBuiltInVar(name string, value IObject) error {
+	if _, ok := v.builtInVar[name]; ok {
 		return errors.New("var already exists:" + name)
 	}
-	v.innerVar[name] = &value
+	v.builtInVar[name] = &value
 	return nil
 }
 
-func (v *Environment) GetInnerFunc(name string) (*InnerFuncObject, error) {
-	funct, exist := v.innerFunc[name]
+func (v *Environment) GetBuiltInFunc(name string) (*BuiltInFuncObject, error) {
+	funct, exist := v.builtInFunc[name]
 	if !exist {
 		return nil, errors.New("function not defined")
 	}

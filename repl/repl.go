@@ -9,8 +9,8 @@ import (
 
 func main() {
 	env := Evaluator.NewEnvironment()
-	Evaluator.LoadInnerFunction(env)
-	Evaluator.LoadInnerVariable(env)
+	Evaluator.LoadBuiltInFunction(env)
+	Evaluator.LoadBuiltInVariable(env)
 	for {
 		fmt.Println(Evaluator.ReplProgram(env))
 	}
@@ -25,4 +25,3 @@ func readBlockLines(reader *bufio.Reader) []byte {
 		text = slices.Concat(text, v)
 	}
 }
-

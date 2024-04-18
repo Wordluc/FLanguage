@@ -20,8 +20,8 @@ func ReplProgram(env *Environment) error {
 	}
 	if string(v) == "clear\r\n" {
 		env := NewEnvironment()
-		LoadInnerFunction(env)
-		LoadInnerVariable(env)
+		LoadBuiltInFunction(env)
+		LoadBuiltInVariable(env)
 		return ReplProgram(env)
 	}
 	v = slices.Concat(v, []byte("\nEND\n"))
