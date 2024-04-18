@@ -3,7 +3,6 @@ package Evaluator
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"os"
 	"reflect"
 	"strconv"
@@ -44,7 +43,6 @@ func print(env *Environment) (IObject, error) {
 	case *NumberObject:
 		println(a.Value)
 	case *BoolObject:
-		fmt.Println("ohhh")
 		println(a.Value)
 	default:
 		return nil, errors.New("not an array or string or number,got:" + reflect.TypeOf(a).String())
@@ -112,7 +110,7 @@ func innerLen(env *Environment) (IObject, error) {
 func Input(env *Environment) (IObject, error) {
 	reader := bufio.NewReader(os.Stdin)
 	v, _ := reader.ReadBytes('\n')
-	return &StringObject{Value: string(v)}, nil
+	return &StringObject{Value: string(v[:len(v)-2])}, nil
 }
 
 var NUMBER = NumberObject{Value: 0}
