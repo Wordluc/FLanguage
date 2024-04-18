@@ -31,6 +31,9 @@ func print(env *Environment) (IObject, error) {
 	if e != nil {
 		return nil, e
 	}
+	if aObject == nil {
+		return nil, errors.New("is nil")
+	}
 	switch a := aObject.(type) {
 	case *StringObject:
 		println(a.Value)

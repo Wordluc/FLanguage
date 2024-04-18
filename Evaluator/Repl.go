@@ -18,6 +18,12 @@ func ReplProgram(env *Environment) error {
 	if string(v) == "{{\r\n" {
 		v = readBlockLines(reader)
 	}
+	if string(v) == "clear\r\n" {
+		env := NewEnvironment()
+		LoadInnerFunction(env)
+		LoadInnerVariable(env)
+		return ReplProgram(env)
+	}
 	v = slices.Concat(v, []byte("\nEND\n"))
 	l, e := Lexer.New(v)
 	if e != nil {
@@ -27,16 +33,10 @@ func ReplProgram(env *Environment) error {
 	if e != nil {
 		return errors.New("Parser:" + e.Error())
 	}
-
-	Eval(p.(*Statements.StatementNode), env)
-
-	return ReplProgram(env)
-}
-
-func New() error {
-	env := NewEnvironment()
-	LoadInnerFunction(env)
-	LoadInnerVariable(env)
+	_, e = Eval(p.(*Statements.StatementNode), env)
+	if e != nil {
+		return errors.New("Eval:" + e.Error())
+	}
 	return ReplProgram(env)
 }
 func readBlockLines(reader *bufio.Reader) []byte {

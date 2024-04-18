@@ -1,7 +1,6 @@
 package main
 
 import (
-	"FLanguage/Evaluator"
 	Lexer "FLanguage/Lexer"
 	"fmt"
 )
@@ -18,6 +17,5 @@ func lexerFromFile() {
 	}
 }
 func main() {
-	a := Evaluator.New()
-	fmt.Println(a)
+
 }
