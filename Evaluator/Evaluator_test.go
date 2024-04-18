@@ -24,11 +24,11 @@ func TestLetAssigment(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	object, isLet := program.(*LetObject)
+	object, isLet := program.(LetObject)
 	if !isLet {
 		t.Error("is not a let")
 	}
-	v := object.Value.(*NumberObject).Value
+	v := object.Value.(NumberObject).Value
 	if v != 59 {
 		t.Errorf("value is not %v got %v", 59, v)
 	}
@@ -55,7 +55,7 @@ func TestAssigment(t *testing.T) {
 		t.Error("eval fallita", e)
 	}
 	envObject, e := env.GetVariable("a")
-	v := envObject.(*NumberObject).Value
+	v := envObject.(NumberObject).Value
 	if v != 5 {
 		t.Errorf("value is not %v got %v", 5, v)
 	}
@@ -81,7 +81,7 @@ func TestAssigmentAndReuse(t *testing.T) {
 		t.Error("eval fallita", e)
 	}
 	envObject, e := env.GetVariable("a")
-	v := envObject.(*NumberObject).Value
+	v := envObject.(NumberObject).Value
 	if v != 177 {
 		t.Errorf("value is not %v got %v", 177, v)
 	}
@@ -113,8 +113,8 @@ func TestCallFuncReturn(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	if (program.(*NumberObject).Value) != 59 {
-		t.Errorf("value is not %v got %v", 59, program.(*ReturnObject).Value.(*NumberObject).Value)
+	if (program.(NumberObject).Value) != 59 {
+		t.Errorf("value is not %v got %v", 59, program.(ReturnObject).Value.(NumberObject).Value)
 	}
 }
 
@@ -170,7 +170,7 @@ func TestIncVar(t *testing.T) {
 		t.Error("eval fallita", e)
 	}
 	v, _ := env.GetVariable("a")
-	if v.(*NumberObject).Value != 3 {
+	if v.(NumberObject).Value != 3 {
 		t.Error("value should be 3")
 	}
 
@@ -200,7 +200,7 @@ func TestIncInParm(t *testing.T) {
 		t.Error("eval fallita", e)
 	}
 	v, _ := env.GetVariable("a")
-	if v.(*NumberObject).Value != 4 {
+	if v.(NumberObject).Value != 4 {
 		t.Error("value should be 4")
 	}
 
@@ -226,8 +226,8 @@ func TestBooleanOp(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	val := (program.(*ReturnObject).Value)
-	v, _ := val.(*BoolObject)
+	val := (program.(ReturnObject).Value)
+	v, _ := val.(BoolObject)
 	if !v.Value {
 		t.Error("3 is greater than 2")
 	}
@@ -258,10 +258,10 @@ func TestNumberComparison(t *testing.T) {
 	}
 	a, _ := env.GetVariable("a")
 	b, _ := env.GetVariable("b")
-	if !a.(*BoolObject).Value {
+	if !a.(BoolObject).Value {
 		t.Error("should be true")
 	}
-	if b.(*BoolObject).Value {
+	if b.(BoolObject).Value {
 		t.Error("should be false")
 	}
 
@@ -293,13 +293,13 @@ func TestStringComparison(t *testing.T) {
 	a, _ := env.GetVariable("a")
 	b, _ := env.GetVariable("b")
 	c, _ := env.GetVariable("c")
-	if !a.(*BoolObject).Value {
+	if !a.(BoolObject).Value {
 		t.Error("should be true, ffff != f")
 	}
-	if !b.(*BoolObject).Value {
+	if !b.(BoolObject).Value {
 		t.Error("should be true, ciao==ciao")
 	}
-	if !c.(*BoolObject).Value {
+	if !c.(BoolObject).Value {
 		t.Error("should be true, 3>=3")
 	}
 }
@@ -374,7 +374,7 @@ func TestUseResultFunction(t *testing.T) {
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
-	if v.(*NumberObject).Value != 5 {
+	if v.(NumberObject).Value != 5 {
 		t.Error("should be 5,got:", v)
 	}
 }
@@ -397,8 +397,8 @@ func TestSumStrings(t *testing.T) {
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
-	if v.(*StringObject).Value != "ciao bene" {
-		t.Error("should be ciao bene ,got:", v.(*StringObject).Value)
+	if v.(StringObject).Value != "ciao bene" {
+		t.Error("should be ciao bene ,got:", v.(StringObject).Value)
 	}
 }
 
@@ -424,8 +424,8 @@ func TestSumStringsFromFunc(t *testing.T) {
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
-	if v.(*StringObject).Value != "ciao prova" {
-		t.Error("should be ciao bene ,got:", v.(*StringObject).Value)
+	if v.(StringObject).Value != "ciao prova" {
+		t.Error("should be ciao bene ,got:", v.(StringObject).Value)
 	}
 }
 
@@ -451,8 +451,8 @@ func TestPassValueThroughtFunc(t *testing.T) {
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
-	if v.(*NumberObject).Value != 4 {
-		t.Error("should be 4 ,got:", v.(*NumberObject).Value)
+	if v.(NumberObject).Value != 4 {
+		t.Error("should be 4 ,got:", v.(NumberObject).Value)
 	}
 }
 func TestSumStringInFunc(t *testing.T) {
@@ -477,8 +477,8 @@ func TestSumStringInFunc(t *testing.T) {
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
-	if v.(*StringObject).Value != "ciao prova" {
-		t.Error("should be ciao prova ,got:", v.(*StringObject).Value)
+	if v.(StringObject).Value != "ciao prova" {
+		t.Error("should be ciao prova ,got:", v.(StringObject).Value)
 	}
 }
 func TestIfStatement(t *testing.T) {
@@ -504,8 +504,8 @@ func TestIfStatement(t *testing.T) {
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
-	if v.(*NumberObject).Value != 4 {
-		t.Error("should be 4 ,got:", v.(*NumberObject).Value)
+	if v.(NumberObject).Value != 4 {
+		t.Error("should be 4 ,got:", v.(NumberObject).Value)
 	}
 }
 
@@ -534,8 +534,8 @@ func TestElseStatement(t *testing.T) {
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	v, _ := env.GetVariable("a")
-	if v.(*NumberObject).Value != 8 {
-		t.Error("should be 8 ,got:", v.(*NumberObject).Value)
+	if v.(NumberObject).Value != 8 {
+		t.Error("should be 8 ,got:", v.(NumberObject).Value)
 	}
 }
 
@@ -562,8 +562,8 @@ func TestCombineStringAndNumber(t *testing.T) {
 		t.Error(e)
 	}
 	a, _ := env.GetVariable("a")
-	if a.(*StringObject).Value != "ciao per2" {
-		t.Error("should be 'ciao per2' ,got:", a.(*StringObject).Value)
+	if a.(StringObject).Value != "ciao per2" {
+		t.Error("should be 'ciao per2' ,got:", a.(StringObject).Value)
 	}
 }
 
@@ -589,8 +589,8 @@ func TestCombineNumberAndString(t *testing.T) {
 		t.Error(e)
 	}
 	a, _ := env.GetVariable("a")
-	if a.(*StringObject).Value != "2ciao per" {
-		t.Error("should be '2ciao per' ,got:", a.(*StringObject).Value)
+	if a.(StringObject).Value != "2ciao per" {
+		t.Error("should be '2ciao per' ,got:", a.(StringObject).Value)
 	}
 }
 func TestDeclareAndGetFromArray(t *testing.T) {
@@ -616,12 +616,12 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 		t.Error(e)
 	}
 	b, _ := env.GetVariable("b")
-	if b.(*NumberObject).Value != 3 {
-		t.Error("should be '3' ,got:", b.(*NumberObject).Value)
+	if b.(NumberObject).Value != 3 {
+		t.Error("should be '3' ,got:", b.(NumberObject).Value)
 	}
 	c, _ := env.GetVariable("c")
-	if c.(*StringObject).Value != "cioa" {
-		t.Error("should be 'cioa' ,got:", c.(*StringObject).Value)
+	if c.(StringObject).Value != "cioa" {
+		t.Error("should be 'cioa' ,got:", c.(StringObject).Value)
 	}
 }
 
@@ -649,12 +649,12 @@ func TestBuiltInFunc(t *testing.T) {
 		t.Error(e)
 	}
 	b, _ := env.GetVariable("b")
-	if b.(*NumberObject).Value != 4 {
-		t.Error("should be '4' ,got:", b.(*NumberObject).Value)
+	if b.(NumberObject).Value != 4 {
+		t.Error("should be '4' ,got:", b.(NumberObject).Value)
 	}
 	c, _ := env.GetVariable("c")
-	if c.(*NumberObject).Value != 5 {
-		t.Error("should be '5' ,got:", c.(*NumberObject).Value)
+	if c.(NumberObject).Value != 5 {
+		t.Error("should be '5' ,got:", c.(NumberObject).Value)
 	}
 }
 func TestOutofRangeArray(t *testing.T) {
@@ -705,13 +705,14 @@ func TestCreateArray(t *testing.T) {
 	}
 	b, _ := env.GetVariable("b")
 	a, _ := env.GetVariable("a")
-	if b.(*NumberObject).Value != 4 {
-		t.Error("should be '4' ,got:", b.(*NumberObject).Value)
+	if b.(NumberObject).Value != 4 {
+		t.Error("should be '4' ,got:", b.(NumberObject).Value)
 	}
-	if _, ok := a.(*ArrayObject); !ok {
+	if _, ok := a.(ArrayObject); !ok {
 		t.Error("should be a array ")
 	}
-	if _, ok := a.(*ArrayObject).Values[0].(*NumberObject); !ok {
+	t.Log(a.(ArrayObject).Values[0])
+	if _, ok := a.(ArrayObject).Values[0].(NumberObject); !ok {
 		t.Error("should be a number")
 	}
 }

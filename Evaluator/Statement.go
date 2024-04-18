@@ -8,69 +8,67 @@ import (
 
 func evalStatement(statement Statements.IStatement, env *Environment) (IObject, error) {
 
-	switch statement.(type) {
-	case *Statements.LetStatement:
-		value, err := evalExpresion(statement.(*Statements.LetStatement).Expresion, env)
+	switch stat := statement.(type) {
+	case Statements.LetStatement:
+		value, err := evalExpresion(stat.Expresion, env)
 
 		if err != nil {
 			return nil, err
 		}
-		e := env.AddVariable(statement.(*Statements.LetStatement).Identifier, value)
+		e := env.AddVariable(stat.Identifier, value)
 		if e != nil {
 			return nil, e
 		}
-		ob := &LetObject{
-			Name:  statement.(*Statements.LetStatement).Identifier,
+		ob := LetObject{
+			Name:  stat.Identifier,
 			Value: value,
 		}
 		return ob, nil
 	case Statements.FuncDeclarationStatement:
-		funcStat, _ := statement.(Statements.FuncDeclarationStatement)
-		env.AddFunction(statement.(Statements.FuncDeclarationStatement).Identifier, &funcStat)
+		env.AddFunction(stat.Identifier, &stat)
 		return nil, nil
 	case Statements.CallFuncStatement:
-		value, err := evalExpresion(statement.(Statements.CallFuncStatement).Expresion, env)
+		value, err := evalExpresion(stat.Expresion, env)
 		if err != nil {
 			return nil, err
 		}
 		return value, nil
-	case *Statements.ReturnStatement:
-		value, err := evalExpresion(statement.(*Statements.ReturnStatement).Expresion, env)
+	case Statements.ReturnStatement:
+		value, err := evalExpresion(stat.Expresion, env)
 		if err != nil {
 			return nil, err
 		}
-		ob := &ReturnObject{
+		ob := ReturnObject{
 			Value: value,
 		}
 		return ob, nil
 	case Statements.AssignExpresionStatement:
-		value, err := evalExpresion(statement.(Statements.AssignExpresionStatement).Expresion, env)
+		value, err := evalExpresion(stat.Expresion, env)
 		if err != nil {
 			return nil, err
 		}
-		e := env.SetVariable(statement.(Statements.AssignExpresionStatement).Identifier, value)
+		e := env.SetVariable(stat.Identifier, value)
 		if e != nil {
 			return nil, e
 		}
 		return nil, nil
-	case *Statements.IfStatement:
-		ifStat := statement.(*Statements.IfStatement)
-		obCondition, e := evalExpresion(ifStat.Expresion, env)
+	case Statements.IfStatement:
+		obCondition, e := evalExpresion(stat.Expresion, env)
 		if e != nil {
 			return nil, e
 		}
-		cond, isBool := obCondition.(*BoolObject)
+		cond, isBool := obCondition.(BoolObject)
 		if !isBool {
 			return nil, errors.New("invalid condition" + reflect.TypeOf(obCondition).String())
 		}
 		if cond.Value {
-			v, e := Eval(ifStat.Body.(*Statements.StatementNode), env)
+			v, e := Eval(stat.Body.(*Statements.StatementNode), env)
 			return v, e
 		} else {
-			if ifStat.Else == nil {
+			if stat.Else == nil {
 				return nil, nil
 			}
-			return Eval(ifStat.Else.(*Statements.StatementNode), env)
+			return Eval(stat.Else.(*Statements.StatementNode), env)
 		}
 
 	}

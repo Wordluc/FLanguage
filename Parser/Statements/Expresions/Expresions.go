@@ -112,7 +112,7 @@ type ExpresionGetValueArray struct {
 	Name    string
 }
 
-func (e *ExpresionGetValueArray) ToString() string {
+func (e ExpresionGetValueArray) ToString() string {
 	return e.Name + "[" + e.ValueId.ToString() + "]"
 }
 
@@ -120,10 +120,10 @@ type ExpresionDeclareArray struct {
 	Values []IExpresion
 }
 
-func (e *ExpresionDeclareArray) AddValue(value IExpresion) {
+func (e ExpresionDeclareArray) AddValue(value IExpresion) {
 	e.Values = append(e.Values, value)
 }
-func (e *ExpresionDeclareArray) ToString() string {
+func (e ExpresionDeclareArray) ToString() string {
 	r := "["
 	i := 0
 	for {

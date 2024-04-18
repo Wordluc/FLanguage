@@ -8,9 +8,7 @@ import (
 )
 
 func parseIfStatement(l *Lexer.Lexer) (IStatement, error) {
-
-	ifExpr := &IfStatement{}
-
+	ifExpr := IfStatement{}
 	curToken, e := l.NextToken()
 	if e != nil {
 		return nil, e

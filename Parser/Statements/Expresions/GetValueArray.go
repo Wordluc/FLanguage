@@ -6,7 +6,7 @@ import (
 )
 
 func parseGetValueArray(l *Lexer.Lexer) (IExpresion, error) {
-	array := &ExpresionGetValueArray{}
+	array := ExpresionGetValueArray{}
 	array.Name = l.LookCurrent().Value
 	l.IncrP()
 	l.IncrP()

@@ -20,7 +20,7 @@ func parseLeaf(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IEx
 		}
 	}
 	curToken := l.LookCurrent()
-	leaf := &ExpresionLeaf{}
+	leaf := ExpresionLeaf{}
 	l.IncrP()
 	return leaf.New(curToken), nil
 }

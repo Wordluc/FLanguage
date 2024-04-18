@@ -30,5 +30,5 @@ func parseLetStatement(l *Lexer.Lexer) (IStatement, error) {
 		return nil, e
 	}
 	l.IncrP()
-	return &let, nil
+	return let, nil
 }

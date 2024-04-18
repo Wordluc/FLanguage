@@ -9,7 +9,7 @@ func Eval(program *Statements.StatementNode, env *Environment) (IObject, error) 
 	if e != nil {
 		return nil, e
 	}
-	_, isReturn := r.(*ReturnObject)
+	_, isReturn := r.(ReturnObject)
 	if isReturn {
 		return r, nil
 	}

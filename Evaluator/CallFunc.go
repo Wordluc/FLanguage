@@ -41,7 +41,7 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (IO
 		return nil, e
 
 	}
-	v, isReturn := valExp.(*ReturnObject)
+	v, isReturn := valExp.(ReturnObject)
 	if !isReturn {
 		return nil, nil
 	}

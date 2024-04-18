@@ -7,7 +7,7 @@ import (
 
 func parseCallFunc(l *Lexer.Lexer, _ IExpresion, _ ...Token.TokenType) (IExpresion, error) {
 
-	callFunc := &ExpresionCallFunc{NameFunc: l.LookCurrent().Value}
+	callFunc := ExpresionCallFunc{NameFunc: l.LookCurrent().Value}
 	l.IncrP()
 	l.IncrP()
 	parms, e := parseExpresionsGroup(l, nil, Token.CLOSE_CIRCLE_BRACKET, Token.COMMA)
