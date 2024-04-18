@@ -23,7 +23,6 @@ func NewEnvironment() *Environment {
 		innerVar:  make(map[string]*IObject),
 	}
 }
-
 func (v *Environment) AddVariable(name string, value IObject) error {
 	if _, existInner := v.variables[name]; existInner {
 		return errors.New("variable already exists:" + name)
@@ -49,6 +48,7 @@ func (v *Environment) SetVariable(name string, value IObject) error {
 }
 
 func (v *Environment) GetVariable(name string) (IObject, error) {
+
 	innerVar, exist := v.innerVar[name]
 	if exist {
 		return *innerVar, nil
@@ -57,16 +57,22 @@ func (v *Environment) GetVariable(name string) (IObject, error) {
 	if exist {
 		return variable, nil
 	}
-	variable, existEx := v.externals.GetVariable(name)
-	if existEx != nil {
+	if v.externals == nil {
 		return nil, errors.New("variable not defined")
 	}
-	return variable, nil
+	variable, existEx := v.externals.GetVariable(name)
+	if existEx == nil {
+		return variable, nil
+	}
+	return nil, errors.New("variable not defined")
 }
 
 func (v *Environment) GetFunction(name string) (*Statements.FuncDeclarationStatement, error) {
 	funct, exist := v.functions[name]
 	if !exist {
+		if v.externals == nil {
+			return nil, errors.New("variable not defined")
+		}
 		funct, existEx := v.externals.GetFunction(name)
 		if existEx != nil {
 			return nil, errors.New("function not defined")
