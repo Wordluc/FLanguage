@@ -9,7 +9,7 @@ import (
 )
 
 func newArray(env *Environment) (IObject, error) {
-	typeObject, e := env.GetVariable("type")
+	typeObject, e := env.GetVariable("type") //todo: processare il type in caso volessi creare un array dentro un array
 	if e != nil {
 		return nil, e
 	}
