@@ -1,8 +1,12 @@
 package Evaluator
 
 import (
+	"bufio"
 	"errors"
+	"fmt"
+	"os"
 	"reflect"
+	"strconv"
 )
 
 func newArray(env *Environment) (IObject, error) {
@@ -37,11 +41,54 @@ func print(env *Environment) (IObject, error) {
 	case *NumberObject:
 		println(a.Value)
 	case *BoolObject:
+		fmt.Println("ohhh")
 		println(a.Value)
 	default:
 		return nil, errors.New("not an array or string or number,got:" + reflect.TypeOf(a).String())
 	}
 	return nil, nil
+}
+func Int(env *Environment) (IObject, error) {
+	v, e := env.GetVariable("a")
+	if e != nil {
+		return nil, e
+	}
+	switch a := v.(type) {
+	case *NumberObject:
+		return a, nil
+	case *StringObject:
+		n, e := strconv.Atoi(a.Value)
+		if e != nil {
+			return nil, errors.New("not a number")
+		}
+		return &NumberObject{Value: n}, nil
+	case *BoolObject:
+		if a.Value {
+			return &NumberObject{Value: 1}, nil
+		}
+		return &NumberObject{Value: 0}, nil
+	default:
+		return nil, errors.New("not a number")
+	}
+}
+func String(env *Environment) (IObject, error) {
+	v, e := env.GetVariable("a")
+	if e != nil {
+		return nil, e
+	}
+	switch a := v.(type) {
+	case *NumberObject:
+		return &StringObject{Value: strconv.Itoa(a.Value)}, nil
+	case *StringObject:
+		return a, nil
+	case *BoolObject:
+		if a.Value {
+			return &StringObject{Value: "true"}, nil
+		}
+		return &StringObject{Value: "false"}, nil
+	default:
+		return nil, errors.New("not a string")
+	}
 }
 func innerLen(env *Environment) (IObject, error) {
 	aObject, e := env.GetVariable("a")
@@ -59,6 +106,11 @@ func innerLen(env *Environment) (IObject, error) {
 		return nil, errors.New("not an array or string,got:" + reflect.TypeOf(a).String())
 	}
 }
+func Input(env *Environment) (IObject, error) {
+	reader := bufio.NewReader(os.Stdin)
+	v, _ := reader.ReadBytes('\n')
+	return &StringObject{Value: string(v)}, nil
+}
 
 var NUMBER = NumberObject{Value: 0}
 var STRING = StringObject{Value: ""}
@@ -72,6 +124,9 @@ func LoadInnerVariable(env *Environment) error {
 func LoadInnerFunction(env *Environment) error {
 	env.AddInnerFunc("len", &InnerFuncObject{NameParams: []string{"a"}, Innerfunc: innerLen})
 	env.AddInnerFunc("newArray", &InnerFuncObject{NameParams: []string{"n", "type"}, Innerfunc: newArray})
+	env.AddInnerFunc("int", &InnerFuncObject{NameParams: []string{"a"}, Innerfunc: Int})
+	env.AddInnerFunc("string", &InnerFuncObject{NameParams: []string{"a"}, Innerfunc: String})
 	env.AddInnerFunc("print", &InnerFuncObject{NameParams: []string{"a"}, Innerfunc: print})
+	env.AddInnerFunc("read", &InnerFuncObject{NameParams: []string{}, Innerfunc: Input})
 	return nil
 }

@@ -131,7 +131,6 @@ func TestElevation(t *testing.T) {
 }
 
 func TestStringWithMoreCharacter(t *testing.T) {
-
 	ist := `	
 	let a = ["1","11","22222244","345","oddd"];
 	Ff search(i,max) {
@@ -139,6 +138,7 @@ func TestStringWithMoreCharacter(t *testing.T) {
 			ret max;
 		}
 		i=i+1;
+
 		if (len(a[i])>max) {
 			ret search(i,len(a[i]));
 		}else{
