@@ -27,7 +27,6 @@ type BoolObject struct {
 type ArrayObject struct {
 	Values []IObject
 	Type   string
-	Len    int
 }
 
 type BuiltInFunc func(env *Environment) (IObject, error)

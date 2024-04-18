@@ -6,7 +6,7 @@ import (
 )
 
 func parseDeclareArray(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
-	array := &ExpresionDeclareArray{}
+	array := ExpresionDeclareArray{}
 	l.IncrP()
 	values, e := parseExpresionsGroup(l, nil, Token.CLOSE_SQUARE_BRACKET, Token.COMMA)
 	if e != nil {

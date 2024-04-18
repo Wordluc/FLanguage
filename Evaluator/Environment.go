@@ -11,7 +11,7 @@ type Environment struct {
 	functions   map[string]*Statements.FuncDeclarationStatement
 	externals   *Environment
 	builtInFunc map[string]*BuiltInFuncObject
-	builtInVar  map[string]*IObject
+	builtInVar  map[string]IObject
 }
 
 func NewEnvironment() *Environment {
@@ -20,7 +20,7 @@ func NewEnvironment() *Environment {
 		functions:   make(map[string]*Statements.FuncDeclarationStatement),
 		externals:   nil,
 		builtInFunc: make(map[string]*BuiltInFuncObject),
-		builtInVar:  make(map[string]*IObject),
+		builtInVar:  make(map[string]IObject),
 	}
 }
 func (v *Environment) AddVariable(name string, value IObject) error {
@@ -51,7 +51,7 @@ func (v *Environment) GetVariable(name string) (IObject, error) {
 
 	builtInVar, exist := v.builtInVar[name]
 	if exist {
-		return *builtInVar, nil
+		return builtInVar, nil
 	}
 	variable, exist := v.variables[name]
 	if exist {
@@ -107,7 +107,7 @@ func (v *Environment) AddBuiltInVar(name string, value IObject) error {
 	if _, ok := v.builtInVar[name]; ok {
 		return errors.New("var already exists:" + name)
 	}
-	v.builtInVar[name] = &value
+	v.builtInVar[name] = value
 	return nil
 }
 

@@ -42,7 +42,7 @@ func TestFunctionFactorial(t *testing.T) {
 	}
 
 	a, _ := env.GetVariable("a")
-	if a.(*NumberObject).Value != 120 {
+	if a.(NumberObject).Value != 120 {
 		t.Error("value should be 120")
 	}
 
@@ -89,7 +89,7 @@ func TestFunctionFibonacci(t *testing.T) {
 	}
 
 	a, _ := env.GetVariable("a")
-	if a.(*NumberObject).Value != 55 {
+	if a.(NumberObject).Value != 55 {
 		t.Error("value should be 55")
 	}
 }
@@ -125,7 +125,7 @@ func TestElevation(t *testing.T) {
 	}
 
 	a, _ := env.GetVariable("a")
-	if a.(*NumberObject).Value != 27 {
+	if a.(NumberObject).Value != 27 {
 		t.Error("value should be 27")
 	}
 }
@@ -167,7 +167,7 @@ func TestGetStringWithMoreCharacters(t *testing.T) {
 	}
 
 	b, _ := env.GetVariable("b")
-	if b.(*StringObject).Value != "22222244" {
-		t.Error("value should be 8,got:", b.(*StringObject).Value)
+	if b.(StringObject).Value != "22222244" {
+		t.Error("value should be 8,got:", b.(StringObject).Value)
 	}
 }

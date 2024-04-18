@@ -9,16 +9,16 @@ import (
 
 func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, error) {
 
-	switch expresion.(type) {
-	case *Expresions.ExpresionCallFunc:
-		v, e := evalCallFunc(*expresion.(*Expresions.ExpresionCallFunc), env)
+	switch expObject := expresion.(type) {
+	case Expresions.ExpresionCallFunc:
+		v, e := evalCallFunc(expObject, env)
 		if e != nil {
 			return nil, e
 		}
 
 		return v, nil
 	case Expresions.ExpresionLeaf:
-		exp := expresion.(Expresions.ExpresionLeaf)
+		exp := expObject
 		switch exp.Type {
 		case Token.WORD:
 			value, err := env.GetVariable(exp.Value)
@@ -28,54 +28,51 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 			return value, nil
 		case Token.NUMBER:
 			v, _ := strconv.Atoi(exp.Value)
-			ob := &NumberObject{
+			ob := NumberObject{
 				Value: v,
 			}
 			return ob, nil
 		case Token.STRING:
-			ob := &StringObject{
+			ob := StringObject{
 				Value: exp.Value,
 			}
 			return ob, nil
 		case Token.BOOLEAN:
-			ob := &BoolObject{
+			ob := BoolObject{
 				Value: exp.Value == "true",
 			}
 			return ob, nil
 		}
 	case Expresions.ExpresionNode:
-		left, e := evalExpresion(expresion.(Expresions.ExpresionNode).LeftExpresion, env)
+		left, e := evalExpresion(expObject.LeftExpresion, env)
 		if e != nil {
 			return nil, e
 		}
-		right, e := evalExpresion(expresion.(Expresions.ExpresionNode).RightExpresion, env)
+		right, e := evalExpresion(expObject.RightExpresion, env)
 		if e != nil {
 			return nil, e
 		}
-		return evalBinaryExpresion(left, right, expresion.(Expresions.ExpresionNode).Operator)
-	case *Expresions.ExpresionDeclareArray:
-		exp := expresion.(*Expresions.ExpresionDeclareArray)
-		array := ArrayObject{Len: 0}
-		for _, v := range exp.Values {
+		return evalBinaryExpresion(left, right, expObject.Operator)
+	case Expresions.ExpresionDeclareArray:
+		array := ArrayObject{}
+		for _, v := range expObject.Values {
 			value, e := evalExpresion(v, env)
 			if e != nil {
 				return nil, e
 			}
-			array.Len++
 			array.Values = append(array.Values, value)
 		}
 		return array, nil
-	case *Expresions.ExpresionGetValueArray:
-		exp := expresion.(*Expresions.ExpresionGetValueArray)
-		array, e := env.GetVariable(exp.Name)
+	case Expresions.ExpresionGetValueArray:
+		array, e := env.GetVariable(expObject.Name)
 		if e != nil {
 			return nil, e
 		}
-		valueId, e := evalExpresion(exp.ValueId, env)
+		valueId, e := evalExpresion(expObject.ValueId, env)
 		if e != nil {
 			return nil, e
 		}
-		if valueId, ok := valueId.(*NumberObject); ok {
+		if valueId, ok := valueId.(NumberObject); ok {
 			if valueId.Value < 0 || valueId.Value >= len(array.(ArrayObject).Values) {
 				return nil, errors.New("index out of range")
 			}

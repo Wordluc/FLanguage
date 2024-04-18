@@ -7,7 +7,7 @@ import (
 )
 
 func parseReturnStatement(l *Lexer.Lexer) (IStatement, error) {
-	r := &ReturnStatement{}
+	r := ReturnStatement{}
 
 	l.IncrP()
 	exp, e := Expresions.ParseExpresion(l, Token.DOT_COMMA)
