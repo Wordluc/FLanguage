@@ -625,7 +625,7 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 	}
 }
 
-func TestInnerFunc(t *testing.T) {
+func TestBuiltInFunc(t *testing.T) {
 	ist := `
 	let a=[1,2,3,"cioa"];
 	let b=len(a);
@@ -643,7 +643,7 @@ func TestInnerFunc(t *testing.T) {
 	root := programParse
 
 	env := NewEnvironment()
-	LoadInnerFunction(env)
+	LoadBuiltInFunction(env)
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
@@ -655,6 +655,29 @@ func TestInnerFunc(t *testing.T) {
 	c, _ := env.GetVariable("c")
 	if c.(*NumberObject).Value != 5 {
 		t.Error("should be '5' ,got:", c.(*NumberObject).Value)
+	}
+}
+func TestOutofRangeArray(t *testing.T) {
+	ist := `
+	let a=[1,2,3,"cioa"];
+	let c=a[5];
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e == nil {
+		t.Error("should be an error")
 	}
 }
 func TestCreateArray(t *testing.T) {
@@ -674,8 +697,8 @@ func TestCreateArray(t *testing.T) {
 	root := programParse
 
 	env := NewEnvironment()
-	LoadInnerFunction(env)
-	LoadInnerVariable(env)
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)

@@ -30,9 +30,9 @@ type ArrayObject struct {
 	Len    int
 }
 
-type InnerFunc func(env *Environment) (IObject, error)
+type BuiltInFunc func(env *Environment) (IObject, error)
 
-type InnerFuncObject struct {
-	NameParams []string
-	Innerfunc  InnerFunc
+type BuiltInFuncObject struct {
+	NameParams  []string
+	BuiltInfunc BuiltInFunc
 }
