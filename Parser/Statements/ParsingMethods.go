@@ -74,6 +74,14 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 			}
 		case Token.LINE_COMM:
 			l.IncrP()
+		case Token.WHILE:
+			runS, e := parseWhileStatement(l)
+			if e != nil {
+				return nil, e
+			}
+			head.addStatement(runS)
+			head.addNext(&StatementNode{})
+			head = head.Next
 		default:
 
 			if slices.Contains(exitTokens, l.LookCurrent().Type) {
