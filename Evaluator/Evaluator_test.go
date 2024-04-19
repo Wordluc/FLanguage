@@ -611,6 +611,7 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 	root := programParse
 
 	env := NewEnvironment()
+	LoadBuiltInFunction(env)
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
@@ -624,7 +625,38 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 		t.Error("should be 'cioa' ,got:", c.(StringObject).Value)
 	}
 }
+func TestDeclareArrayIntoArray(t *testing.T) {
+	ist := `
+	let a=[1,[2,3]];
+	let b=a[0];
+	let c=a[1,0];
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
 
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	b, _ := env.GetVariable("b")
+	if b.(NumberObject).Value != 1 {
+		t.Error("should be '1' ,got:", b.(NumberObject).Value)
+	}
+	c, _ := env.GetVariable("c")
+	if c.(NumberObject).Value != 2 {
+		t.Error("should be '2' ,got:", c.(NumberObject).Value)
+	}
+}
 func TestBuiltInFunc(t *testing.T) {
 	ist := `
 	let a=[1,2,3,"cioa"];
@@ -682,7 +714,7 @@ func TestOutofRangeArray(t *testing.T) {
 }
 func TestCreateArray(t *testing.T) {
 	ist := `
-	let a=newArray(4,NUMBER);
+	let a=newArray(4,0);
 	let b=len(a);
 	END
 	`
@@ -711,7 +743,6 @@ func TestCreateArray(t *testing.T) {
 	if _, ok := a.(ArrayObject); !ok {
 		t.Error("should be a array ")
 	}
-	t.Log(a.(ArrayObject).Values[0])
 	if _, ok := a.(ArrayObject).Values[0].(NumberObject); !ok {
 		t.Error("should be a number")
 	}

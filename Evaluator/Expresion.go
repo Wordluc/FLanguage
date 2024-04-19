@@ -68,18 +68,19 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 		if e != nil {
 			return nil, e
 		}
-		valueId, e := evalExpresion(expObject.ValueId, env)
-		if e != nil {
-			return nil, e
-		}
-		if valueId, ok := valueId.(NumberObject); ok {
-			if valueId.Value < 0 || valueId.Value >= len(array.(ArrayObject).Values) {
+		var elem IObject = array.(ArrayObject)
+		for _, idObj := range expObject.ValuesId {
+			id, e := evalExpresion(idObj, env)
+			if e != nil {
+				return nil, e
+			}
+			value := id.(NumberObject)
+			if value.Value < 0 || value.Value >= len(elem.(ArrayObject).Values) {
 				return nil, errors.New("index out of range")
 			}
-			value := array.(ArrayObject).Values[valueId.Value]
-			return value, nil
+			elem = elem.(ArrayObject).Values[value.Value]
 		}
-		return nil, errors.New("not implemented")
+		return elem, nil
 	}
 	return nil, errors.New("invalid expresion")
 }

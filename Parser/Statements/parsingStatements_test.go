@@ -556,7 +556,7 @@ func TestParseArrayAssignAndDeclaration(t *testing.T) {
 	}
 	expected := ` 
 	 LET ciccio = [1,2,3,]
-         LET a = ciccio[1]
+         LET a = ciccio[1,]
         `
 
 	if !IsEqual(program.ToString(), expected) {

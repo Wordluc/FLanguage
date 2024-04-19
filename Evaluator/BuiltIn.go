@@ -9,7 +9,7 @@ import (
 )
 
 func newArray(env *Environment) (IObject, error) {
-	typeObject, e := env.GetVariable("type") //todo: processare il type in caso volessi creare un array dentro un array
+	typeObject, e := env.GetVariable("type")
 	if e != nil {
 		return nil, e
 	}
@@ -24,6 +24,7 @@ func newArray(env *Environment) (IObject, error) {
 	}
 	return a, nil
 }
+
 func print(env *Environment) (IObject, error) {
 	aObject, e := env.GetVariable("a")
 	if e != nil {
@@ -35,6 +36,7 @@ func print(env *Environment) (IObject, error) {
 	println(aObject.ToString())
 	return nil, nil
 }
+
 func Int(env *Environment) (IObject, error) {
 	v, e := env.GetVariable("a")
 	if e != nil {
@@ -58,6 +60,7 @@ func Int(env *Environment) (IObject, error) {
 		return nil, errors.New("not a number")
 	}
 }
+
 func String(env *Environment) (IObject, error) {
 	v, e := env.GetVariable("a")
 	if e != nil {
@@ -77,6 +80,7 @@ func String(env *Environment) (IObject, error) {
 		return nil, errors.New("not a string")
 	}
 }
+
 func builtInLen(env *Environment) (IObject, error) {
 	aObject, e := env.GetVariable("a")
 	if e != nil {
@@ -91,18 +95,14 @@ func builtInLen(env *Environment) (IObject, error) {
 		return nil, errors.New("not an array or string,got:" + reflect.TypeOf(a).String())
 	}
 }
+
 func Input(env *Environment) (IObject, error) {
 	reader := bufio.NewReader(os.Stdin)
 	v, _ := reader.ReadBytes('\n')
 	return StringObject{Value: string(v[:len(v)-2])}, nil
 }
 
-var NUMBER = NumberObject{Value: 0}
-var STRING = StringObject{Value: ""}
-
 func LoadBuiltInVariable(env *Environment) error {
-	env.AddBuiltInVar("NUMBER", NUMBER)
-	env.AddBuiltInVar("STRING", STRING)
 	return nil
 }
 

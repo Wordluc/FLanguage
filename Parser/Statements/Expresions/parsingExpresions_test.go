@@ -329,7 +329,7 @@ func TestParseGetArrayOp(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	expected := "a[2]"
+	expected := "a[2,]"
 	if program.ToString() != expected {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
