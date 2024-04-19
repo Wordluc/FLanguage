@@ -32,20 +32,7 @@ func print(env *Environment) (IObject, error) {
 	if aObject == nil {
 		return nil, errors.New("is nil")
 	}
-	switch a := aObject.(type) {
-	case StringObject:
-		println(a.Value)
-	case ArrayObject:
-		for _, v := range a.Values {
-			println(v)
-		}
-	case NumberObject:
-		println(a.Value)
-	case BoolObject:
-		println(a.Value)
-	default:
-		return nil, errors.New("not an array or string or number,got:" + reflect.TypeOf(a).String())
-	}
+	println(aObject.ToString())
 	return nil, nil
 }
 func Int(env *Environment) (IObject, error) {
@@ -120,11 +107,11 @@ func LoadBuiltInVariable(env *Environment) error {
 }
 
 func LoadBuiltInFunction(env *Environment) error {
-	env.AddBuiltInFunc("len", &BuiltInFuncObject{NameParams: []string{"a"}, BuiltInfunc: builtInLen})
-	env.AddBuiltInFunc("newArray", &BuiltInFuncObject{NameParams: []string{"n", "type"}, BuiltInfunc: newArray})
-	env.AddBuiltInFunc("int", &BuiltInFuncObject{NameParams: []string{"a"}, BuiltInfunc: Int})
-	env.AddBuiltInFunc("string", &BuiltInFuncObject{NameParams: []string{"a"}, BuiltInfunc: String})
-	env.AddBuiltInFunc("print", &BuiltInFuncObject{NameParams: []string{"a"}, BuiltInfunc: print})
-	env.AddBuiltInFunc("read", &BuiltInFuncObject{NameParams: []string{}, BuiltInfunc: Input})
+	env.AddBuiltInFunc("len", &BuiltInFuncObject{Name: "len", NameParams: []string{"a"}, BuiltInfunc: builtInLen})
+	env.AddBuiltInFunc("newArray", &BuiltInFuncObject{Name: "newArray", NameParams: []string{"n", "type"}, BuiltInfunc: newArray})
+	env.AddBuiltInFunc("int", &BuiltInFuncObject{Name: "int", NameParams: []string{"a"}, BuiltInfunc: Int})
+	env.AddBuiltInFunc("string", &BuiltInFuncObject{Name: "string", NameParams: []string{"a"}, BuiltInfunc: String})
+	env.AddBuiltInFunc("print", &BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: print})
+	env.AddBuiltInFunc("read", &BuiltInFuncObject{Name: "read", NameParams: []string{}, BuiltInfunc: Input})
 	return nil
 }
