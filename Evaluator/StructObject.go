@@ -57,8 +57,11 @@ type ArrayObject struct {
 
 func (a ArrayObject) ToString() string {
 	r := "["
-	for _, v := range a.Values {
-		r += v.ToString() + ","
+	for i, v := range a.Values {
+		r += v.ToString()
+		if i < len(a.Values)-1 {
+			r += ","
+		}
 	}
 	return r + "]"
 }
