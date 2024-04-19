@@ -604,3 +604,27 @@ func TestAssingValueArray(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
+func TestWhile(t *testing.T) {
+	ist := `
+	while (x > 0) {
+		let x = x + 1;	
+	}
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `
+	WHILE ( x > 0 ) {
+		LET x = x + 1		
+	}`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}

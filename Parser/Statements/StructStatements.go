@@ -125,3 +125,18 @@ func (s SetArrayValueStatement) ToString() string {
 	r += "] = " + s.Value.ToString()
 	return r
 }
+
+type WhileStatement struct {
+	Cond Expresions.IExpresion
+	Body IStatement
+}
+
+func (s WhileStatement) ToString() string {
+	r := "WHILE ( "
+	r += s.Cond.ToString() + " ) {\n"
+	if s.Body != nil {
+		r += s.Body.ToString()
+	}
+	r += "\n}"
+	return r
+}
