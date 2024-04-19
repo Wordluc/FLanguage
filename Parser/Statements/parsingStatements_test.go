@@ -564,3 +564,20 @@ func TestParseArrayAssignAndDeclaration(t *testing.T) {
 	}
 
 }
+func TestGetValueArrayWrong(t *testing.T) {
+	ist := `
+	let a=[1,[2,3]];
+	let c=a[0][0];
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	_, e = ParsingStatement(&lexer, Token.END)
+	if e == nil {
+		t.Error("should be error")
+		return
+	}
+	return
+}
