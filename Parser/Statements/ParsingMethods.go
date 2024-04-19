@@ -41,10 +41,13 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 			nextT, _ := l.LookNext()
 			var e error
 			var res IStatement
-			if nextT.Type != Token.OPEN_CIRCLE_BRACKET {
-				res, e = parseAssignment(l)
-			} else {
+			switch nextT.Type {
+			case Token.OPEN_CIRCLE_BRACKET:
 				res, e = parseCallFunc(l)
+			case Token.OPEN_SQUARE_BRACKET:
+				res, e = parseSetArrayValue(l)
+			case Token.ASSIGN:
+				res, e = parseAssignment(l)
 			}
 
 			if e != nil {

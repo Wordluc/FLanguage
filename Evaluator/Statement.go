@@ -70,7 +70,33 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 			}
 			return Eval(stat.Else.(*Statements.StatementNode), env)
 		}
+	case Statements.SetArrayValueStatement:
+		exp, e := evalExpresion(stat.Value, env)
+		if e != nil {
+			return nil, e
+		}
+		array, e := env.GetVariable(stat.Identifier)
+		if e != nil {
+			return nil, e
+		}
+		var elem IObject = array.(ArrayObject)
+		for i, idObj := range stat.Indexs {
+			id, e := evalExpresion(idObj, env)
+			if e != nil {
+				return nil, e
+			}
+			index := id.(NumberObject)
+			if index.Value < 0 || index.Value >= len(elem.(ArrayObject).Values) {
+				return nil, errors.New("index out of range")
+			}
 
+			if i == len(stat.Indexs)-1 {
+				elem.(ArrayObject).Values[index.Value] = exp
+			} else {
+				elem = elem.(ArrayObject).Values[index.Value]
+			}
+		}
+		return nil, nil
 	}
 	//todo: inserire l`assegnamento al array
 	return nil, errors.New("invalid statement" + reflect.TypeOf(statement).String())

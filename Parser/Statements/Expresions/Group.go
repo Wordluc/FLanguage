@@ -5,7 +5,7 @@ import (
 	"FLanguage/Lexer/Token"
 )
 
-func parseExpresionsGroup(l *Lexer.Lexer, _ IExpresion, exist Token.TokenType, delimiter Token.TokenType) ([]IExpresion, error) {
+func ParseExpresionsGroup(l *Lexer.Lexer, _ IExpresion, exist Token.TokenType, delimiter Token.TokenType) ([]IExpresion, error) {
 	var values []IExpresion
 	for {
 

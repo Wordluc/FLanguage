@@ -10,12 +10,12 @@ func parseDeclareArray(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenTy
 	array := ExpresionDeclareArray{}
 	back, e := l.LookBack()
 	if e == nil {
-		if back.Type != Token.ASSIGN && back.Type != Token.COMMA {
+		if back.Type != Token.ASSIGN && back.Type != Token.COMMA && back.Type != Token.OPEN_SQUARE_BRACKET {
 			return nil, errors.New("parseDeclareArray: impossible create array")
 		}
 	}
 	l.IncrP()
-	values, e := parseExpresionsGroup(l, nil, Token.CLOSE_SQUARE_BRACKET, Token.COMMA)
+	values, e := ParseExpresionsGroup(l, nil, Token.CLOSE_SQUARE_BRACKET, Token.COMMA)
 	if e != nil {
 		return nil, e
 	}

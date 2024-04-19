@@ -747,3 +747,39 @@ func TestCreateArray(t *testing.T) {
 		t.Error("should be a number")
 	}
 }
+func TestSetArray(t *testing.T) {
+	ist := `
+	let a=[1,2,3,5,6];
+	a[2]=0;
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	a, e := env.GetVariable("a")
+	if e != nil {
+		t.Error(e)
+	}
+	v := a.(ArrayObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Values[2].(NumberObject).Value != 0 {
+		t.Error("should be '0' ,got:", v.Values[2].(NumberObject).Value)
+	}
+
+}

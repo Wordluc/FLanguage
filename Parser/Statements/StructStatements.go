@@ -107,3 +107,21 @@ type ReturnStatement struct {
 func (s ReturnStatement) ToString() string {
 	return "RETURN " + s.Expresion.ToString()
 }
+
+type SetArrayValueStatement struct {
+	Identifier string
+	Indexs     []Expresions.IExpresion
+	Value      Expresions.IExpresion
+}
+
+func (s SetArrayValueStatement) ToString() string {
+	r := s.Identifier + "["
+	for i := 0; i < len(s.Indexs); i++ {
+		r += s.Indexs[i].ToString()
+		if i < len(s.Indexs)-1 {
+			r += ", "
+		}
+	}
+	r += "] = " + s.Value.ToString()
+	return r
+}

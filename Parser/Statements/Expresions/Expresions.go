@@ -108,18 +108,18 @@ func (e ExpresionCallFunc) ToString() string {
 }
 
 type ExpresionGetValueArray struct {
-	ValuesId []IExpresion
-	Name     string
+	IndexsValues []IExpresion
+	Name         string
 }
 
 func (e ExpresionGetValueArray) ToString() string {
 	r := e.Name + "["
 	i := 0
 	for {
-		if i == len(e.ValuesId) {
+		if i == len(e.IndexsValues) {
 			break
 		}
-		r += e.ValuesId[i].ToString() + ","
+		r += e.IndexsValues[i].ToString() + ","
 		i++
 	}
 	return r + "]"
