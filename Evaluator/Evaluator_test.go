@@ -643,7 +643,6 @@ func TestDeclareArrayIntoArray(t *testing.T) {
 	root := programParse
 
 	env := NewEnvironment()
-	LoadBuiltInFunction(env)
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
@@ -657,6 +656,7 @@ func TestDeclareArrayIntoArray(t *testing.T) {
 		t.Error("should be '2' ,got:", c.(NumberObject).Value)
 	}
 }
+
 func TestBuiltInFunc(t *testing.T) {
 	ist := `
 	let a=[1,2,3,"cioa"];
