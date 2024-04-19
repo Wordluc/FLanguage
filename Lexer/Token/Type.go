@@ -109,7 +109,8 @@ func GetTokenType(typeF string) TokenType {
 		return BOOLEAN
 	case "while":
 		return WHILE
-
+	case "_":
+		return WORD
 	default:
 		if isASingleLineComment(typeF) {
 			return LINE_COMM

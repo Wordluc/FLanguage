@@ -6,13 +6,13 @@ import (
 	"errors"
 )
 
-func parseDeclareArray(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
+func parseDeclareArray(l *Lexer.Lexer, back IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	array := ExpresionDeclareArray{}
-	back, e := l.LookBack()
-	if e == nil {
-		if back.Type != Token.ASSIGN && back.Type != Token.COMMA && back.Type != Token.OPEN_SQUARE_BRACKET {
-			return nil, errors.New("parseDeclareArray: impossible create array")
-		}
+	switch back.(type) {
+	case ExpresionLeaf:
+		return parseGetValueArray(l)
+	case ExpresionDeclareArray, ExpresionGetValueArray:
+		return nil, errors.New("parseDeclareArray: unexpected array")
 	}
 	l.IncrP()
 	values, e := ParseExpresionsGroup(l, nil, Token.CLOSE_SQUARE_BRACKET, Token.COMMA)
