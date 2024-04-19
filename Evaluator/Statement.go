@@ -97,7 +97,30 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 			}
 		}
 		return nil, nil
+	case Statements.WhileStatement:
+		obCondition, e := evalExpresion(stat.Cond, env)
+		if e != nil {
+			return nil, e
+		}
+		cond, isBool := obCondition.(BoolObject)
+		if !isBool {
+			return nil, errors.New("invalid condition")
+		}
+		for cond.Value {
+			_, e := Eval(stat.Body.(*Statements.StatementNode), env)
+			if e != nil {
+				return nil, e
+			}
+			obCondition, e = evalExpresion(stat.Cond, env)
+			if e != nil {
+				return nil, e
+			}
+			cond, isBool = obCondition.(BoolObject)
+			if !isBool {
+				return nil, errors.New("invalid condition")
+			}
+		}
+		return nil, nil
 	}
-	//todo: inserire l`assegnamento al array
 	return nil, errors.New("invalid statement" + reflect.TypeOf(statement).String())
 }

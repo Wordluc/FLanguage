@@ -783,3 +783,41 @@ func TestSetArray(t *testing.T) {
 	}
 
 }
+func TestWhile(t *testing.T) {
+	ist := `
+	let i=0;
+	while (i<5){
+		i=i+1;
+	}
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	a, e := env.GetVariable("i")
+	if e != nil {
+		t.Error(e)
+	}
+	v := a.(NumberObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Value != 5 {
+		t.Error("should be '5' ,got:", v.Value)
+	}
+
+}

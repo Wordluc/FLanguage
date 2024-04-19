@@ -43,6 +43,7 @@ const (
 	EQUAL
 	ELSE
 	BOOLEAN
+	WHILE
 	ERROR_L TokenType = 255
 )
 
@@ -106,6 +107,8 @@ func GetTokenType(typeF string) TokenType {
 		return EQUAL
 	case "true", "false":
 		return BOOLEAN
+	case "while":
+		return WHILE
 
 	default:
 		if isASingleLineComment(typeF) {
