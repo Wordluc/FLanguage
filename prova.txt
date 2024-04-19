@@ -1,7 +1,33 @@
-let a = 3;
-let b = 4;
-let nome = "luca";
-ret a+b;
-ret a*b;
-_
 
+//Ricerca dicotomica
+
+
+Ff splitArray(i,j,array){
+	let diff=j-i;
+	if (diff<=0){
+		ret [];
+	}
+	nArray=newArray(diff,0);
+	let i=0;
+	while (i<diff){
+		nArray[i]=array[i+i];
+		i=i+1;
+	}
+	return nArray;
+}
+Ff RicercaDicotomica(array,value,i){
+	if (array[i]==value){
+		ret i;
+	}
+	if (value>array[i]){
+		let newArray=splitArray(i+1,len(array)-1,array);
+		ret RicercaDicotomica(newArray,value,len(newArray));
+	}
+	if (value<array[i]){
+		let newArray=splitArray(0,i-1,array);
+		ret RicercaDicotomica(newArray,value,len(newArray));
+	}
+}
+	print("cioa");
+
+END
