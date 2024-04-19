@@ -25,7 +25,18 @@ func newArray(env *Environment) (IObject, error) {
 	return a, nil
 }
 
-func print(env *Environment) (IObject, error) {
+func builtInPrint(env *Environment) (IObject, error) {
+	aObject, e := env.GetVariable("a")
+	if e != nil {
+		return nil, e
+	}
+	if aObject == nil {
+		return nil, errors.New("is nil")
+	}
+	print(aObject.ToString())
+	return nil, nil
+}
+func builtInPrintln(env *Environment) (IObject, error) {
 	aObject, e := env.GetVariable("a")
 	if e != nil {
 		return nil, e
@@ -36,7 +47,6 @@ func print(env *Environment) (IObject, error) {
 	println(aObject.ToString())
 	return nil, nil
 }
-
 func Int(env *Environment) (IObject, error) {
 	v, e := env.GetVariable("a")
 	if e != nil {
@@ -111,7 +121,8 @@ func LoadBuiltInFunction(env *Environment) error {
 	env.AddBuiltInFunc("newArray", &BuiltInFuncObject{Name: "newArray", NameParams: []string{"n", "type"}, BuiltInfunc: newArray})
 	env.AddBuiltInFunc("int", &BuiltInFuncObject{Name: "int", NameParams: []string{"a"}, BuiltInfunc: Int})
 	env.AddBuiltInFunc("string", &BuiltInFuncObject{Name: "string", NameParams: []string{"a"}, BuiltInfunc: String})
-	env.AddBuiltInFunc("print", &BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: print})
+	env.AddBuiltInFunc("print", &BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrint})
+	env.AddBuiltInFunc("println", &BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrintln})
 	env.AddBuiltInFunc("read", &BuiltInFuncObject{Name: "read", NameParams: []string{}, BuiltInfunc: Input})
 	return nil
 }
