@@ -581,3 +581,26 @@ func TestGetValueArrayWrong(t *testing.T) {
 	}
 	return
 }
+func TestAssingValueArray(t *testing.T) {
+	ist := `
+	a[0]=2;
+	a[2+3]=4*5+print();
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+	}
+	expected := ` 
+        	a[0] = 2
+        	a[2 + 3] = (4 * 5) + (print())
+	`
+
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}

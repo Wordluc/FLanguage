@@ -10,7 +10,7 @@ func parseCallFunc(l *Lexer.Lexer, _ IExpresion, _ ...Token.TokenType) (IExpresi
 	callFunc := ExpresionCallFunc{NameFunc: l.LookCurrent().Value}
 	l.IncrP()
 	l.IncrP()
-	parms, e := parseExpresionsGroup(l, nil, Token.CLOSE_CIRCLE_BRACKET, Token.COMMA)
+	parms, e := ParseExpresionsGroup(l, nil, Token.CLOSE_CIRCLE_BRACKET, Token.COMMA)
 	callFunc.Values = parms
 	if e != nil {
 		return nil, e

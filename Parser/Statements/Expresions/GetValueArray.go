@@ -10,11 +10,11 @@ func parseGetValueArray(l *Lexer.Lexer) (IExpresion, error) {
 	array.Name = l.LookCurrent().Value
 	l.IncrP()
 	l.IncrP()
-	values, e := parseExpresionsGroup(l, nil, Token.CLOSE_SQUARE_BRACKET, Token.COMMA)
+	values, e := ParseExpresionsGroup(l, nil, Token.CLOSE_SQUARE_BRACKET, Token.COMMA)
 	if e != nil {
 		return nil, e
 	}
-	array.ValuesId = values
+	array.IndexsValues = values
 	l.IncrP()
 	return array, nil
 
