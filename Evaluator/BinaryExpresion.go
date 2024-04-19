@@ -51,7 +51,7 @@ func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, er
 			} else {
 				return nil, errors.New("invalid operation")
 			}
-		}
+		} //todo: sistemare string+bool
 		valueRight := right.(StringObject).Value
 		switch operator.Type {
 		case Token.PLUS:
