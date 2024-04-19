@@ -24,6 +24,9 @@ func NewEnvironment() *Environment {
 	}
 }
 func (v *Environment) AddVariable(name string, value IObject) error {
+	if name == "_" {
+		return nil
+	}
 	if _, exist := v.variables[name]; exist {
 		return errors.New("variable already exists:" + name)
 	}

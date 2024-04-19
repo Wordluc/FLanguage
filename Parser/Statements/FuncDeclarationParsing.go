@@ -12,7 +12,7 @@ func ParsingFuncDeclaration(lexer *Lexer.Lexer, exitTokens ...Token.TokenType) (
 	if e != nil {
 		return nil, e
 	}
-	if curToken.Type != Token.WORD { //TODO Fix this ,prova() !=prova ()
+	if curToken.Type != Token.WORD {
 		return nil, errors.New("ParsingFuncDeclaration: expected 'WORD' token,got:" + curToken.Value)
 	}
 	funcDeclaration.Identifier = curToken.Value
