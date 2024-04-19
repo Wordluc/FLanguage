@@ -17,7 +17,7 @@ func ReplLexer() {
 	l, _ := New(v)
 	fmt.Println("--------------")
 	for {
-		t, e := l.NextToken(0)
+		t, e := l.NextToken()
 		if e != nil {
 			break
 		}
