@@ -135,7 +135,7 @@ func TestGetStringWithMoreCharacters(t *testing.T) {
 	let a = ["1","11","22222244","345","oaaaa"];
 	Ff search(i,iMax) {
 		if (i==len(a)-1) {
-			ret a[iMax];
+			ret  a[iMax];
 		}
 		i=i+1;
 
