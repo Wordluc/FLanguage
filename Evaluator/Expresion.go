@@ -8,7 +8,6 @@ import (
 )
 
 func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, error) {
-
 	switch expObject := expresion.(type) {
 	case Expresions.ExpresionCallFunc:
 		v, e := evalCallFunc(expObject, env)
@@ -44,9 +43,17 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 			return ob, nil
 		}
 	case Expresions.ExpresionNode:
-		left, e := evalExpresion(expObject.LeftExpresion, env)
-		if e != nil {
-			return nil, e
+		var left IObject
+		var e error
+		if expObject.LeftExpresion == nil {
+			left = NumberObject{
+				Value: 0,
+			}
+		} else {
+			left, e = evalExpresion(expObject.LeftExpresion, env)
+			if e != nil {
+				return nil, e
+			}
 		}
 		right, e := evalExpresion(expObject.RightExpresion, env)
 		if e != nil {

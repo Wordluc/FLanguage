@@ -33,7 +33,27 @@ func TestParsingLetStatements(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+func TestParsingLetStatementsWIthNegativeValue(t *testing.T) {
 
+	ist := "let a = -5;END"
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		//t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+	}
+	if program == nil {
+		t.Error("program is nil")
+	}
+
+	expected := "LET a = - 5"
+
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
 func TestParsingLetStatements2(t *testing.T) {
 
 	ist := "let a = 5+3*(3*(4+2));END"
