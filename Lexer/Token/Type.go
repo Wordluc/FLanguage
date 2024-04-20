@@ -11,6 +11,7 @@ const (
 	LET
 	WORD
 	NUMBER
+	NUMBER_WITH_DOT
 	FUNC
 	NONE
 	RETURN
@@ -123,18 +124,23 @@ func GetTokenType(typeF string) TokenType {
 			return WORD
 		}
 
+		if isValidNumberWithDot(typeF) {
+			return NUMBER_WITH_DOT
+		}
 		if isValidNumber(typeF) {
 			return NUMBER
 		}
-
 		return ERROR_L
 	}
 }
 
 var isAWord = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]*$`)
 
-var isANumber = regexp.MustCompile(`^[0-9_]+$`)
+var isANumber = regexp.MustCompile(`^[0-9]+$`)
+
 var isALineComment = regexp.MustCompile(`^\/\/[^\n]*$`)
+
+var isANumberWithDot = regexp.MustCompile(`^[0-9]*\.[0-9]+$`)
 
 func isASingleLineComment(value string) bool {
 	return isALineComment.MatchString(string(value))
@@ -146,7 +152,9 @@ func isValidWord(value string) bool {
 func isValidNumber(value string) bool {
 	return isANumber.MatchString(string(value))
 }
-
+func isValidNumberWithDot(value string) bool {
+	return isANumberWithDot.MatchString(string(value))
+}
 func isValidString(value string) bool {
 	if value[0] == '"' && value[len(value)-1] == '"' {
 		return true

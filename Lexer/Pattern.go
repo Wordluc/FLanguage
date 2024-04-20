@@ -1,10 +1,13 @@
 package Lexer
 
-import "strings"
+import (
+	"strings"
+)
 
 func GetRegex() string {
 	r := strings.Builder{}
-	r.WriteString(`\w+|`)                            //Parole
+	r.WriteString(`[0-9]*\.[0-9]+|`)                 //Numeri con virgola
+	r.WriteString(`\w+|`)                            //Parole e numeri interi
 	r.WriteString(`\/\*|\*\/|`)                      //Commenti multi linea
 	r.WriteString(`\/\/[^\n]*|`)                     //Commenti mono linea
 	r.WriteString(`\+{1,2}|\{1,2}|\-{1,2}|\={1,2}|`) //Operazioni aritmentiche

@@ -31,6 +31,12 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 				Value: v,
 			}
 			return ob, nil
+		case Token.NUMBER_WITH_DOT:
+			v, _ := strconv.ParseFloat(exp.Value, 32)
+			ob := FloatNumberObject{
+				Value: v,
+			}
+			return ob, nil
 		case Token.STRING:
 			ob := StringObject{
 				Value: exp.Value,
@@ -46,7 +52,7 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 		var left IObject
 		var e error
 		if expObject.LeftExpresion == nil {
-			left = NumberObject{
+			left = FloatNumberObject{
 				Value: 0,
 			}
 		} else {

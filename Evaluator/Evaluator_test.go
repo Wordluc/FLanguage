@@ -81,14 +81,45 @@ func TestAssigmentNegativeNumber(t *testing.T) {
 		t.Error("eval fallita", e)
 	}
 	envObject, e := env.GetVariable("a")
-	v := envObject.(NumberObject).Value
+	v := envObject.(FloatNumberObject).Value
 	if v != -5 {
 		t.Errorf("value is not %v got %v", -5, v)
 	}
 	envObject, e = env.GetVariable("b")
-	v = envObject.(NumberObject).Value
+	v = envObject.(FloatNumberObject).Value
 	if v != 5 {
 		t.Errorf("value is not %v got %v", 5, v)
+	}
+}
+func TestAssigmentDecimaleNumber(t *testing.T) {
+
+	ist := `
+	let a=5.5;
+	let b=a+1;
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallita")
+	}
+	root := programParse
+	env := &Environment{variables: make(map[string]IObject), externals: nil}
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error("eval fallita", e)
+	}
+	envObject, e := env.GetVariable("a")
+	v := envObject.(FloatNumberObject).Value
+	if v != 5.5 {
+		t.Errorf("value is not %v got %v", 5.5, v)
+	}
+	envObject, e = env.GetVariable("b")
+	v = envObject.(FloatNumberObject).Value
+	if v != 6.5 {
+		t.Errorf("value is not %v got %v", 6.5, v)
 	}
 }
 func TestAssigmentAndReuse(t *testing.T) {

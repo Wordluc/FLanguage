@@ -31,6 +31,14 @@ func (n NumberObject) ToString() string {
 	return strconv.Itoa(n.Value)
 }
 
+type FloatNumberObject struct {
+	Value float64
+}
+
+func (n FloatNumberObject) ToString() string {
+	return strconv.FormatFloat(n.Value, 'f', -1, 32)
+}
+
 type ReturnObject struct {
 	Value IObject
 }

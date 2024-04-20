@@ -11,7 +11,6 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 	switch stat := statement.(type) {
 	case Statements.LetStatement:
 		value, err := evalExpresion(stat.Expresion, env)
-
 		if err != nil {
 			return nil, err
 		}
