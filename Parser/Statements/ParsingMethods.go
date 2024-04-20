@@ -38,8 +38,7 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 			head.addNext(&StatementNode{})
 			head = head.Next
 		case Token.WORD:
-			nextT, _ := l.LookNext()
-			var e error
+			nextT, e := l.LookNext()
 			var res IStatement
 			switch nextT.Type {
 			case Token.OPEN_CIRCLE_BRACKET:
@@ -48,6 +47,8 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 				res, e = parseSetArrayValue(l)
 			case Token.ASSIGN:
 				res, e = parseAssignment(l)
+			default:
+				return nil, errors.New("ParsingStatement: unexpected token")
 			}
 
 			if e != nil {
@@ -83,7 +84,6 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 			head.addNext(&StatementNode{})
 			head = head.Next
 		default:
-
 			if slices.Contains(exitTokens, l.LookCurrent().Type) {
 				return program, nil
 			}

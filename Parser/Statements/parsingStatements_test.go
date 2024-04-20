@@ -628,3 +628,22 @@ func TestWhile(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
+func TestWrongStatementWrong(t *testing.T) {
+	ist := `
+	let a=[1,[2,3]];
+	deded r;
+	let c=a[0][0];
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	_, e = ParsingStatement(&lexer, Token.END)
+	if e == nil {
+		t.Error("should be error")
+		return
+	}
+	return
+}
