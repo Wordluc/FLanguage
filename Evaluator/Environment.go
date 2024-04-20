@@ -40,11 +40,11 @@ func (v *Environment) AddVariable(name string, value IObject) error {
 func (v *Environment) SetVariable(name string, value IObject) error {
 	variable, exist := v.variables[name]
 	if !exist {
-		return errors.New("variable not defined")
+		return errors.New("variable not defined,name:" + name)
 	}
 
 	if reflect.TypeOf(variable) != reflect.TypeOf(value) {
-		return errors.New("should have same type")
+		return errors.New(name + " should have same type")
 	}
 	v.variables[name] = value
 	return nil
@@ -61,24 +61,24 @@ func (v *Environment) GetVariable(name string) (IObject, error) {
 		return variable, nil
 	}
 	if v.externals == nil {
-		return nil, errors.New("variable not defined")
+		return nil, errors.New("variable not defined,name:" + name)
 	}
 	variable, existEx := v.externals.GetVariable(name)
 	if existEx == nil {
 		return variable, nil
 	}
-	return nil, errors.New("variable not defined")
+	return nil, errors.New("variable not defined,name:" + name)
 }
 
 func (v *Environment) GetFunction(name string) (*Statements.FuncDeclarationStatement, error) {
 	funct, exist := v.functions[name]
 	if !exist {
 		if v.externals == nil {
-			return nil, errors.New("variable not defined")
+			return nil, errors.New("variable not defined,name:" + name)
 		}
 		funct, existEx := v.externals.GetFunction(name)
 		if existEx != nil {
-			return nil, errors.New("function not defined")
+			return nil, errors.New("function not defined,name:" + name)
 		}
 		return funct, nil
 	}

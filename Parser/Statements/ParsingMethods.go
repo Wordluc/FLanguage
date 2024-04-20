@@ -48,7 +48,7 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 			case Token.ASSIGN:
 				res, e = parseAssignment(l)
 			default:
-				return nil, errors.New("ParsingStatement: unexpected token")
+				return nil, errors.New("ParsingStatement: unexpected token,got:" + l.LookCurrent().Value)
 			}
 
 			if e != nil {

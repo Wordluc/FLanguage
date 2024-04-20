@@ -7,7 +7,6 @@ import (
 )
 
 func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, error) {
-
 	switch leftObject := left.(type) {
 	case NumberObject:
 		valueLeft := leftObject.Value
