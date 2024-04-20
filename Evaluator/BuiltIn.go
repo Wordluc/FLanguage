@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"os"
-	"reflect"
 	"strconv"
 )
 
@@ -76,19 +75,7 @@ func String(env *Environment) (IObject, error) {
 	if e != nil {
 		return nil, e
 	}
-	switch a := v.(type) {
-	case NumberObject:
-		return StringObject{Value: strconv.Itoa(a.Value)}, nil
-	case StringObject:
-		return a, nil
-	case BoolObject:
-		if a.Value {
-			return StringObject{Value: "true"}, nil
-		}
-		return StringObject{Value: "false"}, nil
-	default:
-		return nil, errors.New("not a string")
-	}
+	return StringObject{Value: v.ToString()}, nil
 }
 
 func builtInLen(env *Environment) (IObject, error) {
@@ -102,7 +89,7 @@ func builtInLen(env *Environment) (IObject, error) {
 	case ArrayObject:
 		return NumberObject{Value: len(a.Values)}, nil
 	default:
-		return nil, errors.New("not an array or string,got:" + reflect.TypeOf(a).String())
+		return nil, errors.New("impossible to get len")
 	}
 }
 

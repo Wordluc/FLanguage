@@ -34,7 +34,19 @@ func TestLexer(t *testing.T) {
 
 	}
 }
-
+func TestLexerNumberWithDot(t *testing.T) {
+	text := `
+	33.3
+	`
+	l, e := New([]byte(text))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	got := l.LookCurrent()
+	if got.Type != Token.NUMBER_WITH_DOT {
+		t.Errorf("errore parsing: got %v instead %v", got.Type, Token.NUMBER_WITH_DOT)
+	}
+}
 func TestLexer_Op(t *testing.T) {
 	text := `
 	*-/+;

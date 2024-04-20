@@ -21,7 +21,36 @@ func TestParseExpresion_WithOneValue_ShouldPass(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
-
+func TestParseExpresion_WithDecimalNumber(t *testing.T) {
+	ist := "10.3;"
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	if e != nil {
+		t.Error(e)
+	}
+	expected := "10.3"
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
+func TestParseExpresion_WithNegativeDecimalNumber(t *testing.T) {
+	ist := "-10.3;"
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	if e != nil {
+		t.Error(e)
+	}
+	expected := " - 10.3"
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
 func TestParseExpresion_Valid_ShouldPass1(t *testing.T) {
 	ist := "10+2*1+2+22/2+16*3;"
 	lexer, e := Lexer.New([]byte(ist))

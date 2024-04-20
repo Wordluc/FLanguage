@@ -14,7 +14,7 @@ func And(e error, s string) error {
 }
 
 func IsAValidBrach(token Token.Token) bool {
-	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET || token.Type == Token.NUMBER || token.Type == Token.STRING
+	return token.Type == Token.WORD || token.Type == Token.OPEN_CIRCLE_BRACKET || token.Type == Token.NUMBER || token.Type == Token.NUMBER_WITH_DOT || token.Type == Token.STRING
 }
 
 func IsAValidOperator(token Token.Token) bool {
@@ -31,7 +31,7 @@ func GetParse(than Token.TokenType) (fParse, error) {
 		return parseTree, nil
 	case Token.PLUS:
 		return parseTree, nil
-	case Token.WORD, Token.NUMBER, Token.STRING, Token.BOOLEAN:
+	case Token.WORD, Token.NUMBER, Token.STRING, Token.BOOLEAN, Token.NUMBER_WITH_DOT:
 		return parseLeaf, nil
 	case Token.OPEN_CIRCLE_BRACKET:
 		return parseExpresionBlock, nil

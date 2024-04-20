@@ -41,6 +41,45 @@ func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, er
 		case Token.LESS_EQUAL:
 			return BoolObject{Value: valueLeft <= valueRight}, nil
 		}
+	case FloatNumberObject:
+		valueLeft := leftObject.Value
+		stringValue, isRightString := right.(StringObject)
+		if isRightString {
+			if operator.Type == Token.PLUS {
+				return StringObject{strconv.FormatFloat(valueLeft, 'f', -1, 32) + stringValue.Value}, nil
+			} else {
+				return nil, errors.New("invalid operator")
+			}
+		}
+		var valueRight float64
+		switch rightObject := right.(type) {
+		case NumberObject:
+			valueRight = float64(rightObject.Value)
+		case FloatNumberObject:
+			valueRight = rightObject.Value
+		}
+		switch operator.Type {
+		case Token.PLUS:
+			return FloatNumberObject{valueLeft + valueRight}, nil
+		case Token.MINUS:
+			return FloatNumberObject{valueLeft - valueRight}, nil
+		case Token.DIV:
+			return FloatNumberObject{valueLeft / valueRight}, nil
+		case Token.MULT:
+			return FloatNumberObject{valueLeft * valueRight}, nil
+		case Token.GREATER:
+			return BoolObject{Value: valueLeft > valueRight}, nil
+		case Token.LESS:
+			return BoolObject{Value: valueLeft < valueRight}, nil
+		case Token.EQUAL:
+			return BoolObject{Value: valueLeft == valueRight}, nil
+		case Token.NOT_EQUAL:
+			return BoolObject{Value: valueLeft != valueRight}, nil
+		case Token.GREATER_EQUAL:
+			return BoolObject{Value: valueLeft >= valueRight}, nil
+		case Token.LESS_EQUAL:
+			return BoolObject{Value: valueLeft <= valueRight}, nil
+		}
 	case StringObject:
 		valueLeft := leftObject.Value
 		stringValue, isRightNumber := right.(NumberObject)
