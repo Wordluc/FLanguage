@@ -12,12 +12,7 @@ func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, er
 
 		switch valueRight := right.(type) {
 		case StringObject:
-			switch operator.Type {
-			case Token.PLUS:
-				return StringObject{leftObject.ToString() + right.ToString()}, nil
-			case Token.GREATER, Token.LESS, Token.EQUAL, Token.NOT_EQUAL, Token.GREATER_EQUAL, Token.LESS_EQUAL:
-				return boolOperatorString(leftObject.ToString(), right.ToString(), operator)
-			}
+			return stringOperation(left, right, operator)
 		case NumberObject:
 			switch operator.Type {
 			case Token.PLUS, Token.MULT, Token.DIV, Token.MINUS:
@@ -38,12 +33,7 @@ func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, er
 		var valueRight float64
 		switch rightObject := right.(type) {
 		case StringObject:
-			switch operator.Type {
-			case Token.PLUS:
-				return StringObject{leftObject.ToString() + right.ToString()}, nil
-			case Token.GREATER, Token.LESS, Token.EQUAL, Token.NOT_EQUAL, Token.GREATER_EQUAL, Token.LESS_EQUAL:
-				return boolOperatorString(leftObject.ToString(), right.ToString(), operator)
-			}
+			return stringOperation(left, rightObject, operator)
 		case NumberObject:
 			valueRight = float64(rightObject.Value)
 		case FloatNumberObject:
@@ -56,12 +46,7 @@ func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, er
 			return boolOperatorFloat(valueLeft, valueRight, operator)
 		}
 	case StringObject:
-		switch operator.Type {
-		case Token.PLUS:
-			return StringObject{leftObject.ToString() + right.ToString()}, nil
-		case Token.GREATER, Token.LESS, Token.EQUAL, Token.NOT_EQUAL, Token.GREATER_EQUAL, Token.LESS_EQUAL:
-			return boolOperatorString(leftObject.ToString(), right.ToString(), operator)
-		}
+		return stringOperation(leftObject, right, operator)
 	case BoolObject:
 		valueLeft := leftObject.Value
 		valueRight := right.(BoolObject).Value
@@ -137,20 +122,14 @@ func boolOperatorFloat(valueLeft, valueRight float64, operator Token.Token) (IOb
 	return nil, errors.New("invalid operation")
 
 }
-func boolOperatorString(valueLeft, valueRight string, operator Token.Token) (IObject, error) {
+func stringOperation(valueLeft, valueRight IObject, operator Token.Token) (IObject, error) {
 	switch operator.Type {
-	case Token.GREATER:
-		return BoolObject{Value: valueLeft > valueRight}, nil
-	case Token.LESS:
-		return BoolObject{Value: valueLeft < valueRight}, nil
+	case Token.PLUS:
+		return StringObject{Value: valueLeft.ToString() + valueRight.ToString()}, nil
 	case Token.EQUAL:
-		return BoolObject{Value: valueLeft == valueRight}, nil
+		return BoolObject{Value: valueLeft.ToString() == valueRight.ToString()}, nil
 	case Token.NOT_EQUAL:
-		return BoolObject{Value: valueLeft != valueRight}, nil
-	case Token.GREATER_EQUAL:
-		return BoolObject{Value: valueLeft >= valueRight}, nil
-	case Token.LESS_EQUAL:
-		return BoolObject{Value: valueLeft <= valueRight}, nil
+		return BoolObject{Value: valueLeft.ToString() != valueRight.ToString()}, nil
 	}
 	return nil, errors.New("invalid operation")
 }
