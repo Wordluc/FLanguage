@@ -23,15 +23,15 @@ Ff RicercaDicotomica(array,value,i){
 		ret [false,-1];
 	}
 	if (value>array[i]){
-		let newArray=splitArray(i+1,len(array),array);
+		let newArray=splitArray(i,len(array),array);
 		let r= RicercaDicotomica(newArray,value,len(newArray)/2);
 		if(r[0]){
-			ret [true,r[1]+i+1];
+			ret [true,r[1]+i];
 		}
 		ret r;
 	}
 	if (value<array[i]){
-		let newArray=splitArray(0,i-1,array);
+		let newArray=splitArray(0,i,array);
 		let r= RicercaDicotomica(newArray,value,len(newArray)/2);
 		if(r[0]){
 			ret [true,r[1]];
@@ -39,5 +39,5 @@ Ff RicercaDicotomica(array,value,i){
 		ret r;
 	}
 }
-println(RicercaDicotomica([1,2,3,4,5,6,7,8,9,10],11,5));
+println(RicercaDicotomica([1,2,3,4,5,6,7,8,9,10],8,5));
 END
