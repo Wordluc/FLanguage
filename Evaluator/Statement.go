@@ -106,9 +106,13 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 			return nil, errors.New("invalid condition")
 		}
 		for cond.Value {
-			_, e := Eval(stat.Body.(*Statements.StatementNode), env)
+			rObject, e := Eval(stat.Body.(*Statements.StatementNode), env)
 			if e != nil {
 				return nil, e
+			}
+			r, isReturn := rObject.(ReturnObject)
+			if isReturn {
+				return r, nil
 			}
 			obCondition, e = evalExpresion(stat.Cond, env)
 			if e != nil {

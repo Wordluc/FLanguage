@@ -171,3 +171,51 @@ func TestGetStringWithMoreCharacters(t *testing.T) {
 		t.Error("value should be 8,got:", b.(StringObject).Value)
 	}
 }
+func TestDicotomicSearch(t *testing.T) {
+	ist := `
+	Ff RicercaDicotomica(array,value){
+		let low=0;
+		let high=len(array)-1;
+		let i=len(array)/2;
+		while(low<=high){
+			if(array[i]==value){
+				ret i;				
+			}
+			if(value>array[i]){
+                             low=i+1;
+			}else{
+			     high=i-1;
+			}
+			i=(high+low)/2;
+		}
+		ret -1;
+	}
+
+	let array=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+	let result= RicercaDicotomica(array,16);
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+
+	a, _ := env.GetVariable("result")
+	if a.(NumberObject).Value != 15 {
+		t.Error("value should be 15,got:", a.(NumberObject).Value)
+	}
+
+}
