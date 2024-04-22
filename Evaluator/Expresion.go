@@ -81,7 +81,11 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 		if e != nil {
 			return nil, e
 		}
-		var elem IObject = array.(ArrayObject)
+		var elem IObject
+		elem, ok := array.(ArrayObject)
+		if !ok {
+			return nil, errors.New("not an array")
+		}
 		for _, idObj := range expObject.IndexsValues {
 			id, e := evalExpresion(idObj, env)
 			if e != nil {
