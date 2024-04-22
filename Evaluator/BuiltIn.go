@@ -35,6 +35,7 @@ func builtInPrint(env *Environment) (IObject, error) {
 	print(aObject.ToString())
 	return nil, nil
 }
+
 func builtInPrintln(env *Environment) (IObject, error) {
 	aObject, e := env.GetVariable("a")
 	if e != nil {
@@ -46,11 +47,13 @@ func builtInPrintln(env *Environment) (IObject, error) {
 	println(aObject.ToString())
 	return nil, nil
 }
+
 func Int(env *Environment) (IObject, error) {
 	v, e := env.GetVariable("a")
 	if e != nil {
 		return nil, e
 	}
+
 	switch a := v.(type) {
 	case NumberObject:
 		return a, nil
@@ -83,13 +86,14 @@ func builtInLen(env *Environment) (IObject, error) {
 	if e != nil {
 		return nil, e
 	}
+
 	switch a := aObject.(type) {
 	case StringObject:
 		return NumberObject{Value: len(a.Value)}, nil
 	case ArrayObject:
 		return NumberObject{Value: len(a.Values)}, nil
 	default:
-		return nil, errors.New("impossible to get len")
+		return nil, errors.New("impossible use len")
 	}
 }
 

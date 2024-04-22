@@ -11,7 +11,18 @@ func main() {
 	env := Evaluator.NewEnvironment()
 	Evaluator.LoadBuiltInFunction(env)
 	Evaluator.LoadBuiltInVariable(env)
+	loop(env)
+}
+
+func loop(env *Evaluator.Environment) {
 	for {
+
+		defer func() {
+			if recover() != nil {
+				fmt.Println("Recover...")
+				loop(env)
+			}
+		}()
 		fmt.Println(Evaluator.ReplProgram(env))
 	}
 }

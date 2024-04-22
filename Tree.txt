@@ -1,0 +1,47 @@
+
+let nil="";
+
+Ff AddNode(value,node){
+	if(value>node[1]){
+
+		if(len(node[2])!=0){
+			AddNode(value,node[2]);
+		}else{
+			node[2]=[nil,value,nil];
+		}
+	}else{
+
+		if(len(node[0])!=0){
+			AddNode(value,node[0]);
+		}else{
+			node[0]=[nil,value,nil];
+		}
+	}
+}
+
+Ff MakeTree(list){
+	let i=1;
+	let node=[nil,list[0],nil];
+
+	while(i<len(list)){
+		AddNode(list[i],node);
+		i=i+1;
+	}
+	ret node;
+}
+
+Ff GetListFromTree(node){
+
+	if(len(node[0])!=0){
+		GetListFromTree(node[0]);
+	}
+	println(node[1]);
+	if(len(node[2])!=0){
+		GetListFromTree(node[2]);
+	}
+}
+
+let list=[1,0,3,-9,5,1,2,5,9,44,-122,-1,-11,-5];
+let tree=MakeTree(list);
+GetListFromTree(tree);
+END

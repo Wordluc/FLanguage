@@ -10,6 +10,7 @@ import (
 func TestFunctionFactorial(t *testing.T) {
 	ist := `
 	//Calcola il fattoriale di un Number
+
 	Ff factorial(x) {
 
 		if (x == 0) {
@@ -54,6 +55,7 @@ func TestFunctionFibonacci(t *testing.T) {
 	Dato un numero 
 	calcola il valore della serie
 	*/
+
 	Ff fibonacci(x) {
 
 		if (x == 0) {
@@ -133,7 +135,9 @@ func TestElevation(t *testing.T) {
 func TestGetStringWithMoreCharacters(t *testing.T) {
 	ist := `	
 	let a = ["1","11","22222244","345","oaaaa"];
+
 	Ff search(i,iMax) {
+
 		if (i==len(a)-1) {
 			ret  a[iMax];
 		}
@@ -173,14 +177,18 @@ func TestGetStringWithMoreCharacters(t *testing.T) {
 }
 func TestDicotomicSearch(t *testing.T) {
 	ist := `
+
 	Ff RicercaDicotomica(array,value){
 		let low=0;
 		let high=len(array)-1;
 		let i=len(array)/2;
-		while(low<=high){
+
+		while (low<=high){
+
 			if(array[i]==value){
 				ret i;				
 			}
+
 			if(value>array[i]){
                              low=i+1;
 			}else{
@@ -217,5 +225,4 @@ func TestDicotomicSearch(t *testing.T) {
 	if a.(NumberObject).Value != 15 {
 		t.Error("value should be 15,got:", a.(NumberObject).Value)
 	}
-
 }

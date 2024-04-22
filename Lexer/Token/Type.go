@@ -162,5 +162,6 @@ func isValidString(value string) bool {
 	if value[0] == '\'' && value[len(value)-1] == '\'' {
 		return true
 	}
+
 	return false
 }

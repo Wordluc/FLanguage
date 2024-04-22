@@ -5,7 +5,6 @@ import (
 	Lexer "FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
 	"FLanguage/Parser/Statements"
-	"bufio"
 	"fmt"
 	"os"
 )
@@ -15,12 +14,10 @@ func lexerFromFile(path string) (Lexer.Lexer, error) {
 	lexer, e := Lexer.New(file)
 	return lexer, e
 }
+
 func main() {
-	reder := bufio.NewReader(os.Stdin)
-	fmt.Print("-")
-	v, _ := reder.ReadBytes('\n')
-	v = v[:len(v)-2]
-	l, e := lexerFromFile(string(v))
+	path := os.Args[1]
+	l, e := lexerFromFile(path)
 	if e != nil {
 		fmt.Println(e)
 		return
@@ -31,7 +28,6 @@ func main() {
 		fmt.Println(e)
 		return
 	}
-	println("-----INIZIO-----")
 	env := Evaluator.NewEnvironment()
 	Evaluator.LoadBuiltInFunction(env)
 	Evaluator.LoadBuiltInVariable(env)
@@ -40,6 +36,5 @@ func main() {
 		fmt.Println(e)
 		return
 	}
-	fmt.Println("-----FINE-----")
 	return
 }

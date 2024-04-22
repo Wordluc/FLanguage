@@ -239,6 +239,7 @@ func TestIncVar(t *testing.T) {
 func TestIncInParm(t *testing.T) {
 
 	ist := `
+
 	Ff add(x){
 		ret x+1;
 	}
@@ -847,6 +848,7 @@ func TestSetArray(t *testing.T) {
 func TestWhile(t *testing.T) {
 	ist := `
 	let i=0;
+
 	while (i<5){
 		i=i+1;
 	}
