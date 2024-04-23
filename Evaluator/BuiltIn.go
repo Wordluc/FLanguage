@@ -92,6 +92,7 @@ func builtInLen(env *Environment) (IObject, error) {
 		return NumberObject{Value: len(a.Value)}, nil
 	case ArrayObject:
 		return NumberObject{Value: len(a.Values)}, nil
+
 	default:
 		return nil, errors.New("impossible use len")
 	}

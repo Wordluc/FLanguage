@@ -3,6 +3,7 @@ package Evaluator
 import (
 	"FLanguage/Lexer/Token"
 	"errors"
+	"fmt"
 )
 
 func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, error) {
@@ -56,6 +57,7 @@ func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, er
 			}, nil
 		}
 	}
+	fmt.Println(left, operator, right)
 	return nil, errors.New("invalid operation")
 }
 
@@ -102,7 +104,7 @@ func boolOperatorInt(valueLeft, valueRight int, operator Token.Token) (IObject, 
 	case Token.LESS_EQUAL:
 		return BoolObject{Value: valueLeft <= valueRight}, nil
 	}
-	return nil, errors.New("invalid operation")
+	return BoolObject{Value: false}, nil
 }
 func boolOperatorFloat(valueLeft, valueRight float64, operator Token.Token) (IObject, error) {
 	switch operator.Type {
@@ -119,7 +121,8 @@ func boolOperatorFloat(valueLeft, valueRight float64, operator Token.Token) (IOb
 	case Token.LESS_EQUAL:
 		return BoolObject{Value: valueLeft <= valueRight}, nil
 	}
-	return nil, errors.New("invalid operation")
+
+	return BoolObject{Value: false}, nil
 
 }
 func stringOperation(valueLeft, valueRight IObject, operator Token.Token) (IObject, error) {
