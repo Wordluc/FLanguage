@@ -2,46 +2,47 @@
 let nil="";
 
 Ff AddNode(value,node){
-	if(value>node[1]){
-
-		if(len(node[2])!=0){
-			AddNode(value,node[2]);
-		}else{
-			node[2]=[nil,value,nil];
-		}
-	}else{
-
-		if(len(node[0])!=0){
-			AddNode(value,node[0]);
-		}else{
-			node[0]=[nil,value,nil];
-		}
+	if(len(node)==0){
+		ret [nil,value,nil];
 	}
+	if(value>node[1]){
+		node[2]=AddNode(value,node[2]);
+	}else{
+		node[0]=AddNode(value,node[0]);
+	}
+	ret node;
 }
 
 Ff MakeTree(list){
 	let i=1;
 	let node=[nil,list[0],nil];
-
+	let ordered=newArray(len(list),0);
+	let v=0;
 	while(i<len(list)){
 		AddNode(list[i],node);
+		ordered[i]=v;
 		i=i+1;
 	}
 	ret node;
 }
 
-Ff GetListFromTree(node){
+Ff GetListFromTree(node,i,list){
 
 	if(len(node[0])!=0){
-		GetListFromTree(node[0]);
+		GetListFromTree(node[0],i,list);
 	}
-	println(node[1]);
+	list[i[0]]=node[1];
+	//utilizzo l'array con l'elemento i in modo da passare l'indice come reference, sfruttando le slice di golang
+	i[0]=i[0]+1;
+
 	if(len(node[2])!=0){
-		GetListFromTree(node[2]);
+		GetListFromTree(node[2],i,list);
 	}
 }
 
 let list=[1,0,3,-9,5,1,2,5,9,44,-122,-1,-11,-5];
 let tree=MakeTree(list);
-GetListFromTree(tree);
+let ordered=newArray(len(list),0);
+GetListFromTree(tree,[0],ordered);
+print(ordered);
 END
