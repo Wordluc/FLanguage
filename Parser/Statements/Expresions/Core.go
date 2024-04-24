@@ -4,6 +4,7 @@ import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
 	"errors"
+	"fmt"
 )
 
 type fParse func(l *Lexer.Lexer, expresion IExpresion, exitTokens ...Token.TokenType) (IExpresion, error)
@@ -36,7 +37,8 @@ func GetParse(than Token.TokenType) (fParse, error) {
 	case Token.OPEN_CIRCLE_BRACKET:
 		return parseExpresionBlock, nil
 	case Token.OPEN_SQUARE_BRACKET:
-		return parseDeclareArray, nil
+		return parseArray, nil
 	}
+	fmt.Println(than)
 	return nil, errors.New("GetParse: Operator:" + string(than) + "not implemented")
 }

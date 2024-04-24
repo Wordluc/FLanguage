@@ -68,21 +68,23 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 		return evalBinaryExpresion(left, right, expObject.Operator)
 	case Expresions.ExpresionDeclareArray:
 		array := ArrayObject{}
-		for _, v := range expObject.Values {
+		array.Values = make([]IObject, len(expObject.Values))
+		for i, v := range expObject.Values {
 			value, e := evalExpresion(v, env)
 			if e != nil {
 				return nil, e
 			}
-			array.Values = append(array.Values, value)
+			array.Values[i] = value
 		}
 		return array, nil
 	case Expresions.ExpresionGetValueArray:
-		array, e := env.GetVariable(expObject.Name)
+		value, e := evalExpresion(expObject.Value, env)
 		if e != nil {
 			return nil, e
 		}
+
 		var elem IObject
-		elem, ok := array.(ArrayObject)
+		elem, ok := value.(ArrayObject)
 		if !ok {
 			return nil, errors.New("not an array")
 		}

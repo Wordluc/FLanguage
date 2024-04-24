@@ -182,9 +182,7 @@ func TestDicotomicSearch(t *testing.T) {
 		let low=0;
 		let high=len(array)-1;
 		let i=len(array)/2;
-
 		while (low<=high){
-
 			if(array[i]==value){
 				ret i;				
 			}
@@ -198,7 +196,6 @@ func TestDicotomicSearch(t *testing.T) {
 		}
 		ret -1;
 	}
-
 	let array=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 	let result= RicercaDicotomica(array,16);
 	END

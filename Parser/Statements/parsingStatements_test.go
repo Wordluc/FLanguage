@@ -615,12 +615,20 @@ func TestGetValueArrayWrong(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	_, e = ParsingStatement(&lexer, Token.END)
-	if e == nil {
-		t.Error("should be error")
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
 		return
 	}
-	return
+	expected := ` 
+	  LET a = [1,[2,3,],]
+          LET c = a[0,][0,]  
+	  `
+
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+
 }
 func TestAssingValueArray(t *testing.T) {
 	ist := `
@@ -669,22 +677,84 @@ func TestWhile(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
-
+func TestWhileIncr(t *testing.T) {
+	ist := `
+	x = 0;
+	array = [1,2,3,4];
+	while (array[x] > 0) {
+		let x = x + 1;	
+	}
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `
+	x = 0 
+	array = [1,2,3,4,]
+ 	WHILE ( (array[x,]) > 0 ) {
+	        LET x = x + 1
+	}`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
 func TestWrongStatementWrong(t *testing.T) {
 	ist := `
-	let a=[1,[2,3]];
-	deded r;
-	let c=a[0][0];
+	if(value>array[i]){
+             low=i+1;
+	}else{
+	     high=i-1;
+	}
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	_, e = ParsingStatement(&lexer, Token.END)
-	if e == nil {
-		t.Error("should be error")
+	program, e := ParsingStatement(&lexer, Token.END)
+	expected := `
+        IF ( value > (array[i,]) ) {
+                low = i + 1
+
+        } ELSE {
+                high = i - 1
+
+        }
+	`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
+
+func TestGetMatrixFromFunction(t *testing.T) {
+	ist := `
+	Ff getMatrix(){
+		ret [[2,4],[2,3,4]];
+	}
+	let b=getMatrix()[0][1];
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
 		return
 	}
-	return
+	expected := `
+	 Ff getMatrix (  ) {
+                RETURN [[2,4,],[2,3,4,],]
+
+         }
+         LET b = getMatrix()[0,][1,]	`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
 }
