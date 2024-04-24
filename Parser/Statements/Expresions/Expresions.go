@@ -109,11 +109,11 @@ func (e ExpresionCallFunc) ToString() string {
 
 type ExpresionGetValueArray struct {
 	IndexsValues []IExpresion
-	Name         string
+	Value        IExpresion
 }
 
 func (e ExpresionGetValueArray) ToString() string {
-	r := e.Name + "["
+	r := e.Value.ToString() + "["
 	i := 0
 	for {
 		if i == len(e.IndexsValues) {

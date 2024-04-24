@@ -38,6 +38,7 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 			head.addNext(&StatementNode{})
 			head = head.Next
 		case Token.WORD:
+
 			nextT, e := l.LookNext()
 			var res IStatement
 			switch nextT.Type {

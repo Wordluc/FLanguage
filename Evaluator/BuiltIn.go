@@ -17,9 +17,9 @@ func newArray(env *Environment) (IObject, error) {
 	if !ok {
 		return nil, errors.New("not a number")
 	}
-	a := ArrayObject{Values: []IObject{}}
+	a := ArrayObject{Values: make([]IObject, n.Value)}
 	for i := 0; i < int(n.Value); i++ {
-		a.Values = append(a.Values, typeObject)
+		a.Values[i] = typeObject
 	}
 	return a, nil
 }

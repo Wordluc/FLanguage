@@ -679,6 +679,7 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 		t.Error(e)
 	}
 	b, _ := env.GetVariable("b")
+	t.Log(b.ToString())
 	if b.(NumberObject).Value != 3 {
 		t.Error("should be '3' ,got:", b.(NumberObject).Value)
 	}
@@ -807,6 +808,78 @@ func TestCreateArray(t *testing.T) {
 	}
 	if _, ok := a.(ArrayObject).Values[0].(NumberObject); !ok {
 		t.Error("should be a number")
+	}
+}
+func TestGetMatrix(t *testing.T) {
+	ist := `
+	let a=[[2,4],[2,3,4]];
+	let b=a[0][1];
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	a, e := env.GetVariable("b")
+	if e != nil {
+		t.Error(e)
+	}
+	v := a.(NumberObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Value != 4 {
+		t.Error("should be '4' ,got:", v.Value)
+	}
+}
+func TestGetArrayFromFunc(t *testing.T) {
+	ist := `
+	Ff getMatrix(){
+		ret [[2,4],[2,3,4]];
+	}
+	let b=getMatrix()[0][1];
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	a, e := env.GetVariable("b")
+	if e != nil {
+		t.Error(e)
+	}
+	v := a.(NumberObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Value != 4 {
+		t.Error("should be '4' ,got:", v.Value)
 	}
 }
 func TestSetArray(t *testing.T) {
