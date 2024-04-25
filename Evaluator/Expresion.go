@@ -51,9 +51,20 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 	case Expresions.ExpresionNode:
 		var left IObject
 		var e error
+		right, e := evalExpresion(expObject.RightExpresion, env)
+		if e != nil {
+			return nil, e
+		}
 		if expObject.LeftExpresion == nil {
-			left = FloatNumberObject{
-				Value: 0,
+			switch right.(type) {
+			case NumberObject:
+				left = NumberObject{
+					Value: 0,
+				}
+			case FloatNumberObject:
+				left = FloatNumberObject{
+					Value: 0.0,
+				}
 			}
 		} else {
 			left, e = evalExpresion(expObject.LeftExpresion, env)
@@ -61,10 +72,7 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 				return nil, e
 			}
 		}
-		right, e := evalExpresion(expObject.RightExpresion, env)
-		if e != nil {
-			return nil, e
-		}
+
 		return evalBinaryExpresion(left, right, expObject.Operator)
 	case Expresions.ExpresionDeclareArray:
 		array := ArrayObject{}
