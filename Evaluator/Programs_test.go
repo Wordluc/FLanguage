@@ -175,9 +175,10 @@ func TestGetStringWithMoreCharacters(t *testing.T) {
 		t.Error("value should be 8,got:", b.(StringObject).Value)
 	}
 }
+
 func TestDicotomicSearch(t *testing.T) {
 	ist := `
-
+	
 	Ff RicercaDicotomica(array,value){
 		let low=0;
 		let high=len(array)-1;
