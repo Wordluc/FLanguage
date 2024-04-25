@@ -3,136 +3,145 @@ package Evaluator
 import (
 	"FLanguage/Lexer/Token"
 	"errors"
-	"fmt"
+	"reflect"
 )
 
 func evalBinaryExpresion(left, right IObject, operator Token.Token) (IObject, error) {
+	switch op := operator.Type; op {
+	case Token.PLUS:
+		return evalPlusOperator(left, right)
+	case Token.MINUS:
+		return evalMinusOperator(left, right)
+	case Token.DIV:
+		return evalDivOperator(left, right)
+	case Token.MULT:
+		return evalMultOperator(left, right)
+	case Token.EQUAL:
+		return evalEqualOperator(left, right)
+	case Token.NOT_EQUAL:
+		v, _ := evalEqualOperator(left, right)
+		return BoolObject{Value: !v.(BoolObject).Value}, nil
+	case Token.LESS:
+		return evalLessOperator(left, right)
+	case Token.GREATER:
+		v, _ := evalLessOperator(left, right)
+		return BoolObject{Value: !v.(BoolObject).Value}, nil
+	case Token.LESS_EQUAL:
+		vEqual, _ := evalEqualOperator(left, right)
+		vLess, _ := evalLessOperator(left, right)
+		return BoolObject{Value: vLess.(BoolObject).Value || vEqual.(BoolObject).Value}, nil
+	case Token.GREATER_EQUAL:
+		vEqual, _ := evalEqualOperator(left, right)
+		vLess, _ := evalLessOperator(left, right)
+		return BoolObject{Value: !vLess.(BoolObject).Value || vEqual.(BoolObject).Value}, nil
+	}
+	return nil, errors.New("Wrong type")
+}
+func evalLessOperator(left, right IObject) (IObject, error) {
+	if reflect.TypeOf(left) != reflect.TypeOf(right) {
+		return nil, errors.New("Wrong type")
+	}
 	switch leftObject := left.(type) {
 	case NumberObject:
-		valueLeft := leftObject.Value
-
-		switch valueRight := right.(type) {
-		case StringObject:
-			return stringOperation(left, right, operator)
-		case NumberObject:
-			switch operator.Type {
-			case Token.PLUS, Token.MULT, Token.DIV, Token.MINUS:
-				return mathOperatorInt(valueLeft, valueRight.Value, operator)
-			case Token.GREATER, Token.LESS, Token.EQUAL, Token.NOT_EQUAL, Token.GREATER_EQUAL, Token.LESS_EQUAL:
-				return boolOperatorInt(valueLeft, valueRight.Value, operator)
-			}
-		case FloatNumberObject:
-			switch operator.Type {
-			case Token.PLUS, Token.MULT, Token.DIV, Token.MINUS:
-				return mathOperatorFloat(float64(valueLeft), float64(valueRight.Value), operator)
-			case Token.GREATER, Token.LESS, Token.EQUAL, Token.NOT_EQUAL, Token.GREATER_EQUAL, Token.LESS_EQUAL:
-				return boolOperatorFloat(float64(valueLeft), float64(valueRight.Value), operator)
-			}
-		}
+		rightObject, _ := right.(NumberObject)
+		return BoolObject{Value: leftObject.Value < rightObject.Value}, nil
 	case FloatNumberObject:
-		valueLeft := leftObject.Value
-		var valueRight float64
-		switch rightObject := right.(type) {
-		case StringObject:
-			return stringOperation(left, rightObject, operator)
-		case NumberObject:
-			valueRight = float64(rightObject.Value)
-		case FloatNumberObject:
-			valueRight = rightObject.Value
-		}
-		switch operator.Type {
-		case Token.PLUS, Token.MINUS, Token.DIV, Token.MULT:
-			return mathOperatorFloat(valueLeft, valueRight, operator)
-		case Token.GREATER, Token.LESS, Token.EQUAL, Token.NOT_EQUAL, Token.GREATER_EQUAL, Token.LESS_EQUAL:
-			return boolOperatorFloat(valueLeft, valueRight, operator)
-		}
+		rightObject, _ := right.(FloatNumberObject)
+		return BoolObject{Value: leftObject.Value < rightObject.Value}, nil
+	}
+	return nil, errors.New("Wrong type")
+}
+func evalEqualOperator(left, right IObject) (IObject, error) {
+	if reflect.TypeOf(left) != reflect.TypeOf(right) {
+		return BoolObject{Value: false}, nil
+	}
+	switch leftObject := left.(type) {
 	case StringObject:
-		return stringOperation(leftObject, right, operator)
-	case BoolObject:
-		valueLeft := leftObject.Value
-		valueRight := right.(BoolObject).Value
-		if operator.Type == Token.EQUAL {
-			return BoolObject{
-				Value: valueLeft == valueRight,
-			}, nil
+		rightObject, _ := right.(StringObject)
+		return BoolObject{Value: leftObject.Value == rightObject.Value}, nil
+	case NumberObject:
+		rightObject, _ := right.(NumberObject)
+		return BoolObject{Value: leftObject.Value == rightObject.Value}, nil
+	case FloatNumberObject:
+		rightObject, _ := right.(FloatNumberObject)
+		return BoolObject{Value: leftObject.Value == rightObject.Value}, nil
+	}
+	return BoolObject{Value: false}, nil
+}
+func evalPlusOperator(left, right IObject) (IObject, error) {
+	if left == nil {
+		{
+			rightObject, ok := right.(FloatNumberObject)
+			if ok {
+				return FloatNumberObject{Value: rightObject.Value}, nil
+			}
+		}
+		{
+			rightObject, ok := right.(NumberObject)
+			if ok {
+				return NumberObject{Value: rightObject.Value}, nil
+			}
 		}
 	}
-	fmt.Println(left, operator, right)
-	return nil, errors.New("invalid operation")
-}
-
-func mathOperatorFloat(valueLeft float64, valueRight float64, operator Token.Token) (IObject, error) {
-	switch operator.Type {
-	case Token.PLUS:
-		return FloatNumberObject{valueLeft + valueRight}, nil
-	case Token.MINUS:
-		return FloatNumberObject{valueLeft - valueRight}, nil
-	case Token.DIV:
-		return FloatNumberObject{valueLeft / valueRight}, nil
-	case Token.MULT:
-		return FloatNumberObject{valueLeft * valueRight}, nil
-
+	if reflect.TypeOf(left) != reflect.TypeOf(right) {
+		return nil, errors.New("Wrong type")
 	}
-	return nil, errors.New("invalid operation")
-}
-func mathOperatorInt(valueLeft, valueRight int, operator Token.Token) (IObject, error) {
-	switch operator.Type {
-	case Token.PLUS:
-		return NumberObject{valueLeft + valueRight}, nil
-	case Token.MINUS:
-		return NumberObject{valueLeft - valueRight}, nil
-	case Token.DIV:
-		return NumberObject{valueLeft / valueRight}, nil
-	case Token.MULT:
-		return NumberObject{valueLeft * valueRight}, nil
-
+	switch leftObject := left.(type) {
+	case StringObject:
+		rightObject, _ := right.(StringObject)
+		return StringObject{Value: leftObject.Value + rightObject.Value}, nil
+	case NumberObject:
+		rightObject, _ := right.(NumberObject)
+		return NumberObject{Value: leftObject.Value + rightObject.Value}, nil
+	case FloatNumberObject:
+		rightObject, _ := right.(FloatNumberObject)
+		return FloatNumberObject{Value: leftObject.Value + rightObject.Value}, nil
 	}
-	return nil, errors.New("invalid operation")
+	return nil, errors.New("Wrong type")
 }
-func boolOperatorInt(valueLeft, valueRight int, operator Token.Token) (IObject, error) {
-	switch operator.Type {
-	case Token.GREATER:
-		return BoolObject{Value: valueLeft > valueRight}, nil
-	case Token.LESS:
-		return BoolObject{Value: valueLeft < valueRight}, nil
-	case Token.EQUAL:
-		return BoolObject{Value: valueLeft == valueRight}, nil
-	case Token.NOT_EQUAL:
-		return BoolObject{Value: valueLeft != valueRight}, nil
-	case Token.GREATER_EQUAL:
-		return BoolObject{Value: valueLeft >= valueRight}, nil
-	case Token.LESS_EQUAL:
-		return BoolObject{Value: valueLeft <= valueRight}, nil
-	}
-	return BoolObject{Value: false}, nil
-}
-func boolOperatorFloat(valueLeft, valueRight float64, operator Token.Token) (IObject, error) {
-	switch operator.Type {
-	case Token.GREATER:
-		return BoolObject{Value: valueLeft > valueRight}, nil
-	case Token.LESS:
-		return BoolObject{Value: valueLeft < valueRight}, nil
-	case Token.EQUAL:
-		return BoolObject{Value: valueLeft == valueRight}, nil
-	case Token.NOT_EQUAL:
-		return BoolObject{Value: valueLeft != valueRight}, nil
-	case Token.GREATER_EQUAL:
-		return BoolObject{Value: valueLeft >= valueRight}, nil
-	case Token.LESS_EQUAL:
-		return BoolObject{Value: valueLeft <= valueRight}, nil
+func evalMinusOperator(left, right IObject) (IObject, error) {
+	if reflect.TypeOf(left) != reflect.TypeOf(right) {
+		return nil, errors.New("Wrong type")
 	}
 
-	return BoolObject{Value: false}, nil
-
-}
-func stringOperation(valueLeft, valueRight IObject, operator Token.Token) (IObject, error) {
-	switch operator.Type {
-	case Token.PLUS:
-		return StringObject{Value: valueLeft.ToString() + valueRight.ToString()}, nil
-	case Token.EQUAL:
-		return BoolObject{Value: valueLeft.ToString() == valueRight.ToString()}, nil
-	case Token.NOT_EQUAL:
-		return BoolObject{Value: valueLeft.ToString() != valueRight.ToString()}, nil
+	switch leftObject := left.(type) {
+	case NumberObject:
+		rightObject, _ := right.(NumberObject)
+		return NumberObject{Value: leftObject.Value - rightObject.Value}, nil
+	case FloatNumberObject:
+		rightObject, _ := right.(FloatNumberObject)
+		return FloatNumberObject{Value: leftObject.Value - rightObject.Value}, nil
 	}
-	return nil, errors.New("invalid operation")
+	return nil, errors.New("Wrong type")
+}
+func evalDivOperator(left, right IObject) (IObject, error) {
+	if reflect.TypeOf(left) != reflect.TypeOf(right) {
+		return nil, errors.New("Wrong type")
+	}
+
+	switch leftObject := left.(type) {
+	case NumberObject:
+		rightObject, _ := right.(NumberObject)
+		return NumberObject{Value: leftObject.Value / rightObject.Value}, nil
+	case FloatNumberObject:
+		rightObject, _ := right.(FloatNumberObject)
+		return FloatNumberObject{Value: leftObject.Value / rightObject.Value}, nil
+	}
+	return nil, errors.New("Wrong type")
+}
+func evalMultOperator(left, right IObject) (IObject, error) {
+	if reflect.TypeOf(left) != reflect.TypeOf(right) {
+		return nil, errors.New("Wrong type")
+	}
+
+	switch leftObject := left.(type) {
+	case NumberObject:
+		rightObject, _ := right.(NumberObject)
+		return NumberObject{Value: leftObject.Value * rightObject.Value}, nil
+
+	case FloatNumberObject:
+		rightObject, _ := right.(FloatNumberObject)
+		return FloatNumberObject{Value: leftObject.Value * rightObject.Value}, nil
+	}
+	return nil, errors.New("Wrong type")
 }
