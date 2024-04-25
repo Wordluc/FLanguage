@@ -35,7 +35,7 @@ func TestFunctionFactorial(t *testing.T) {
 	}
 	env := &Environment{
 		variables: make(map[string]IObject),
-		functions: make(map[string]*Statements.FuncDeclarationStatement),
+		functions: make(map[string]Statements.FuncDeclarationStatement),
 	}
 	_, e = Eval(programParse.(*Statements.StatementNode), env)
 	if e != nil {
@@ -83,7 +83,7 @@ func TestFunctionFibonacci(t *testing.T) {
 	}
 	env := &Environment{
 		variables: make(map[string]IObject),
-		functions: make(map[string]*Statements.FuncDeclarationStatement),
+		functions: make(map[string]Statements.FuncDeclarationStatement),
 	}
 	_, e = Eval(programParse.(*Statements.StatementNode), env)
 	if e != nil {
@@ -119,7 +119,7 @@ func TestElevation(t *testing.T) {
 	}
 	env := &Environment{
 		variables: make(map[string]IObject),
-		functions: make(map[string]*Statements.FuncDeclarationStatement),
+		functions: make(map[string]Statements.FuncDeclarationStatement),
 	}
 	_, e = Eval(programParse.(*Statements.StatementNode), env)
 	if e != nil {

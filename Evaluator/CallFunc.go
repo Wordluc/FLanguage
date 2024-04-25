@@ -9,12 +9,11 @@ import (
 func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (IObject, error) {
 	envFunc := &Environment{
 		variables:   make(map[string]IObject),
-		functions:   make(map[string]*Statements.FuncDeclarationStatement),
-		externals:   make([]*Environment, 0),
+		functions:   make(map[string]Statements.FuncDeclarationStatement),
+		externals:   env,
 		builtInVar:  env.builtInVar,
 		builtInFunc: env.builtInFunc,
 	}
-	envFunc.externals = append(envFunc.externals, env)
 	funcBuiltInObject, ok := env.GetBuiltInFunc(expression.NameFunc)
 	if ok == nil {
 		err := evalParms(expression.Values, funcBuiltInObject.NameParams, envFunc)
@@ -54,7 +53,10 @@ func evalParms(values []Expresions.IExpresion, nameParms []string, env *Environm
 		if e != nil {
 			return e
 		}
-		env.AddVariable(nameParms[i], value)
+		e = env.AddVariable(nameParms[i], value)
+		if e != nil {
+			return e
+		}
 	}
 	return nil
 }

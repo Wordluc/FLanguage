@@ -8,18 +8,18 @@ import (
 
 type Environment struct {
 	variables   map[string]IObject
-	functions   map[string]*Statements.FuncDeclarationStatement
-	externals   []*Environment
-	builtInFunc map[string]*BuiltInFuncObject
+	functions   map[string]Statements.FuncDeclarationStatement
+	externals   *Environment
+	builtInFunc map[string]BuiltInFuncObject
 	builtInVar  map[string]IObject
 }
 
 func NewEnvironment() *Environment {
 	return &Environment{
 		variables:   make(map[string]IObject),
-		functions:   make(map[string]*Statements.FuncDeclarationStatement),
-		externals:   make([]*Environment, 2),
-		builtInFunc: make(map[string]*BuiltInFuncObject),
+		functions:   make(map[string]Statements.FuncDeclarationStatement),
+		externals:   nil,
+		builtInFunc: make(map[string]BuiltInFuncObject),
 		builtInVar:  make(map[string]IObject),
 	}
 }
@@ -52,44 +52,39 @@ func (v *Environment) SetVariable(name string, value IObject) error {
 
 func (v *Environment) GetVariable(name string) (IObject, error) {
 
-	builtInVar, exist := v.builtInVar[name]
+	variable, exist := v.builtInVar[name]
 	if exist {
-		return builtInVar, nil
+		return variable, nil
 	}
-	variable, exist := v.variables[name]
+	variable, exist = v.variables[name]
 	if exist {
 		return variable, nil
 	}
 	if v.externals == nil {
 		return nil, errors.New("variable not defined,name:" + name)
 	}
-	for envEx := range v.externals {
-		variable, existEx := v.externals[envEx].GetVariable(name)
-		if existEx == nil {
-			return variable, nil
-		}
+	variable, existEx := v.externals.GetVariable(name)
+	if existEx == nil {
+		return variable, nil
 	}
+
 	return nil, errors.New("variable not defined,name:" + name)
 }
 
-func (v *Environment) GetFunction(name string) (*Statements.FuncDeclarationStatement, error) {
+func (v *Environment) GetFunction(name string) (Statements.FuncDeclarationStatement, error) {
 	funct, exist := v.functions[name]
 	if !exist {
-		for _, envEx := range v.externals {
-			if envEx == nil {
-				break
-			}
-			variable, existEx := envEx.GetFunction(name)
+		if v.externals != nil {
+			variable, existEx := v.externals.GetFunction(name)
 			if existEx == nil {
 				return variable, nil
 			}
 		}
-		return nil, errors.New("function not defined,name:" + name)
 	}
 	return funct, nil
 }
 
-func (v *Environment) AddFunction(name string, value *Statements.FuncDeclarationStatement) error {
+func (v *Environment) AddFunction(name string, value Statements.FuncDeclarationStatement) error {
 	if _, ok := v.builtInFunc[name]; ok {
 		return errors.New("function already exists as builtInFunc:" + name)
 	}
@@ -101,7 +96,7 @@ func (v *Environment) AddFunction(name string, value *Statements.FuncDeclaration
 
 }
 
-func (v *Environment) AddBuiltInFunc(name string, value *BuiltInFuncObject) error {
+func (v *Environment) AddBuiltInFunc(name string, value BuiltInFuncObject) error {
 	_, exist := v.builtInFunc[name]
 	if exist {
 		return errors.New("function already exists:" + name)
@@ -118,10 +113,10 @@ func (v *Environment) AddBuiltInVar(name string, value IObject) error {
 	return nil
 }
 
-func (v *Environment) GetBuiltInFunc(name string) (*BuiltInFuncObject, error) {
+func (v *Environment) GetBuiltInFunc(name string) (BuiltInFuncObject, error) {
 	funct, exist := v.builtInFunc[name]
 	if !exist {
-		return nil, errors.New("function not defined")
+		return BuiltInFuncObject{}, errors.New("function not defined")
 	}
 	return funct, nil
 }

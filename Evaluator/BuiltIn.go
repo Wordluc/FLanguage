@@ -148,21 +148,19 @@ func ImportLibrary(env *Environment) (IObject, error) {
 	if len(env.variables) > 1 {
 		return nil, errors.New("not possible define variables in library")
 	}
-	for envEx := range env.externals {
-		for name, funct := range env.functions {
-			env.externals[envEx].AddFunction(name, funct)
-		}
+	for name, funct := range env.functions {
+		env.externals.AddFunction(name, funct)
 	}
 	return nil, nil
 }
 func LoadBuiltInFunction(env *Environment) {
-	env.AddBuiltInFunc("len", &BuiltInFuncObject{Name: "len", NameParams: []string{"a"}, BuiltInfunc: builtInLen})
-	env.AddBuiltInFunc("newArray", &BuiltInFuncObject{Name: "newArray", NameParams: []string{"n", "type"}, BuiltInfunc: newArray})
-	env.AddBuiltInFunc("int", &BuiltInFuncObject{Name: "int", NameParams: []string{"a"}, BuiltInfunc: Int})
-	env.AddBuiltInFunc("float", &BuiltInFuncObject{Name: "float", NameParams: []string{"a"}, BuiltInfunc: Float})
-	env.AddBuiltInFunc("string", &BuiltInFuncObject{Name: "string", NameParams: []string{"a"}, BuiltInfunc: String})
-	env.AddBuiltInFunc("print", &BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrint})
-	env.AddBuiltInFunc("println", &BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrintln})
-	env.AddBuiltInFunc("read", &BuiltInFuncObject{Name: "read", NameParams: []string{}, BuiltInfunc: Input})
-	env.AddBuiltInFunc("import", &BuiltInFuncObject{Name: "import", NameParams: []string{"path"}, BuiltInfunc: ImportLibrary})
+	env.AddBuiltInFunc("len", BuiltInFuncObject{Name: "len", NameParams: []string{"a"}, BuiltInfunc: builtInLen})
+	env.AddBuiltInFunc("newArray", BuiltInFuncObject{Name: "newArray", NameParams: []string{"n", "type"}, BuiltInfunc: newArray})
+	env.AddBuiltInFunc("int", BuiltInFuncObject{Name: "int", NameParams: []string{"a"}, BuiltInfunc: Int})
+	env.AddBuiltInFunc("float", BuiltInFuncObject{Name: "float", NameParams: []string{"a"}, BuiltInfunc: Float})
+	env.AddBuiltInFunc("string", BuiltInFuncObject{Name: "string", NameParams: []string{"a"}, BuiltInfunc: String})
+	env.AddBuiltInFunc("print", BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrint})
+	env.AddBuiltInFunc("println", BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrintln})
+	env.AddBuiltInFunc("read", BuiltInFuncObject{Name: "read", NameParams: []string{}, BuiltInfunc: Input})
+	env.AddBuiltInFunc("import", BuiltInFuncObject{Name: "import", NameParams: []string{"path"}, BuiltInfunc: ImportLibrary})
 }
