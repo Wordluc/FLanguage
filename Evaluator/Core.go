@@ -1,7 +1,10 @@
 package Evaluator
 
 import (
+	"FLanguage/Lexer"
+	"FLanguage/Lexer/Token"
 	"FLanguage/Parser/Statements"
+	"errors"
 )
 
 func Eval(program *Statements.StatementNode, env *Environment) (IObject, error) {
@@ -22,4 +25,21 @@ func Eval(program *Statements.StatementNode, env *Environment) (IObject, error) 
 		return r, nil
 	}
 	return Eval(program.Next, env)
+}
+
+func Run(path string, env *Environment) (IObject, error) {
+	file, _ := Lexer.GetByteFromFile(path)
+	l, e := Lexer.New(file)
+	if e != nil {
+		return nil, errors.New("Lexer:" + e.Error())
+	}
+	p, e := Statements.ParsingStatement(&l, Token.END)
+	if e != nil {
+		return nil, errors.New("Parser:" + e.Error())
+	}
+	r, e := Eval(p.(*Statements.StatementNode), env)
+	if e != nil {
+		return nil, errors.New("Eval:" + e.Error())
+	}
+	return r, nil
 }
