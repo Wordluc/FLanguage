@@ -83,23 +83,34 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 			return nil, e
 		}
 
-		var elem IObject
-		elem, ok := value.(ArrayObject)
-		if !ok {
-			return nil, errors.New("not an array")
-		}
-		for _, idObj := range expObject.IndexsValues {
-			id, e := evalExpresion(idObj, env)
+		switch v := value.(type) {
+		case ArrayObject:
+			var elem IObject = v
+			for _, idObj := range expObject.IndexsValues {
+				id, e := evalExpresion(idObj, env)
+				if e != nil {
+					return nil, e
+				}
+				index := id.(NumberObject)
+				if index.Value < 0 || index.Value >= len(elem.(ArrayObject).Values) {
+					return nil, errors.New("index out of range")
+				}
+				elem = elem.(ArrayObject).Values[index.Value]
+			}
+			return elem, nil
+		case StringObject:
+			id, e := evalExpresion(expObject.IndexsValues[0], env)
 			if e != nil {
 				return nil, e
 			}
 			index := id.(NumberObject)
-			if index.Value < 0 || index.Value >= len(elem.(ArrayObject).Values) {
+			if index.Value < 0 || index.Value >= len(v.Value) {
 				return nil, errors.New("index out of range")
 			}
-			elem = elem.(ArrayObject).Values[index.Value]
+			return StringObject{Value: string(v.Value[index.Value])}, nil
 		}
-		return elem, nil
+		return nil, errors.New("invalid get expresion")
+
 	}
 	return nil, errors.New("invalid expresion")
 }
