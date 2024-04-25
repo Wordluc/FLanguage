@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
 )
 
@@ -29,7 +30,14 @@ func (l *Lexer) GetAll() []string {
 	return l.input
 }
 func GetByteFromFile(path string) ([]byte, error) {
-	file, err := os.ReadFile(path)
+	dirtyPath, e := os.Getwd()
+	if e != nil {
+		log.Fatalf("open file error: %v", e)
+		return nil, e
+	}
+	pwd := filepath.Dir(dirtyPath)
+
+	file, err := os.ReadFile(filepath.Join(pwd, "Library", path))
 	if err != nil {
 		log.Fatalf("open file error: %v", err)
 		return nil, err
