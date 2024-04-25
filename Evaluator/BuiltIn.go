@@ -132,8 +132,34 @@ func Input(env *Environment) (IObject, error) {
 func LoadBuiltInVariable(env *Environment) error {
 	return nil
 }
+func ImportLibrary(env *Environment) (IObject, error) {
+	pathVar, e := env.GetVariable("path")
+	if e != nil {
+		return nil, e
+	}
+	path, ok := pathVar.(StringObject)
+	if !ok {
+		return nil, errors.New("not a string")
+	}
+	envLibrary := NewEnvironment()
+	envLibrary.builtInFunc = env.builtInFunc
+	envLibrary.builtInVar = env.builtInVar
 
-func LoadBuiltInFunction(env *Environment) error {
+	_, e = Run(path.Value, envLibrary)
+	if e != nil {
+		return nil, e
+	}
+	if len(envLibrary.variables) > 0 {
+		return nil, errors.New("not possible define variables in library")
+	}
+	for envEx := range env.externals {
+		for name, funct := range envLibrary.functions {
+			env.externals[envEx].AddFunction(name, funct)
+		}
+	}
+	return nil, nil
+}
+func LoadBuiltInFunction(env *Environment) {
 	env.AddBuiltInFunc("len", &BuiltInFuncObject{Name: "len", NameParams: []string{"a"}, BuiltInfunc: builtInLen})
 	env.AddBuiltInFunc("newArray", &BuiltInFuncObject{Name: "newArray", NameParams: []string{"n", "type"}, BuiltInfunc: newArray})
 	env.AddBuiltInFunc("int", &BuiltInFuncObject{Name: "int", NameParams: []string{"a"}, BuiltInfunc: Int})
@@ -142,5 +168,5 @@ func LoadBuiltInFunction(env *Environment) error {
 	env.AddBuiltInFunc("print", &BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrint})
 	env.AddBuiltInFunc("println", &BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrintln})
 	env.AddBuiltInFunc("read", &BuiltInFuncObject{Name: "read", NameParams: []string{}, BuiltInfunc: Input})
-	return nil
+	env.AddBuiltInFunc("import", &BuiltInFuncObject{Name: "import", NameParams: []string{"path"}, BuiltInfunc: ImportLibrary})
 }

@@ -10,10 +10,11 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (IO
 	envFunc := &Environment{
 		variables:   make(map[string]IObject),
 		functions:   make(map[string]*Statements.FuncDeclarationStatement),
-		externals:   env,
+		externals:   make([]*Environment, 0),
 		builtInVar:  env.builtInVar,
 		builtInFunc: env.builtInFunc,
 	}
+	envFunc.externals = append(envFunc.externals, env)
 	funcBuiltInObject, ok := env.GetBuiltInFunc(expression.NameFunc)
 	if ok == nil {
 		err := evalParms(expression.Values, funcBuiltInObject.NameParams, envFunc)
@@ -30,7 +31,6 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (IO
 	if e != nil {
 		return nil, e
 	}
-
 	if len(fun.Params) != len(expression.Values) {
 		return nil, errors.New("not enough parms")
 	}

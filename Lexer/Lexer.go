@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strings"
 )
 
 type Lexer struct {
@@ -29,7 +30,13 @@ func (l *Lexer) GetAll() []string {
 	return l.input
 }
 func GetByteFromFile(path string) ([]byte, error) {
-	file, err := os.ReadFile(path)
+	dirtyPath, e := os.Getwd()
+	if e != nil {
+		log.Fatalf("open file error: %v", e)
+		return nil, e
+	}
+	pwd := strings.TrimRight(dirtyPath, "\\Evaluator\\")
+	file, err := os.ReadFile(pwd + "\\" + path)
 	if err != nil {
 		log.Fatalf("open file error: %v", err)
 		return nil, err
