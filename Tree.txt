@@ -2,7 +2,7 @@
 let nil="";
 
 Ff AddNode(value,node){
-	if(len(node)==0){
+	if(node==nil){
 		ret [nil,value,nil];
 	}
 	if(value>node[1]){
@@ -28,14 +28,14 @@ Ff MakeTree(list){
 
 Ff GetListFromTree(node,i,list){
 
-	if(len(node[0])!=0){
+	if(node[0]!=nil){
 		GetListFromTree(node[0],i,list);
 	}
 	list[i[0]]=node[1];
 	//utilizzo l'array con l'elemento i in modo da passare l'indice come reference, sfruttando le slice di golang
 	i[0]=i[0]+1;
 
-	if(len(node[2])!=0){
+	if(node[2]!=nil){
 		GetListFromTree(node[2],i,list);
 	}
 }
