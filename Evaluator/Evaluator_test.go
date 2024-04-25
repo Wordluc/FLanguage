@@ -81,12 +81,12 @@ func TestAssigmentNegativeNumber(t *testing.T) {
 		t.Error("eval fallita", e)
 	}
 	envObject, e := env.GetVariable("a")
-	v := envObject.(FloatNumberObject).Value
+	v := envObject.(NumberObject).Value
 	if v != -5 {
 		t.Errorf("value is not %v got %v", -5, v)
 	}
 	envObject, e = env.GetVariable("b")
-	v = envObject.(FloatNumberObject).Value
+	v = envObject.(NumberObject).Value
 	if v != 5 {
 		t.Errorf("value is not %v got %v", 5, v)
 	}
@@ -95,7 +95,7 @@ func TestAssigmentDecimaleNumber(t *testing.T) {
 
 	ist := `
 	let a=5.5;
-	let b=a+1;
+	let b=a+float(1);
 	END`
 	lexer, e := Lexer.New([]byte(ist))
 	if e != nil {
@@ -106,7 +106,9 @@ func TestAssigmentDecimaleNumber(t *testing.T) {
 		t.Error("parsing fallita")
 	}
 	root := programParse
-	env := &Environment{variables: make(map[string]IObject), externals: nil}
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
@@ -605,7 +607,7 @@ func TestCombineStringAndNumber(t *testing.T) {
 	ist := `
 
 	let a="ciao per";
-	a=a+2;
+	a=a+string(2);
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
@@ -619,6 +621,7 @@ func TestCombineStringAndNumber(t *testing.T) {
 	root := programParse
 
 	env := NewEnvironment()
+	LoadBuiltInFunction(env)
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
@@ -632,7 +635,7 @@ func TestCombineStringAndNumber(t *testing.T) {
 func TestCombineNumberAndString(t *testing.T) {
 	ist := `
 
-	let a=2+"ciao per";
+	let a=string(2)+"ciao per";
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
@@ -646,6 +649,7 @@ func TestCombineNumberAndString(t *testing.T) {
 	root := programParse
 
 	env := NewEnvironment()
+	LoadBuiltInFunction(env)
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
@@ -679,7 +683,6 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 		t.Error(e)
 	}
 	b, _ := env.GetVariable("b")
-	t.Log(b.ToString())
 	if b.(NumberObject).Value != 3 {
 		t.Error("should be '3' ,got:", b.(NumberObject).Value)
 	}
@@ -704,7 +707,6 @@ func TestDeclareArrayIntoArray(t *testing.T) {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
-
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
