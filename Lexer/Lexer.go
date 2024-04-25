@@ -5,8 +5,8 @@ import (
 	"errors"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
-	"strings"
 )
 
 type Lexer struct {
@@ -35,8 +35,9 @@ func GetByteFromFile(path string) ([]byte, error) {
 		log.Fatalf("open file error: %v", e)
 		return nil, e
 	}
-	pwd := strings.TrimRight(dirtyPath, "\\Evaluator\\")
-	file, err := os.ReadFile(pwd + "\\" + path)
+	pwd := filepath.Dir(dirtyPath)
+
+	file, err := os.ReadFile(filepath.Join(pwd, path))
 	if err != nil {
 		log.Fatalf("open file error: %v", err)
 		return nil, err
