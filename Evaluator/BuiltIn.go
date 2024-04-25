@@ -55,6 +55,8 @@ func Int(env *Environment) (IObject, error) {
 	}
 
 	switch a := v.(type) {
+	case FloatNumberObject:
+		return NumberObject{Value: int(a.Value)}, nil
 	case NumberObject:
 		return a, nil
 	case StringObject:
@@ -72,7 +74,30 @@ func Int(env *Environment) (IObject, error) {
 		return nil, errors.New("not a number")
 	}
 }
+func Float(env *Environment) (IObject, error) {
+	v, e := env.GetVariable("a")
+	if e != nil {
+		return nil, e
+	}
 
+	switch a := v.(type) {
+	case NumberObject:
+		return FloatNumberObject{Value: float64(a.Value)}, nil
+	case StringObject:
+		n, e := strconv.ParseFloat(a.Value, 32)
+		if e != nil {
+			return nil, errors.New("not a number")
+		}
+		return FloatNumberObject{Value: n}, nil
+	case BoolObject:
+		if a.Value {
+			return FloatNumberObject{Value: 1}, nil
+		}
+		return FloatNumberObject{Value: 0}, nil
+	default:
+		return nil, errors.New("not a number")
+	}
+}
 func String(env *Environment) (IObject, error) {
 	v, e := env.GetVariable("a")
 	if e != nil {
@@ -112,6 +137,7 @@ func LoadBuiltInFunction(env *Environment) error {
 	env.AddBuiltInFunc("len", &BuiltInFuncObject{Name: "len", NameParams: []string{"a"}, BuiltInfunc: builtInLen})
 	env.AddBuiltInFunc("newArray", &BuiltInFuncObject{Name: "newArray", NameParams: []string{"n", "type"}, BuiltInfunc: newArray})
 	env.AddBuiltInFunc("int", &BuiltInFuncObject{Name: "int", NameParams: []string{"a"}, BuiltInfunc: Int})
+	env.AddBuiltInFunc("float", &BuiltInFuncObject{Name: "float", NameParams: []string{"a"}, BuiltInfunc: Float})
 	env.AddBuiltInFunc("string", &BuiltInFuncObject{Name: "string", NameParams: []string{"a"}, BuiltInfunc: String})
 	env.AddBuiltInFunc("print", &BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrint})
 	env.AddBuiltInFunc("println", &BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrintln})
