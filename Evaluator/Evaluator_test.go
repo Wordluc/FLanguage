@@ -997,7 +997,7 @@ func TestGetCharFromSting(t *testing.T) {
 }
 func TestImportLibrary(t *testing.T) {
 	ist := `
-	import("Library\BinarySearch.txt");
+	import("BinarySearch.txt");
 	let list=[2,6,7,9,22,44,55,66,77,88,99];
 	let b=BinarySearch(list,66);
 	END
