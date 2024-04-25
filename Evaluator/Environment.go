@@ -9,7 +9,7 @@ import (
 type Environment struct {
 	variables   map[string]IObject
 	functions   map[string]*Statements.FuncDeclarationStatement
-	externals   *Environment
+	externals   []*Environment
 	builtInFunc map[string]*BuiltInFuncObject
 	builtInVar  map[string]IObject
 }
@@ -18,7 +18,7 @@ func NewEnvironment() *Environment {
 	return &Environment{
 		variables:   make(map[string]IObject),
 		functions:   make(map[string]*Statements.FuncDeclarationStatement),
-		externals:   nil,
+		externals:   make([]*Environment, 2),
 		builtInFunc: make(map[string]*BuiltInFuncObject),
 		builtInVar:  make(map[string]IObject),
 	}
@@ -63,9 +63,11 @@ func (v *Environment) GetVariable(name string) (IObject, error) {
 	if v.externals == nil {
 		return nil, errors.New("variable not defined,name:" + name)
 	}
-	variable, existEx := v.externals.GetVariable(name)
-	if existEx == nil {
-		return variable, nil
+	for envEx := range v.externals {
+		variable, existEx := v.externals[envEx].GetVariable(name)
+		if existEx == nil {
+			return variable, nil
+		}
 	}
 	return nil, errors.New("variable not defined,name:" + name)
 }
@@ -73,14 +75,16 @@ func (v *Environment) GetVariable(name string) (IObject, error) {
 func (v *Environment) GetFunction(name string) (*Statements.FuncDeclarationStatement, error) {
 	funct, exist := v.functions[name]
 	if !exist {
-		if v.externals == nil {
-			return nil, errors.New("variable not defined,name:" + name)
+		for _, envEx := range v.externals {
+			if envEx == nil {
+				break
+			}
+			variable, existEx := envEx.GetFunction(name)
+			if existEx == nil {
+				return variable, nil
+			}
 		}
-		funct, existEx := v.externals.GetFunction(name)
-		if existEx != nil {
-			return nil, errors.New("function not defined,name:" + name)
-		}
-		return funct, nil
+		return nil, errors.New("function not defined,name:" + name)
 	}
 	return funct, nil
 }
