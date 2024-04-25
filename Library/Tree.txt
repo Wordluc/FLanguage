@@ -34,7 +34,7 @@ Ff interateTreeNodes(node,i,list){
 		interateTreeNodes(node[2],i,list);
 	}
 }
-Ff GetOrderedListFromTree(node,n){
+Ff FromTreeToList(node,n){
 
 	let i=[0];
 	let list=newArray(n,0);

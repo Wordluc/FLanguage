@@ -50,7 +50,7 @@ func TestTree(t *testing.T) {
 	import("Tree.txt");
 	let list=[22,21,6,7,9,0,55,6,-20,88,99];
 	let node=MakeTree(list);
-	let orderedList=GetOrderedListFromTree(node,len(list));
+	let orderedList=FromTreeToList(node,len(list));
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
