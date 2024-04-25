@@ -37,7 +37,7 @@ func GetByteFromFile(path string) ([]byte, error) {
 	}
 	pwd := filepath.Dir(dirtyPath)
 
-	file, err := os.ReadFile(filepath.Join(pwd, path))
+	file, err := os.ReadFile(filepath.Join(pwd, "Library", path))
 	if err != nil {
 		log.Fatalf("open file error: %v", err)
 		return nil, err
