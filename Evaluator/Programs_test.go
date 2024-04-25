@@ -182,7 +182,7 @@ func TestDicotomicSearch(t *testing.T) {
 		let low=0;
 		let high=len(array)-1;
 		let i=len(array)/2;
-		while (low<=high){
+		while (low<high){
 			if(array[i]==value){
 				ret i;				
 			}
@@ -190,14 +190,14 @@ func TestDicotomicSearch(t *testing.T) {
 			if(value>array[i]){
                              low=i+1;
 			}else{
-			     high=i-1;
+			     high=i;
 			}
 			i=(high+low)/2;
 		}
 		ret -1;
 	}
-	let array=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
-	let result= RicercaDicotomica(array,16);
+	let array=[1,2,3,7,8,9,10,11,13,14,15,16,17,19,20];
+	let result= RicercaDicotomica(array,7);
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
@@ -219,7 +219,7 @@ func TestDicotomicSearch(t *testing.T) {
 	}
 
 	a, _ := env.GetVariable("result")
-	if a.(NumberObject).Value != 15 {
-		t.Error("value should be 15,got:", a.(NumberObject).Value)
+	if a.(NumberObject).Value != 3 {
+		t.Error("value should be 3,got:", a.(NumberObject).Value)
 	}
 }
