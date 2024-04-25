@@ -3,6 +3,7 @@ package Evaluator
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
 )
@@ -119,6 +120,7 @@ func builtInLen(env *Environment) (IObject, error) {
 		return NumberObject{Value: len(a.Values)}, nil
 
 	default:
+		fmt.Println(a.ToString())
 		return nil, errors.New("impossible use len")
 	}
 }
