@@ -24,7 +24,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		}
 		return ob, nil
 	case Statements.FuncDeclarationStatement:
-		env.AddFunction(stat.Identifier, &stat)
+		env.AddFunction(stat.Identifier, stat)
 		return nil, nil
 	case Statements.CallFuncStatement:
 		value, err := evalExpresion(stat.Expresion, env)
