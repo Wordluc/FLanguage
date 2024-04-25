@@ -141,19 +141,15 @@ func ImportLibrary(env *Environment) (IObject, error) {
 	if !ok {
 		return nil, errors.New("not a string")
 	}
-	envLibrary := NewEnvironment()
-	envLibrary.builtInFunc = env.builtInFunc
-	envLibrary.builtInVar = env.builtInVar
-
-	_, e = Run(path.Value, envLibrary)
+	_, e = Run(path.Value, env)
 	if e != nil {
 		return nil, e
 	}
-	if len(envLibrary.variables) > 0 {
+	if len(env.variables) > 1 {
 		return nil, errors.New("not possible define variables in library")
 	}
 	for envEx := range env.externals {
-		for name, funct := range envLibrary.functions {
+		for name, funct := range env.functions {
 			env.externals[envEx].AddFunction(name, funct)
 		}
 	}
