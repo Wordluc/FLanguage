@@ -6,7 +6,7 @@ import (
 	"reflect"
 )
 
-func evalStatement(statement Statements.IStatement, env *Environment) (IObject, error) {
+func evalStatement(statement Statements.IStatement, env *Environment) (iObject, error) {
 
 	switch stat := statement.(type) {
 	case Statements.LetStatement:
@@ -14,17 +14,17 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		if err != nil {
 			return nil, err
 		}
-		e := env.AddVariable(stat.Identifier, value)
+		e := env.addVariable(stat.Identifier, value)
 		if e != nil {
 			return nil, e
 		}
-		ob := LetObject{
+		ob := letObject{
 			Name:  stat.Identifier,
 			Value: value,
 		}
 		return ob, nil
 	case Statements.FuncDeclarationStatement:
-		env.AddFunction(stat.Identifier, stat)
+		env.addFunction(stat.Identifier, stat)
 		return nil, nil
 	case Statements.CallFuncStatement:
 		value, err := evalExpresion(stat.Expresion, env)
@@ -37,7 +37,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		if err != nil {
 			return nil, err
 		}
-		ob := ReturnObject{
+		ob := returnObject{
 			Value: value,
 		}
 		return ob, nil
@@ -46,7 +46,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		if err != nil {
 			return nil, err
 		}
-		e := env.SetVariable(stat.Identifier, value)
+		e := env.setVariable(stat.Identifier, value)
 		if e != nil {
 			return nil, e
 		}
@@ -56,7 +56,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		if e != nil {
 			return nil, e
 		}
-		cond, isBool := obCondition.(BoolObject)
+		cond, isBool := obCondition.(boolObject)
 		if !isBool {
 			return nil, errors.New("invalid condition" + reflect.TypeOf(obCondition).String())
 		}
@@ -74,25 +74,25 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		if e != nil {
 			return nil, e
 		}
-		array, e := env.GetVariable(stat.Identifier)
+		array, e := env.getVariable(stat.Identifier)
 		if e != nil {
 			return nil, e
 		}
-		var elem IObject = array.(ArrayObject)
+		var elem iObject = array.(arrayObject)
 		for i, idObj := range stat.Indexs {
 			id, e := evalExpresion(idObj, env)
 			if e != nil {
 				return nil, e
 			}
-			index := id.(NumberObject)
-			if index.Value < 0 || index.Value >= len(elem.(ArrayObject).Values) {
+			index := id.(numberObject)
+			if index.Value < 0 || index.Value >= len(elem.(arrayObject).Values) {
 				return nil, errors.New("index out of range")
 			}
 
 			if i == len(stat.Indexs)-1 {
-				elem.(ArrayObject).Values[index.Value] = exp
+				elem.(arrayObject).Values[index.Value] = exp
 			} else {
-				elem = elem.(ArrayObject).Values[index.Value]
+				elem = elem.(arrayObject).Values[index.Value]
 			}
 		}
 		return nil, nil
@@ -101,7 +101,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 		if e != nil {
 			return nil, e
 		}
-		cond, isBool := obCondition.(BoolObject)
+		cond, isBool := obCondition.(boolObject)
 		if !isBool {
 			return nil, errors.New("invalid condition")
 		}
@@ -110,7 +110,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 			if e != nil {
 				return nil, e
 			}
-			r, isReturn := rObject.(ReturnObject)
+			r, isReturn := rObject.(returnObject)
 			if isReturn {
 				return r, nil
 			}
@@ -118,7 +118,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (IObject, 
 			if e != nil {
 				return nil, e
 			}
-			cond, isBool = obCondition.(BoolObject)
+			cond, isBool = obCondition.(boolObject)
 			if !isBool {
 				return nil, errors.New("invalid condition")
 			}

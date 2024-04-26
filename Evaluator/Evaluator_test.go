@@ -20,15 +20,15 @@ func TestLetAssigment(t *testing.T) {
 		t.Error("parsing fallita")
 	}
 	root := programParse
-	program, e := Eval(root.(*Statements.StatementNode), &Environment{variables: make(map[string]IObject), externals: nil})
+	program, e := Eval(root.(*Statements.StatementNode), &Environment{variables: make(map[string]iObject), externals: nil})
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	object, isLet := program.(LetObject)
+	object, isLet := program.(letObject)
 	if !isLet {
 		t.Error("is not a let")
 	}
-	v := object.Value.(NumberObject).Value
+	v := object.Value.(numberObject).Value
 	if v != 59 {
 		t.Errorf("value is not %v got %v", 59, v)
 	}
@@ -49,13 +49,13 @@ func TestAssigment(t *testing.T) {
 		t.Error("parsing fallita")
 	}
 	root := programParse
-	env := &Environment{variables: make(map[string]IObject), externals: nil}
+	env := &Environment{variables: make(map[string]iObject), externals: nil}
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	envObject, e := env.GetVariable("a")
-	v := envObject.(NumberObject).Value
+	envObject, e := env.getVariable("a")
+	v := envObject.(numberObject).Value
 	if v != 5 {
 		t.Errorf("value is not %v got %v", 5, v)
 	}
@@ -75,18 +75,18 @@ func TestAssigmentNegativeNumber(t *testing.T) {
 		t.Error("parsing fallita")
 	}
 	root := programParse
-	env := &Environment{variables: make(map[string]IObject), externals: nil}
+	env := &Environment{variables: make(map[string]iObject), externals: nil}
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	envObject, e := env.GetVariable("a")
-	v := envObject.(NumberObject).Value
+	envObject, e := env.getVariable("a")
+	v := envObject.(numberObject).Value
 	if v != -5 {
 		t.Errorf("value is not %v got %v", -5, v)
 	}
-	envObject, e = env.GetVariable("b")
-	v = envObject.(NumberObject).Value
+	envObject, e = env.getVariable("b")
+	v = envObject.(numberObject).Value
 	if v != 5 {
 		t.Errorf("value is not %v got %v", 5, v)
 	}
@@ -113,13 +113,13 @@ func TestAssigmentDecimaleNumber(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	envObject, e := env.GetVariable("a")
-	v := envObject.(FloatNumberObject).Value
+	envObject, e := env.getVariable("a")
+	v := envObject.(floatNumberObject).Value
 	if v != 5.5 {
 		t.Errorf("value is not %v got %v", 5.5, v)
 	}
-	envObject, e = env.GetVariable("b")
-	v = envObject.(FloatNumberObject).Value
+	envObject, e = env.getVariable("b")
+	v = envObject.(floatNumberObject).Value
 	if v != 6.5 {
 		t.Errorf("value is not %v got %v", 6.5, v)
 	}
@@ -138,13 +138,13 @@ func TestAssigmentAndReuse(t *testing.T) {
 		t.Error("parsing fallita")
 	}
 	root := programParse
-	env := &Environment{variables: make(map[string]IObject), externals: nil}
+	env := &Environment{variables: make(map[string]iObject), externals: nil}
 	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	envObject, e := env.GetVariable("a")
-	v := envObject.(NumberObject).Value
+	envObject, e := env.getVariable("a")
+	v := envObject.(numberObject).Value
 	if v != 177 {
 		t.Errorf("value is not %v got %v", 177, v)
 	}
@@ -176,8 +176,8 @@ func TestCallFuncReturn(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	if (program.(NumberObject).Value) != 59 {
-		t.Errorf("value is not %v got %v", 59, program.(ReturnObject).Value.(NumberObject).Value)
+	if (program.(numberObject).Value) != 59 {
+		t.Errorf("value is not %v got %v", 59, program.(returnObject).Value.(numberObject).Value)
 	}
 }
 
@@ -232,8 +232,8 @@ func TestIncVar(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	v, _ := env.GetVariable("a")
-	if v.(NumberObject).Value != 3 {
+	v, _ := env.getVariable("a")
+	if v.(numberObject).Value != 3 {
 		t.Error("value should be 3")
 	}
 
@@ -263,8 +263,8 @@ func TestIncInParm(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	v, _ := env.GetVariable("a")
-	if v.(NumberObject).Value != 4 {
+	v, _ := env.getVariable("a")
+	if v.(numberObject).Value != 4 {
 		t.Error("value should be 4")
 	}
 
@@ -290,8 +290,8 @@ func TestBooleanOp(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	val := (program.(ReturnObject).Value)
-	v, _ := val.(BoolObject)
+	val := (program.(returnObject).Value)
+	v, _ := val.(boolObject)
 	if !v.Value {
 		t.Error("3 is greater than 2")
 	}
@@ -320,12 +320,12 @@ func TestNumberComparison(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	a, _ := env.GetVariable("a")
-	b, _ := env.GetVariable("b")
-	if !a.(BoolObject).Value {
+	a, _ := env.getVariable("a")
+	b, _ := env.getVariable("b")
+	if !a.(boolObject).Value {
 		t.Error("should be true")
 	}
-	if b.(BoolObject).Value {
+	if b.(boolObject).Value {
 		t.Error("should be false")
 	}
 
@@ -354,16 +354,16 @@ func TestStringComparison(t *testing.T) {
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
-	a, _ := env.GetVariable("a")
-	b, _ := env.GetVariable("b")
-	c, _ := env.GetVariable("c")
-	if !a.(BoolObject).Value {
+	a, _ := env.getVariable("a")
+	b, _ := env.getVariable("b")
+	c, _ := env.getVariable("c")
+	if !a.(boolObject).Value {
 		t.Error("should be true, ffff != f")
 	}
-	if !b.(BoolObject).Value {
+	if !b.(boolObject).Value {
 		t.Error("should be true, ciao==ciao")
 	}
-	if !c.(BoolObject).Value {
+	if !c.(boolObject).Value {
 		t.Error("should be true, 3>=3")
 	}
 }
@@ -437,8 +437,8 @@ func TestUseResultFunction(t *testing.T) {
 
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
-	v, _ := env.GetVariable("a")
-	if v.(NumberObject).Value != 5 {
+	v, _ := env.getVariable("a")
+	if v.(numberObject).Value != 5 {
 		t.Error("should be 5,got:", v)
 	}
 }
@@ -460,9 +460,9 @@ func TestSumStrings(t *testing.T) {
 
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
-	v, _ := env.GetVariable("a")
-	if v.(StringObject).Value != "ciao bene" {
-		t.Error("should be ciao bene ,got:", v.(StringObject).Value)
+	v, _ := env.getVariable("a")
+	if v.(stringObject).Value != "ciao bene" {
+		t.Error("should be ciao bene ,got:", v.(stringObject).Value)
 	}
 }
 
@@ -487,9 +487,9 @@ func TestSumStringsFromFunc(t *testing.T) {
 
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
-	v, _ := env.GetVariable("a")
-	if v.(StringObject).Value != "ciao prova" {
-		t.Error("should be ciao bene ,got:", v.(StringObject).Value)
+	v, _ := env.getVariable("a")
+	if v.(stringObject).Value != "ciao prova" {
+		t.Error("should be ciao bene ,got:", v.(stringObject).Value)
 	}
 }
 
@@ -514,9 +514,9 @@ func TestPassValueThroughtFunc(t *testing.T) {
 
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
-	v, _ := env.GetVariable("a")
-	if v.(NumberObject).Value != 4 {
-		t.Error("should be 4 ,got:", v.(NumberObject).Value)
+	v, _ := env.getVariable("a")
+	if v.(numberObject).Value != 4 {
+		t.Error("should be 4 ,got:", v.(numberObject).Value)
 	}
 }
 func TestSumStringInFunc(t *testing.T) {
@@ -540,9 +540,9 @@ func TestSumStringInFunc(t *testing.T) {
 
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
-	v, _ := env.GetVariable("a")
-	if v.(StringObject).Value != "ciao prova" {
-		t.Error("should be ciao prova ,got:", v.(StringObject).Value)
+	v, _ := env.getVariable("a")
+	if v.(stringObject).Value != "ciao prova" {
+		t.Error("should be ciao prova ,got:", v.(stringObject).Value)
 	}
 }
 func TestIfStatement(t *testing.T) {
@@ -567,9 +567,9 @@ func TestIfStatement(t *testing.T) {
 
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
-	v, _ := env.GetVariable("a")
-	if v.(NumberObject).Value != 4 {
-		t.Error("should be 4 ,got:", v.(NumberObject).Value)
+	v, _ := env.getVariable("a")
+	if v.(numberObject).Value != 4 {
+		t.Error("should be 4 ,got:", v.(numberObject).Value)
 	}
 }
 
@@ -597,9 +597,9 @@ func TestElseStatement(t *testing.T) {
 
 	env := NewEnvironment()
 	_, e = Eval(root.(*Statements.StatementNode), env)
-	v, _ := env.GetVariable("a")
-	if v.(NumberObject).Value != 8 {
-		t.Error("should be 8 ,got:", v.(NumberObject).Value)
+	v, _ := env.getVariable("a")
+	if v.(numberObject).Value != 8 {
+		t.Error("should be 8 ,got:", v.(numberObject).Value)
 	}
 }
 
@@ -626,9 +626,9 @@ func TestCombineStringAndNumber(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	a, _ := env.GetVariable("a")
-	if a.(StringObject).Value != "ciao per2" {
-		t.Error("should be 'ciao per2' ,got:", a.(StringObject).Value)
+	a, _ := env.getVariable("a")
+	if a.(stringObject).Value != "ciao per2" {
+		t.Error("should be 'ciao per2' ,got:", a.(stringObject).Value)
 	}
 }
 
@@ -654,9 +654,9 @@ func TestCombineNumberAndString(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	a, _ := env.GetVariable("a")
-	if a.(StringObject).Value != "2ciao per" {
-		t.Error("should be '2ciao per' ,got:", a.(StringObject).Value)
+	a, _ := env.getVariable("a")
+	if a.(stringObject).Value != "2ciao per" {
+		t.Error("should be '2ciao per' ,got:", a.(stringObject).Value)
 	}
 }
 func TestDeclareAndGetFromArray(t *testing.T) {
@@ -682,13 +682,13 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	b, _ := env.GetVariable("b")
-	if b.(NumberObject).Value != 3 {
-		t.Error("should be '3' ,got:", b.(NumberObject).Value)
+	b, _ := env.getVariable("b")
+	if b.(numberObject).Value != 3 {
+		t.Error("should be '3' ,got:", b.(numberObject).Value)
 	}
-	c, _ := env.GetVariable("c")
-	if c.(StringObject).Value != "cioa" {
-		t.Error("should be 'cioa' ,got:", c.(StringObject).Value)
+	c, _ := env.getVariable("c")
+	if c.(stringObject).Value != "cioa" {
+		t.Error("should be 'cioa' ,got:", c.(stringObject).Value)
 	}
 }
 func TestDeclareArrayIntoArray(t *testing.T) {
@@ -712,13 +712,13 @@ func TestDeclareArrayIntoArray(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	b, _ := env.GetVariable("b")
-	if b.(NumberObject).Value != 1 {
-		t.Error("should be '1' ,got:", b.(NumberObject).Value)
+	b, _ := env.getVariable("b")
+	if b.(numberObject).Value != 1 {
+		t.Error("should be '1' ,got:", b.(numberObject).Value)
 	}
-	c, _ := env.GetVariable("c")
-	if c.(NumberObject).Value != 2 {
-		t.Error("should be '2' ,got:", c.(NumberObject).Value)
+	c, _ := env.getVariable("c")
+	if c.(numberObject).Value != 2 {
+		t.Error("should be '2' ,got:", c.(numberObject).Value)
 	}
 }
 
@@ -745,13 +745,13 @@ func TestBuiltInFunc(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	b, _ := env.GetVariable("b")
-	if b.(NumberObject).Value != 4 {
-		t.Error("should be '4' ,got:", b.(NumberObject).Value)
+	b, _ := env.getVariable("b")
+	if b.(numberObject).Value != 4 {
+		t.Error("should be '4' ,got:", b.(numberObject).Value)
 	}
-	c, _ := env.GetVariable("c")
-	if c.(NumberObject).Value != 5 {
-		t.Error("should be '5' ,got:", c.(NumberObject).Value)
+	c, _ := env.getVariable("c")
+	if c.(numberObject).Value != 5 {
+		t.Error("should be '5' ,got:", c.(numberObject).Value)
 	}
 }
 func TestOutofRangeArray(t *testing.T) {
@@ -800,15 +800,15 @@ func TestCreateArray(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	b, _ := env.GetVariable("b")
-	a, _ := env.GetVariable("a")
-	if b.(NumberObject).Value != 4 {
-		t.Error("should be '4' ,got:", b.(NumberObject).Value)
+	b, _ := env.getVariable("b")
+	a, _ := env.getVariable("a")
+	if b.(numberObject).Value != 4 {
+		t.Error("should be '4' ,got:", b.(numberObject).Value)
 	}
-	if _, ok := a.(ArrayObject); !ok {
+	if _, ok := a.(arrayObject); !ok {
 		t.Error("should be a array ")
 	}
-	if _, ok := a.(ArrayObject).Values[0].(NumberObject); !ok {
+	if _, ok := a.(arrayObject).Values[0].(numberObject); !ok {
 		t.Error("should be a number")
 	}
 }
@@ -835,11 +835,11 @@ func TestGetMatrix(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	a, e := env.GetVariable("b")
+	a, e := env.getVariable("b")
 	if e != nil {
 		t.Error(e)
 	}
-	v := a.(NumberObject)
+	v := a.(numberObject)
 	if e != nil {
 		t.Error(e)
 	}
@@ -872,11 +872,11 @@ func TestGetArrayFromFunc(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	a, e := env.GetVariable("b")
+	a, e := env.getVariable("b")
 	if e != nil {
 		t.Error(e)
 	}
-	v := a.(NumberObject)
+	v := a.(numberObject)
 	if e != nil {
 		t.Error(e)
 	}
@@ -907,16 +907,16 @@ func TestSetArray(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	a, e := env.GetVariable("a")
+	a, e := env.getVariable("a")
 	if e != nil {
 		t.Error(e)
 	}
-	v := a.(ArrayObject)
+	v := a.(arrayObject)
 	if e != nil {
 		t.Error(e)
 	}
-	if v.Values[2].(NumberObject).Value != 0 {
-		t.Error("should be '0' ,got:", v.Values[2].(NumberObject).Value)
+	if v.Values[2].(numberObject).Value != 0 {
+		t.Error("should be '0' ,got:", v.Values[2].(numberObject).Value)
 	}
 
 }
@@ -946,11 +946,11 @@ func TestWhile(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	a, e := env.GetVariable("i")
+	a, e := env.getVariable("i")
 	if e != nil {
 		t.Error(e)
 	}
-	v := a.(NumberObject)
+	v := a.(numberObject)
 	if e != nil {
 		t.Error(e)
 	}
@@ -983,11 +983,11 @@ func TestGetCharFromSting(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	a, e := env.GetVariable("b")
+	a, e := env.getVariable("b")
 	if e != nil {
 		t.Error(e)
 	}
-	v := a.(StringObject)
+	v := a.(stringObject)
 	if e != nil {
 		t.Error(e)
 	}

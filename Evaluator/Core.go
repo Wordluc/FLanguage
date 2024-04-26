@@ -7,12 +7,12 @@ import (
 	"errors"
 )
 
-func Eval(program *Statements.StatementNode, env *Environment) (IObject, error) {
+func Eval(program *Statements.StatementNode, env *Environment) (iObject, error) {
 	r, e := evalStatement(program.Statement, env)
 	if e != nil {
 		return nil, e
 	}
-	_, isReturn := r.(ReturnObject)
+	_, isReturn := r.(returnObject)
 	if isReturn {
 		return r, nil
 	}
@@ -27,7 +27,7 @@ func Eval(program *Statements.StatementNode, env *Environment) (IObject, error) 
 	return Eval(program.Next, env)
 }
 
-func Run(path string, env *Environment) (IObject, error) {
+func Run(path string, env *Environment) (iObject, error) {
 	file, _ := Lexer.GetByteFromFile(path)
 	l, e := Lexer.New(file)
 	if e != nil {
