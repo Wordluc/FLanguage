@@ -6,6 +6,7 @@ import (
 
 type TokenType uint8
 
+// /This are the different types of tokens that can be used
 const (
 	END TokenType = iota
 	LET

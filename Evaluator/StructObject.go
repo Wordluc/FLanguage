@@ -2,68 +2,68 @@ package Evaluator
 
 import "strconv"
 
-type IObject interface {
+type iObject interface {
 	ToString() string
 }
 
-type LetObject struct {
+type letObject struct {
 	Name  string
-	Value IObject
+	Value iObject
 }
 
-func (l LetObject) ToString() string {
+func (l letObject) ToString() string {
 	return "let " + l.Name + " = " + l.Value.ToString()
 }
 
-type StringObject struct {
+type stringObject struct {
 	Value string
 }
 
-func (s StringObject) ToString() string {
+func (s stringObject) ToString() string {
 	return s.Value
 }
 
-type NumberObject struct {
+type numberObject struct {
 	Value int
 }
 
-func (n NumberObject) ToString() string {
+func (n numberObject) ToString() string {
 	return strconv.Itoa(n.Value)
 }
 
-type FloatNumberObject struct {
+type floatNumberObject struct {
 	Value float64
 }
 
-func (n FloatNumberObject) ToString() string {
+func (n floatNumberObject) ToString() string {
 	return strconv.FormatFloat(n.Value, 'f', -1, 32)
 }
 
-type ReturnObject struct {
-	Value IObject
+type returnObject struct {
+	Value iObject
 }
 
-func (r ReturnObject) ToString() string {
+func (r returnObject) ToString() string {
 	return r.Value.ToString()
 }
 
-type BoolObject struct {
+type boolObject struct {
 	Value bool
 }
 
-func (b BoolObject) ToString() string {
+func (b boolObject) ToString() string {
 	if b.Value {
 		return "true"
 	}
 	return "false"
 }
 
-type ArrayObject struct {
-	Values []IObject
+type arrayObject struct {
+	Values []iObject
 	Type   string
 }
 
-func (a ArrayObject) ToString() string {
+func (a arrayObject) ToString() string {
 	r := "["
 	for i, v := range a.Values {
 		r += v.ToString()
@@ -74,15 +74,15 @@ func (a ArrayObject) ToString() string {
 	return r + "]"
 }
 
-type BuiltInFunc func(env *Environment) (IObject, error)
+type builtInFunc func(env *Environment) (iObject, error)
 
-type BuiltInFuncObject struct {
+type builtInFuncObject struct {
 	Name        string
 	NameParams  []string
-	BuiltInfunc BuiltInFunc
+	BuiltInfunc builtInFunc
 }
 
-func (b BuiltInFuncObject) ToString() string {
+func (b builtInFuncObject) ToString() string {
 	r := b.Name + "("
 	for _, v := range b.NameParams {
 		r += v + ","

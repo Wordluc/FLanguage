@@ -1,7 +1,6 @@
-package Library
+package Evaluator
 
 import (
-	"FLanguage/Evaluator"
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
 	"FLanguage/Parser/Statements"
@@ -25,18 +24,18 @@ func TestBinarySearch(t *testing.T) {
 	}
 	root := programParse
 
-	env := Evaluator.NewEnvironment()
-	Evaluator.LoadBuiltInFunction(env)
-	Evaluator.LoadBuiltInVariable(env)
-	_, e = Evaluator.Eval(root.(*Statements.StatementNode), env)
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
-	a, e := env.GetVariable("b")
+	a, e := env.getVariable("b")
 	if e != nil {
 		t.Error(e)
 	}
-	v := a.(Evaluator.NumberObject)
+	v := a.(numberObject)
 	if e != nil {
 		t.Error(e)
 	}
@@ -63,24 +62,24 @@ func TestTree(t *testing.T) {
 	}
 	root := programParse
 
-	env := Evaluator.NewEnvironment()
-	Evaluator.LoadBuiltInFunction(env)
-	Evaluator.LoadBuiltInVariable(env)
-	_, e = Evaluator.Eval(root.(*Statements.StatementNode), env)
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
-	a, e := env.GetVariable("orderedList")
+	a, e := env.getVariable("orderedList")
 	if e != nil {
 		t.Error(e)
 	}
-	v := a.(Evaluator.ArrayObject)
+	v := a.(arrayObject)
 	if e != nil {
 		t.Error(e)
 	}
 	expected := []int{-20, 0, 6, 6, 7, 9, 21, 22, 55, 88, 99}
 	for i := 0; i < len(expected); i++ {
-		if v.Values[i].(Evaluator.NumberObject).Value != expected[i] {
+		if v.Values[i].(numberObject).Value != expected[i] {
 			t.Error("error order")
 		}
 	}

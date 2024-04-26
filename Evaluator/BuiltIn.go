@@ -4,29 +4,31 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
-func newArray(env *Environment) (IObject, error) {
-	typeObject, e := env.GetVariable("type")
+func newArrayBuiltIn(env *Environment) (iObject, error) {
+	typeObject, e := env.getVariable("type")
 	if e != nil {
 		return nil, e
 	}
-	nObject, e := env.GetVariable("n")
-	n, ok := nObject.(NumberObject)
+	nObject, e := env.getVariable("n")
+	n, ok := nObject.(numberObject)
 	if !ok {
 		return nil, errors.New("not a number")
 	}
-	a := ArrayObject{Values: make([]IObject, n.Value)}
+	a := arrayObject{Values: make([]iObject, n.Value)}
 	for i := 0; i < int(n.Value); i++ {
 		a.Values[i] = typeObject
 	}
 	return a, nil
 }
 
-func builtInPrint(env *Environment) (IObject, error) {
-	aObject, e := env.GetVariable("a")
+func printBuiltIn(env *Environment) (iObject, error) {
+	aObject, e := env.getVariable("a")
 	if e != nil {
 		return nil, e
 	}
@@ -37,8 +39,8 @@ func builtInPrint(env *Environment) (IObject, error) {
 	return nil, nil
 }
 
-func builtInPrintln(env *Environment) (IObject, error) {
-	aObject, e := env.GetVariable("a")
+func printlnBuiltIn(env *Environment) (iObject, error) {
+	aObject, e := env.getVariable("a")
 	if e != nil {
 		return nil, e
 	}
@@ -49,75 +51,75 @@ func builtInPrintln(env *Environment) (IObject, error) {
 	return nil, nil
 }
 
-func Int(env *Environment) (IObject, error) {
-	v, e := env.GetVariable("a")
+func intBuiltIn(env *Environment) (iObject, error) {
+	v, e := env.getVariable("a")
 	if e != nil {
 		return nil, e
 	}
 
 	switch a := v.(type) {
-	case FloatNumberObject:
-		return NumberObject{Value: int(a.Value)}, nil
-	case NumberObject:
+	case floatNumberObject:
+		return numberObject{Value: int(a.Value)}, nil
+	case numberObject:
 		return a, nil
-	case StringObject:
+	case stringObject:
 		n, e := strconv.Atoi(a.Value)
 		if e != nil {
 			return nil, errors.New("not a number")
 		}
-		return NumberObject{Value: n}, nil
-	case BoolObject:
+		return numberObject{Value: n}, nil
+	case boolObject:
 		if a.Value {
-			return NumberObject{Value: 1}, nil
+			return numberObject{Value: 1}, nil
 		}
-		return NumberObject{Value: 0}, nil
+		return numberObject{Value: 0}, nil
 	default:
 		return nil, errors.New("not a number")
 	}
 }
-func Float(env *Environment) (IObject, error) {
-	v, e := env.GetVariable("a")
+func floatBuiltIn(env *Environment) (iObject, error) {
+	v, e := env.getVariable("a")
 	if e != nil {
 		return nil, e
 	}
 
 	switch a := v.(type) {
-	case NumberObject:
-		return FloatNumberObject{Value: float64(a.Value)}, nil
-	case StringObject:
+	case numberObject:
+		return floatNumberObject{Value: float64(a.Value)}, nil
+	case stringObject:
 		n, e := strconv.ParseFloat(a.Value, 32)
 		if e != nil {
 			return nil, errors.New("not a number")
 		}
-		return FloatNumberObject{Value: n}, nil
-	case BoolObject:
+		return floatNumberObject{Value: n}, nil
+	case boolObject:
 		if a.Value {
-			return FloatNumberObject{Value: 1}, nil
+			return floatNumberObject{Value: 1}, nil
 		}
-		return FloatNumberObject{Value: 0}, nil
+		return floatNumberObject{Value: 0}, nil
 	default:
 		return nil, errors.New("not a number")
 	}
 }
-func String(env *Environment) (IObject, error) {
-	v, e := env.GetVariable("a")
+func stringBuiltIn(env *Environment) (iObject, error) {
+	v, e := env.getVariable("a")
 	if e != nil {
 		return nil, e
 	}
-	return StringObject{Value: v.ToString()}, nil
+	return stringObject{Value: v.ToString()}, nil
 }
 
-func builtInLen(env *Environment) (IObject, error) {
-	aObject, e := env.GetVariable("a")
+func lenBuiltin(env *Environment) (iObject, error) {
+	aObject, e := env.getVariable("a")
 	if e != nil {
 		return nil, e
 	}
 
 	switch a := aObject.(type) {
-	case StringObject:
-		return NumberObject{Value: len(a.Value)}, nil
-	case ArrayObject:
-		return NumberObject{Value: len(a.Values)}, nil
+	case stringObject:
+		return numberObject{Value: len(a.Value)}, nil
+	case arrayObject:
+		return numberObject{Value: len(a.Values)}, nil
 
 	default:
 		fmt.Println(a.ToString())
@@ -125,25 +127,32 @@ func builtInLen(env *Environment) (IObject, error) {
 	}
 }
 
-func Input(env *Environment) (IObject, error) {
+func inputBuiltIn(env *Environment) (iObject, error) {
 	reader := bufio.NewReader(os.Stdin)
 	v, _ := reader.ReadBytes('\n')
-	return StringObject{Value: string(v[:len(v)-2])}, nil
+	return stringObject{Value: string(v[:len(v)-2])}, nil
 }
 
 func LoadBuiltInVariable(env *Environment) error {
 	return nil
 }
-func ImportLibrary(env *Environment) (IObject, error) {
-	pathVar, e := env.GetVariable("path")
+func ImportLibrary(env *Environment) (iObject, error) {
+	pathVar, e := env.getVariable("path")
 	if e != nil {
 		return nil, e
 	}
-	path, ok := pathVar.(StringObject)
+	pathOb, ok := pathVar.(stringObject)
 	if !ok {
 		return nil, errors.New("not a string")
 	}
-	_, e = Run(path.Value, env)
+	dirtyPath, e := os.Getwd()
+	if e != nil {
+		log.Fatalf("open file error: %v", e)
+		return nil, e
+	}
+	pwd := filepath.Dir(dirtyPath)
+	path := filepath.Join(pwd, "Library", pathOb.Value)
+	_, e = Run(path, env)
 	if e != nil {
 		return nil, e
 	}
@@ -151,18 +160,18 @@ func ImportLibrary(env *Environment) (IObject, error) {
 		return nil, errors.New("not possible define variables in library")
 	}
 	for name, funct := range env.functions {
-		env.externals.AddFunction(name, funct)
+		env.externals.addFunction(name, funct)
 	}
 	return nil, nil
 }
 func LoadBuiltInFunction(env *Environment) {
-	env.AddBuiltInFunc("len", BuiltInFuncObject{Name: "len", NameParams: []string{"a"}, BuiltInfunc: builtInLen})
-	env.AddBuiltInFunc("newArray", BuiltInFuncObject{Name: "newArray", NameParams: []string{"n", "type"}, BuiltInfunc: newArray})
-	env.AddBuiltInFunc("int", BuiltInFuncObject{Name: "int", NameParams: []string{"a"}, BuiltInfunc: Int})
-	env.AddBuiltInFunc("float", BuiltInFuncObject{Name: "float", NameParams: []string{"a"}, BuiltInfunc: Float})
-	env.AddBuiltInFunc("string", BuiltInFuncObject{Name: "string", NameParams: []string{"a"}, BuiltInfunc: String})
-	env.AddBuiltInFunc("print", BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrint})
-	env.AddBuiltInFunc("println", BuiltInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: builtInPrintln})
-	env.AddBuiltInFunc("read", BuiltInFuncObject{Name: "read", NameParams: []string{}, BuiltInfunc: Input})
-	env.AddBuiltInFunc("import", BuiltInFuncObject{Name: "import", NameParams: []string{"path"}, BuiltInfunc: ImportLibrary})
+	env.addBuiltInFunc("len", builtInFuncObject{Name: "len", NameParams: []string{"a"}, BuiltInfunc: lenBuiltin})
+	env.addBuiltInFunc("newArray", builtInFuncObject{Name: "newArray", NameParams: []string{"n", "type"}, BuiltInfunc: newArrayBuiltIn})
+	env.addBuiltInFunc("int", builtInFuncObject{Name: "int", NameParams: []string{"a"}, BuiltInfunc: intBuiltIn})
+	env.addBuiltInFunc("float", builtInFuncObject{Name: "float", NameParams: []string{"a"}, BuiltInfunc: floatBuiltIn})
+	env.addBuiltInFunc("string", builtInFuncObject{Name: "string", NameParams: []string{"a"}, BuiltInfunc: stringBuiltIn})
+	env.addBuiltInFunc("print", builtInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: printBuiltIn})
+	env.addBuiltInFunc("println", builtInFuncObject{Name: "print", NameParams: []string{"a"}, BuiltInfunc: printlnBuiltIn})
+	env.addBuiltInFunc("read", builtInFuncObject{Name: "read", NameParams: []string{}, BuiltInfunc: inputBuiltIn})
+	env.addBuiltInFunc("import", builtInFuncObject{Name: "import", NameParams: []string{"path"}, BuiltInfunc: ImportLibrary})
 }

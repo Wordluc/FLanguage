@@ -34,7 +34,7 @@ func TestFunctionFactorial(t *testing.T) {
 		t.Error(e)
 	}
 	env := &Environment{
-		variables: make(map[string]IObject),
+		variables: make(map[string]iObject),
 		functions: make(map[string]Statements.FuncDeclarationStatement),
 	}
 	_, e = Eval(programParse.(*Statements.StatementNode), env)
@@ -42,8 +42,8 @@ func TestFunctionFactorial(t *testing.T) {
 		t.Error(e)
 	}
 
-	a, _ := env.GetVariable("a")
-	if a.(NumberObject).Value != 120 {
+	a, _ := env.getVariable("a")
+	if a.(numberObject).Value != 120 {
 		t.Error("value should be 120")
 	}
 
@@ -82,7 +82,7 @@ func TestFunctionFibonacci(t *testing.T) {
 		t.Error(e)
 	}
 	env := &Environment{
-		variables: make(map[string]IObject),
+		variables: make(map[string]iObject),
 		functions: make(map[string]Statements.FuncDeclarationStatement),
 	}
 	_, e = Eval(programParse.(*Statements.StatementNode), env)
@@ -90,8 +90,8 @@ func TestFunctionFibonacci(t *testing.T) {
 		t.Error(e)
 	}
 
-	a, _ := env.GetVariable("a")
-	if a.(NumberObject).Value != 55 {
+	a, _ := env.getVariable("a")
+	if a.(numberObject).Value != 55 {
 		t.Error("value should be 55")
 	}
 }
@@ -118,7 +118,7 @@ func TestElevation(t *testing.T) {
 		t.Error(e)
 	}
 	env := &Environment{
-		variables: make(map[string]IObject),
+		variables: make(map[string]iObject),
 		functions: make(map[string]Statements.FuncDeclarationStatement),
 	}
 	_, e = Eval(programParse.(*Statements.StatementNode), env)
@@ -126,8 +126,8 @@ func TestElevation(t *testing.T) {
 		t.Error(e)
 	}
 
-	a, _ := env.GetVariable("a")
-	if a.(NumberObject).Value != 27 {
+	a, _ := env.getVariable("a")
+	if a.(numberObject).Value != 27 {
 		t.Error("value should be 27")
 	}
 }
@@ -170,9 +170,9 @@ func TestGetStringWithMoreCharacters(t *testing.T) {
 		t.Error(e)
 	}
 
-	b, _ := env.GetVariable("b")
-	if b.(StringObject).Value != "22222244" {
-		t.Error("value should be 8,got:", b.(StringObject).Value)
+	b, _ := env.getVariable("b")
+	if b.(stringObject).Value != "22222244" {
+		t.Error("value should be 8,got:", b.(stringObject).Value)
 	}
 }
 
@@ -219,8 +219,8 @@ func TestDicotomicSearch(t *testing.T) {
 		t.Error(e)
 	}
 
-	a, _ := env.GetVariable("result")
-	if a.(NumberObject).Value != 3 {
-		t.Error("value should be 3,got:", a.(NumberObject).Value)
+	a, _ := env.getVariable("result")
+	if a.(numberObject).Value != 3 {
+		t.Error("value should be 3,got:", a.(numberObject).Value)
 	}
 }

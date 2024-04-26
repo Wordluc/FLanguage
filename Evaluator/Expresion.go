@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, error) {
+func evalExpresion(expresion Expresions.IExpresion, env *Environment) (iObject, error) {
 	switch expObject := expresion.(type) {
 	case Expresions.ExpresionCallFunc:
 		v, e := evalCallFunc(expObject, env)
@@ -20,36 +20,36 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 		exp := expObject
 		switch exp.Type {
 		case Token.WORD:
-			value, err := env.GetVariable(exp.Value)
+			value, err := env.getVariable(exp.Value)
 			if err != nil {
 				return nil, err
 			}
 			return value, nil
 		case Token.NUMBER:
 			v, _ := strconv.Atoi(exp.Value)
-			ob := NumberObject{
+			ob := numberObject{
 				Value: v,
 			}
 			return ob, nil
 		case Token.NUMBER_WITH_DOT:
 			v, _ := strconv.ParseFloat(exp.Value, 32)
-			ob := FloatNumberObject{
+			ob := floatNumberObject{
 				Value: v,
 			}
 			return ob, nil
 		case Token.STRING:
-			ob := StringObject{
+			ob := stringObject{
 				Value: exp.Value,
 			}
 			return ob, nil
 		case Token.BOOLEAN:
-			ob := BoolObject{
+			ob := boolObject{
 				Value: exp.Value == "true",
 			}
 			return ob, nil
 		}
 	case Expresions.ExpresionNode:
-		var left IObject
+		var left iObject
 		var e error
 		right, e := evalExpresion(expObject.RightExpresion, env)
 		if e != nil {
@@ -57,12 +57,12 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 		}
 		if expObject.LeftExpresion == nil {
 			switch right.(type) {
-			case NumberObject:
-				left = NumberObject{
+			case numberObject:
+				left = numberObject{
 					Value: 0,
 				}
-			case FloatNumberObject:
-				left = FloatNumberObject{
+			case floatNumberObject:
+				left = floatNumberObject{
 					Value: 0.0,
 				}
 			}
@@ -75,8 +75,8 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 
 		return evalBinaryExpresion(left, right, expObject.Operator)
 	case Expresions.ExpresionDeclareArray:
-		array := ArrayObject{}
-		array.Values = make([]IObject, len(expObject.Values))
+		array := arrayObject{}
+		array.Values = make([]iObject, len(expObject.Values))
 		for i, v := range expObject.Values {
 			value, e := evalExpresion(v, env)
 			if e != nil {
@@ -92,30 +92,30 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (IObject, 
 		}
 
 		switch v := value.(type) {
-		case ArrayObject:
-			var elem IObject = v
+		case arrayObject:
+			var elem iObject = v
 			for _, idObj := range expObject.IndexsValues {
 				id, e := evalExpresion(idObj, env)
 				if e != nil {
 					return nil, e
 				}
-				index := id.(NumberObject)
-				if index.Value < 0 || index.Value >= len(elem.(ArrayObject).Values) {
+				index := id.(numberObject)
+				if index.Value < 0 || index.Value >= len(elem.(arrayObject).Values) {
 					return nil, errors.New("index out of range")
 				}
-				elem = elem.(ArrayObject).Values[index.Value]
+				elem = elem.(arrayObject).Values[index.Value]
 			}
 			return elem, nil
-		case StringObject:
+		case stringObject:
 			id, e := evalExpresion(expObject.IndexsValues[0], env)
 			if e != nil {
 				return nil, e
 			}
-			index := id.(NumberObject)
+			index := id.(numberObject)
 			if index.Value < 0 || index.Value >= len(v.Value) {
 				return nil, errors.New("index out of range")
 			}
-			return StringObject{Value: string(v.Value[index.Value])}, nil
+			return stringObject{Value: string(v.Value[index.Value])}, nil
 		}
 		return nil, errors.New("invalid get expresion")
 
