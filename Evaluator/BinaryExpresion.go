@@ -69,20 +69,6 @@ func evalEqualOperator(left, right iObject) (iObject, error) {
 	return boolObject{Value: false}, nil
 }
 func evalPlusOperator(left, right iObject) (iObject, error) {
-	if left == nil {
-		{
-			rightObject, ok := right.(floatNumberObject)
-			if ok {
-				return floatNumberObject{Value: rightObject.Value}, nil
-			}
-		}
-		{
-			rightObject, ok := right.(numberObject)
-			if ok {
-				return numberObject{Value: rightObject.Value}, nil
-			}
-		}
-	}
 	if reflect.TypeOf(left) != reflect.TypeOf(right) {
 		return nil, errors.New("Wrong type")
 	}
