@@ -3,7 +3,7 @@ package Evaluator
 import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements"
+	"FLanguage/Parser"
 	"bufio"
 	"errors"
 	"fmt"
@@ -29,11 +29,11 @@ func ReplProgram(env *Environment) error {
 	if e != nil {
 		return errors.New("Lexer:" + e.Error())
 	}
-	p, e := Statements.ParsingStatement(&l, Token.END)
+	p, e := Parser.ParsingStatement(&l, Token.END)
 	if e != nil {
 		return errors.New("Parser:" + e.Error())
 	}
-	_, e = Eval(p.(*Statements.StatementNode), env)
+	_, e = Eval(p.(*Parser.StatementNode), env)
 	if e != nil {
 		return errors.New("Eval:" + e.Error())
 	}

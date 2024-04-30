@@ -1,10 +1,9 @@
-package Expresions
+package Parser
 
 import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
 	"errors"
-	"fmt"
 )
 
 type fParse func(l *Lexer.Lexer, expresion IExpresion, exitTokens ...Token.TokenType) (IExpresion, error)
@@ -40,7 +39,8 @@ func GetParse(than Token.TokenType) (fParse, error) {
 		return parseArray, nil
 	case Token.OPEN_GRAP_BRACKET:
 		return parseHash, nil
+	case Token.AT:
+		return parseInlineFunction, nil
 	}
-	fmt.Println(than)
 	return nil, errors.New("GetParse: Operator:" + string(than) + "not implemented")
 }

@@ -1,9 +1,8 @@
-package Statements
+package Parser
 
 import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements/Expresions"
 	"errors"
 )
 
@@ -13,7 +12,7 @@ func parseSetArrayValue(l *Lexer.Lexer) (IStatement, error) {
 	}
 	l.IncrP()
 	l.IncrP()
-	index, e := Expresions.ParseExpresionsGroup(l, nil, Token.CLOSE_SQUARE_BRACKET, Token.COMMA)
+	index, e := ParseExpresionsGroup(l, nil, Token.CLOSE_SQUARE_BRACKET, Token.COMMA)
 	if e != nil {
 		return nil, e
 	}
@@ -25,7 +24,7 @@ func parseSetArrayValue(l *Lexer.Lexer) (IStatement, error) {
 		return nil, errors.New("parseSetArrayValue: expected '=' token")
 	}
 	l.IncrP()
-	value, e := Expresions.ParseExpresion(l, Token.DOT_COMMA)
+	value, e := ParseExpresion(l, Token.DOT_COMMA)
 	if e != nil {
 		return nil, e
 	}

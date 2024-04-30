@@ -1,47 +1,54 @@
-package Statements
+package Parser
 
 import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements/Expresions"
 	"errors"
 )
 
-func ParsingInlineFunction(lexer *Lexer.Lexer, exitTokens ...Token.TokenType) (Expresions.IExpresion, error) {
+func ParsingFuncDeclaration(lexer *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement, error) {
 	funcDeclaration := FuncDeclarationStatement{}
-	curToken := lexer.LookCurrent()
-
+	curToken, e := lexer.NextToken()
+	if e != nil {
+		return nil, e
+	}
+	if curToken.Type != Token.WORD {
+		return nil, errors.New("ParsingFuncDeclaration: expected 'WORD' token,got:" + curToken.Value)
+	}
+	funcDeclaration.Identifier = curToken.Value
+	curToken, e = lexer.NextToken()
+	if e != nil {
+		return nil, e
+	}
 	if curToken.Type != Token.OPEN_CIRCLE_BRACKET {
 		return nil, errors.New("ParsingFuncDeclaration: expected '(' token,error Parameters")
 	}
-	parms, e := parseParms(lexer)
-	if e != nil {
-		return nil, e
-	}
-	funcDeclaration.Params = parms
-	curToken, e = lexer.NextToken()
 
+	funcDeclaration.Params, e = ParseParms(lexer)
 	if e != nil {
 		return nil, e
 	}
+	curToken, e = lexer.NextToken()
 	if curToken.Type != Token.OPEN_GRAP_BRACKET {
 		return nil, errors.New("ParsingFuncDeclaration: expected '{' token")
 	}
+
 	lexer.IncrP()
 	program, e := ParsingStatement(lexer, Token.CLOSE_GRAP_BRACKET)
+	funcDeclaration.Body = program
 	if e != nil {
 		return nil, e
 	}
-	funcDeclaration.Body = program
-	curToken, e = lexer.LookNext()
-	if e == nil && curToken.Type == Token.OPEN_CIRCLE_BRACKET {
-		return Expresions.ParseCallFunc(lexer, funcDeclaration)
+	curToken = lexer.LookCurrent()
+	if curToken.Type != Token.CLOSE_GRAP_BRACKET {
+		return nil, errors.New("ParsingFuncDeclaration: expected '}' token")
 	}
+
 	lexer.IncrP()
 	return funcDeclaration, nil
 }
 
-func parseParms(lexer *Lexer.Lexer) ([]string, error) {
+func ParseParms(lexer *Lexer.Lexer) ([]string, error) {
 	parms := []string{}
 	for {
 		lookNextToken, e := lexer.LookNext()

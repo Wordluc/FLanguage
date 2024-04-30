@@ -3,7 +3,7 @@ package Evaluator
 import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements"
+	"FLanguage/Parser"
 	"testing"
 )
 
@@ -15,12 +15,12 @@ func TestLetAssigment(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallita")
 	}
 	root := programParse
-	program, e := Eval(root.(*Statements.StatementNode), &Environment{variables: make(map[string]iObject), externals: nil})
+	program, e := Eval(root.(*Parser.StatementNode), &Environment{variables: make(map[string]iObject), externals: nil})
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -44,13 +44,13 @@ func TestAssigment(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallita")
 	}
 	root := programParse
 	env := &Environment{variables: make(map[string]iObject), externals: nil}
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -70,13 +70,13 @@ func TestAssigmentNegativeNumber(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallita")
 	}
 	root := programParse
 	env := &Environment{variables: make(map[string]iObject), externals: nil}
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -101,7 +101,7 @@ func TestAssigmentDecimaleNumber(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallita")
 	}
@@ -109,7 +109,7 @@ func TestAssigmentDecimaleNumber(t *testing.T) {
 
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -133,13 +133,13 @@ func TestAssigmentAndReuse(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallita")
 	}
 	root := programParse
 	env := &Environment{variables: make(map[string]iObject), externals: nil}
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -165,14 +165,14 @@ func TestCallFuncReturn(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	program, e := Eval(root.(*Statements.StatementNode), env)
+	program, e := Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -195,14 +195,14 @@ func TestCallFuncWithoutReturn(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	program, e := Eval(root.(*Statements.StatementNode), env)
+	program, e := Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -221,14 +221,14 @@ func TestIncVar(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, _ = Eval(root.(*Statements.StatementNode), env)
+	_, _ = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -252,14 +252,14 @@ func TestIncInParm(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, _ = Eval(root.(*Statements.StatementNode), env)
+	_, _ = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -279,14 +279,14 @@ func TestBooleanOp(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	program, e := Eval(root.(*Statements.StatementNode), env)
+	program, e := Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -309,14 +309,14 @@ func TestNumberComparison(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -343,14 +343,14 @@ func TestStringComparison(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error("eval fallita", e)
 	}
@@ -379,14 +379,14 @@ func TestMultipleVariableDeclarationWtihSameName(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e == nil {
 		t.Error("should have error")
 	}
@@ -403,14 +403,14 @@ func TestAssigmentDifferentValue(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e == nil {
 		t.Error("should have error")
 	}
@@ -429,14 +429,14 @@ func TestUseResultFunction(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	v, _ := env.getVariable("a")
 	if v.(numberObject).Value != 5 {
 		t.Error("should be 5,got:", v)
@@ -452,14 +452,14 @@ func TestSumStrings(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	v, _ := env.getVariable("a")
 	if v.(stringObject).Value != "ciao bene" {
 		t.Error("should be ciao bene ,got:", v.(stringObject).Value)
@@ -479,14 +479,14 @@ func TestSumStringsFromFunc(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	v, _ := env.getVariable("a")
 	if v.(stringObject).Value != "ciao prova" {
 		t.Error("should be ciao bene ,got:", v.(stringObject).Value)
@@ -506,14 +506,14 @@ func TestPassValueThroughtFunc(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	v, _ := env.getVariable("a")
 	if v.(numberObject).Value != 4 {
 		t.Error("should be 4 ,got:", v.(numberObject).Value)
@@ -532,14 +532,14 @@ func TestSumStringInFunc(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	v, _ := env.getVariable("a")
 	if v.(stringObject).Value != "ciao prova" {
 		t.Error("should be ciao prova ,got:", v.(stringObject).Value)
@@ -559,14 +559,14 @@ func TestIfStatement(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	v, _ := env.getVariable("a")
 	if v.(numberObject).Value != 4 {
 		t.Error("should be 4 ,got:", v.(numberObject).Value)
@@ -589,14 +589,14 @@ func TestElseStatement(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	v, _ := env.getVariable("a")
 	if v.(numberObject).Value != 8 {
 		t.Error("should be 8 ,got:", v.(numberObject).Value)
@@ -614,7 +614,7 @@ func TestCombineStringAndNumber(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -622,7 +622,7 @@ func TestCombineStringAndNumber(t *testing.T) {
 
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -642,7 +642,7 @@ func TestCombineNumberAndString(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -650,7 +650,7 @@ func TestCombineNumberAndString(t *testing.T) {
 
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -670,7 +670,7 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -678,7 +678,7 @@ func TestDeclareAndGetFromArray(t *testing.T) {
 
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -702,13 +702,13 @@ func TestDeclareArrayIntoArray(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
 	root := programParse
 	env := NewEnvironment()
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -733,7 +733,7 @@ func TestBuiltInFunc(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -741,7 +741,7 @@ func TestBuiltInFunc(t *testing.T) {
 
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -764,7 +764,7 @@ func TestOutofRangeArray(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -772,7 +772,7 @@ func TestOutofRangeArray(t *testing.T) {
 
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e == nil {
 		t.Error("should be an error")
 	}
@@ -787,7 +787,7 @@ func TestCreateArray(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -796,7 +796,7 @@ func TestCreateArray(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -822,7 +822,7 @@ func TestGetMatrix(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -831,7 +831,7 @@ func TestGetMatrix(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -859,7 +859,7 @@ func TestGetArrayFromFunc(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -868,7 +868,7 @@ func TestGetArrayFromFunc(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -894,7 +894,7 @@ func TestSetArray(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -903,7 +903,7 @@ func TestSetArray(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -933,7 +933,7 @@ func TestWhile(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -942,7 +942,7 @@ func TestWhile(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -970,7 +970,7 @@ func TestGetCharFromSting(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -979,7 +979,7 @@ func TestGetCharFromSting(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -1007,7 +1007,7 @@ func TestGetHashValue(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -1016,7 +1016,7 @@ func TestGetHashValue(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -1048,14 +1048,14 @@ func TestInlineFunc(t *testing.T) {
 	let a=@(a,b){
 		ret a+b;
 	};
-	let b=a(1,2);
+	let b=a(2,1);
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -1064,7 +1064,7 @@ func TestInlineFunc(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -1093,7 +1093,7 @@ func TestInlineFuncInHash(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -1102,7 +1102,7 @@ func TestInlineFuncInHash(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -1123,13 +1123,15 @@ func TestCallInlineFuncInDeclaration(t *testing.T) {
 	let a=@(a,b){
 		ret a+b;
 	}(1,2);
+	let b={"prova":@(){ret 7;}};
+	let c=b{"prova"}();
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -1138,7 +1140,7 @@ func TestCallInlineFuncInDeclaration(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -1152,5 +1154,16 @@ func TestCallInlineFuncInDeclaration(t *testing.T) {
 	}
 	if v.Value != 3 {
 		t.Error("should be '3' ,got:", v.Value)
+	}
+	c, e := env.getVariable("c")
+	if e != nil {
+		t.Error(e)
+	}
+	v = c.(numberObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Value != 7 {
+		t.Error("should be '7' ,got:", v.Value)
 	}
 }

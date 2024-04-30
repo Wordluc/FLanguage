@@ -1,4 +1,4 @@
-package Statements
+package Parser
 
 import (
 	"FLanguage/Lexer"

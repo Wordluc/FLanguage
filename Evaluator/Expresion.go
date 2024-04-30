@@ -2,21 +2,21 @@ package Evaluator
 
 import (
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements/Expresions"
+	"FLanguage/Parser"
 	"errors"
 	"strconv"
 )
 
-func evalExpresion(expresion Expresions.IExpresion, env *Environment) (iObject, error) {
+func evalExpresion(expresion Parser.IExpresion, env *Environment) (iObject, error) {
 	switch expObject := expresion.(type) {
-	case Expresions.ExpresionCallFunc:
+	case Parser.ExpresionCallFunc:
 		v, e := evalCallFunc(expObject, env)
 		if e != nil {
 			return nil, e
 		}
 
 		return v, nil
-	case Expresions.ExpresionLeaf:
+	case Parser.ExpresionLeaf:
 		exp := expObject
 		switch exp.Type {
 		case Token.WORD:
@@ -48,7 +48,9 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (iObject, 
 			}
 			return ob, nil
 		}
-	case Expresions.ExpresionNode:
+	case Parser.FuncDeclarationStatement:
+		return expObject, nil
+	case Parser.ExpresionNode:
 		var left iObject
 		var e error
 		right, e := evalExpresion(expObject.RightExpresion, env)
@@ -74,7 +76,7 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (iObject, 
 		}
 
 		return evalBinaryExpresion(left, right, expObject.Operator)
-	case Expresions.ExpresionDeclareArray:
+	case Parser.ExpresionDeclareArray:
 		array := arrayObject{}
 		array.Values = make([]iObject, len(expObject.Values))
 		for i, v := range expObject.Values {
@@ -85,7 +87,7 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (iObject, 
 			array.Values[i] = value
 		}
 		return array, nil
-	case Expresions.ExpresionDeclareHash:
+	case Parser.ExpresionDeclareHash:
 		array := hashObject{}
 		array.Values = make(map[iObject]iObject)
 		for i, v := range expObject.Values {
@@ -100,7 +102,7 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (iObject, 
 			array.Values[key] = value
 		}
 		return array, nil
-	case Expresions.ExpresionGetValueHash:
+	case Parser.ExpresionGetValueHash:
 		value, e := evalExpresion(expObject.Value, env)
 		if e != nil {
 			return nil, e
@@ -115,7 +117,7 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (iObject, 
 		}
 		return value, nil
 
-	case Expresions.ExpresionGetValueArray:
+	case Parser.ExpresionGetValueArray:
 		value, e := evalExpresion(expObject.Value, env)
 		if e != nil {
 			return nil, e

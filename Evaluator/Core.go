@@ -3,11 +3,11 @@ package Evaluator
 import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements"
+	"FLanguage/Parser"
 	"errors"
 )
 
-func Eval(program *Statements.StatementNode, env *Environment) (iObject, error) {
+func Eval(program *Parser.StatementNode, env *Environment) (iObject, error) {
 	r, e := evalStatement(program.Statement, env)
 	if e != nil {
 		return nil, e
@@ -33,11 +33,11 @@ func Run(path string, env *Environment) (iObject, error) {
 	if e != nil {
 		return nil, errors.New("Lexer:" + e.Error())
 	}
-	p, e := Statements.ParsingStatement(&l, Token.END)
+	p, e := Parser.ParsingStatement(&l, Token.END)
 	if e != nil {
 		return nil, errors.New("Parser:" + e.Error())
 	}
-	r, e := Eval(p.(*Statements.StatementNode), env)
+	r, e := Eval(p.(*Parser.StatementNode), env)
 	if e != nil {
 		return nil, errors.New("Eval:" + e.Error())
 	}

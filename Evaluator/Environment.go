@@ -1,14 +1,14 @@
 package Evaluator
 
 import (
-	"FLanguage/Parser/Statements"
+	"FLanguage/Parser"
 	"errors"
 	"reflect"
 )
 
 type Environment struct {
 	variables   map[string]iObject
-	functions   map[string]Statements.FuncDeclarationStatement
+	functions   map[string]Parser.FuncDeclarationStatement
 	externals   *Environment
 	builtInFunc map[string]builtInFuncObject
 	builtInVar  map[string]iObject
@@ -17,7 +17,7 @@ type Environment struct {
 func NewEnvironment() *Environment {
 	return &Environment{
 		variables:   make(map[string]iObject),
-		functions:   make(map[string]Statements.FuncDeclarationStatement),
+		functions:   make(map[string]Parser.FuncDeclarationStatement),
 		externals:   nil,
 		builtInFunc: make(map[string]builtInFuncObject),
 		builtInVar:  make(map[string]iObject),
@@ -71,20 +71,22 @@ func (v *Environment) getVariable(name string) (iObject, error) {
 	return nil, errors.New("variable not defined,name:" + name)
 }
 
-func (v *Environment) getFunction(name string) (Statements.FuncDeclarationStatement, error) {
+func (v *Environment) getFunction(name string) (Parser.FuncDeclarationStatement, error) {
 	funct, exist := v.functions[name]
 	if !exist {
 		if v.externals != nil {
-			variable, existEx := v.externals.getFunction(name)
+			funct, existEx := v.externals.getFunction(name)
 			if existEx == nil {
-				return variable, nil
+				return funct, nil
 			}
 		}
+
+		return Parser.FuncDeclarationStatement{}, errors.New("function not defined,name:" + name)
 	}
 	return funct, nil
 }
 
-func (v *Environment) addFunction(name string, value Statements.FuncDeclarationStatement) error {
+func (v *Environment) addFunction(name string, value Parser.FuncDeclarationStatement) error {
 	if _, ok := v.builtInFunc[name]; ok {
 		return errors.New("function already exists as builtInFunc:" + name)
 	}
