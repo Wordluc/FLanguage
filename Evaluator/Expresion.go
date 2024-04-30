@@ -97,8 +97,6 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (iObject, 
 			if e != nil {
 				return nil, e
 			}
-			println("ke" + key.ToString())
-			println("ec" + value.ToString())
 			array.Values[key] = value
 		}
 		return array, nil
