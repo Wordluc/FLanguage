@@ -10,15 +10,14 @@ func parseLeaf(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IEx
 	if e != nil {
 		return nil, e
 	}
+	curToken := l.LookCurrent()
+	leaf := ExpresionLeaf{}.New(curToken)
 	if l.LookCurrent().Type == Token.WORD {
-
 		if nextT.Type == Token.OPEN_CIRCLE_BRACKET {
-			return parseCallFunc(l, nil)
+			return parseCallFunc(l, leaf)
 		}
 
 	}
-	curToken := l.LookCurrent()
-	leaf := ExpresionLeaf{}
 	l.IncrP()
-	return leaf.New(curToken), nil
+	return leaf, nil
 }

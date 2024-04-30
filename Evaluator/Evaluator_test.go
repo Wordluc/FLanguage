@@ -1080,3 +1080,41 @@ func TestInlineFunc(t *testing.T) {
 		t.Error("should be '1' ,got:", v.Value)
 	}
 }
+func TestInlineFuncInHash(t *testing.T) {
+	ist := `
+	let a=@(a,b){
+		ret a+b;
+	};
+	let b={"a":a};
+	let c=b{"a"}(1,2);
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	c, e := env.getVariable("c")
+	if e != nil {
+		t.Error(e)
+	}
+	v := c.(numberObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Value != 3 {
+		t.Error("should be '1' ,got:", v.Value)
+	}
+}
