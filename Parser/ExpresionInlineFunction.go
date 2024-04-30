@@ -1,4 +1,4 @@
-package Statements
+package Parser
 
 import (
 	"FLanguage/Lexer"
@@ -6,49 +6,43 @@ import (
 	"errors"
 )
 
-func ParsingFuncDeclaration(lexer *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement, error) {
+func parseInlineFunction(lexer *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	funcDeclaration := FuncDeclarationStatement{}
 	curToken, e := lexer.NextToken()
-	if e != nil {
-		return nil, e
-	}
-	if curToken.Type != Token.WORD {
-		return nil, errors.New("ParsingFuncDeclaration: expected 'WORD' token,got:" + curToken.Value)
-	}
-	funcDeclaration.Identifier = curToken.Value
-	curToken, e = lexer.NextToken()
 	if e != nil {
 		return nil, e
 	}
 	if curToken.Type != Token.OPEN_CIRCLE_BRACKET {
 		return nil, errors.New("ParsingFuncDeclaration: expected '(' token,error Parameters")
 	}
-
-	funcDeclaration.Params, e = ParseParms(lexer)
+	parms, e := parseParms(lexer)
 	if e != nil {
 		return nil, e
 	}
+	funcDeclaration.Params = parms
 	curToken, e = lexer.NextToken()
+
+	if e != nil {
+		return nil, e
+	}
 	if curToken.Type != Token.OPEN_GRAP_BRACKET {
 		return nil, errors.New("ParsingFuncDeclaration: expected '{' token")
 	}
-
 	lexer.IncrP()
 	program, e := ParsingStatement(lexer, Token.CLOSE_GRAP_BRACKET)
-	funcDeclaration.Body = program
 	if e != nil {
 		return nil, e
 	}
-	curToken = lexer.LookCurrent()
-	if curToken.Type != Token.CLOSE_GRAP_BRACKET {
-		return nil, errors.New("ParsingFuncDeclaration: expected '}' token")
+	funcDeclaration.Body = program
+	curToken, e = lexer.LookNext()
+	if e == nil && curToken.Type == Token.OPEN_CIRCLE_BRACKET {
+		return ParseCallFunc(lexer, funcDeclaration)
 	}
-
 	lexer.IncrP()
 	return funcDeclaration, nil
 }
 
-func ParseParms(lexer *Lexer.Lexer) ([]string, error) {
+func parseParms(lexer *Lexer.Lexer) ([]string, error) {
 	parms := []string{}
 	for {
 		lookNextToken, e := lexer.LookNext()
