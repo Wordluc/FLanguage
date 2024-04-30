@@ -24,7 +24,16 @@ func parseLetStatement(l *Lexer.Lexer) (IStatement, error) {
 	if curToken.Type != Token.ASSIGN {
 		return nil, errors.New("parseLetStatement: expected '=' token")
 	}
-	l.IncrP()
+	curToken, _ = l.NextToken()
+	if curToken.Type == Token.AT {
+		l.IncrP()
+		let.Expresion, e = ParsingInlineFunction(l)
+		if e != nil {
+			return nil, e
+		}
+		l.IncrP()
+		return let, nil
+	}
 	let.Expresion, e = Expresions.ParseExpresion(l, Token.DOT_COMMA)
 	if e != nil {
 		return nil, e
