@@ -3,7 +3,7 @@ package Evaluator
 import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements"
+	"FLanguage/Parser"
 	"testing"
 )
 
@@ -18,7 +18,7 @@ func TestBinarySearch(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -27,7 +27,7 @@ func TestBinarySearch(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}
@@ -56,7 +56,7 @@ func TestTree(t *testing.T) {
 	if e != nil {
 		t.Error("creazione Lexer fallita")
 	}
-	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
 	if e != nil {
 		t.Error("parsing fallito", e)
 	}
@@ -65,7 +65,7 @@ func TestTree(t *testing.T) {
 	env := NewEnvironment()
 	LoadBuiltInFunction(env)
 	LoadBuiltInVariable(env)
-	_, e = Eval(root.(*Statements.StatementNode), env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
 	if e != nil {
 		t.Error(e)
 	}

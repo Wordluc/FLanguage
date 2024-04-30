@@ -1,9 +1,8 @@
-package Statements
+package Parser
 
 import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements/Expresions"
 	"errors"
 )
 
@@ -17,7 +16,7 @@ func parseIfStatement(l *Lexer.Lexer) (IStatement, error) {
 		return nil, errors.New("parseIfStatement: expected '(' token")
 	}
 	l.IncrP()
-	ifExpr.Expresion, e = Expresions.ParseExpresion(l,
+	ifExpr.Expresion, e = ParseExpresion(l,
 		Token.CLOSE_CIRCLE_BRACKET)
 	if e != nil {
 		return nil, e

@@ -1,9 +1,8 @@
-package Statements
+package Parser
 
 import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements/Expresions"
 	"errors"
 )
 
@@ -34,7 +33,7 @@ func parseLetStatement(l *Lexer.Lexer) (IStatement, error) {
 		l.IncrP()
 		return let, nil
 	}
-	let.Expresion, e = Expresions.ParseExpresion(l, Token.DOT_COMMA)
+	let.Expresion, e = ParseExpresion(l, Token.DOT_COMMA)
 	if e != nil {
 		return nil, e
 	}

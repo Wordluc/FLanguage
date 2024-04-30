@@ -1,8 +1,4 @@
-package Statements
-
-import (
-	"FLanguage/Parser/Statements/Expresions"
-)
+package Parser
 
 type IStatement interface {
 	ToString() string
@@ -32,7 +28,7 @@ func (s StatementNode) ToString() string {
 
 type LetStatement struct {
 	Identifier string
-	Expresion  Expresions.IExpresion
+	Expresion  IExpresion
 }
 
 func (s LetStatement) ToString() string {
@@ -40,7 +36,7 @@ func (s LetStatement) ToString() string {
 }
 
 type IfStatement struct {
-	Expresion Expresions.IExpresion
+	Expresion IExpresion
 	Body      IStatement
 	Else      IStatement
 }
@@ -62,7 +58,7 @@ func (s IfStatement) ToString() string {
 }
 
 type CallFuncStatement struct {
-	Expresion Expresions.IExpresion
+	Expresion IExpresion
 }
 
 func (s CallFuncStatement) ToString() string {
@@ -71,7 +67,7 @@ func (s CallFuncStatement) ToString() string {
 
 type AssignExpresionStatement struct {
 	Identifier string
-	Expresion  Expresions.IExpresion
+	Expresion  IExpresion
 }
 
 func (s AssignExpresionStatement) ToString() string {
@@ -101,7 +97,7 @@ func (s FuncDeclarationStatement) ToString() string {
 }
 
 type ReturnStatement struct {
-	Expresion Expresions.IExpresion
+	Expresion IExpresion
 }
 
 func (s ReturnStatement) ToString() string {
@@ -110,8 +106,8 @@ func (s ReturnStatement) ToString() string {
 
 type SetArrayValueStatement struct {
 	Identifier string
-	Indexs     []Expresions.IExpresion
-	Value      Expresions.IExpresion
+	Indexs     []IExpresion
+	Value      IExpresion
 }
 
 func (s SetArrayValueStatement) ToString() string {
@@ -128,8 +124,8 @@ func (s SetArrayValueStatement) ToString() string {
 
 type SetHashValueStatement struct {
 	Identifier string
-	Index      Expresions.IExpresion
-	Value      Expresions.IExpresion
+	Index      IExpresion
+	Value      IExpresion
 }
 
 func (s SetHashValueStatement) ToString() string {
@@ -140,7 +136,7 @@ func (s SetHashValueStatement) ToString() string {
 }
 
 type WhileStatement struct {
-	Cond Expresions.IExpresion
+	Cond IExpresion
 	Body IStatement
 }
 

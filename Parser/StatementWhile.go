@@ -1,21 +1,20 @@
-package Statements
+package Parser
 
 import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements/Expresions"
 	"errors"
 )
 
 func parseWhileStatement(lexer *Lexer.Lexer) (IStatement, error) {
 	next, e := lexer.NextToken()
-	var cond Expresions.IExpresion
+	var cond IExpresion
 	if next.Type != Token.OPEN_CIRCLE_BRACKET {
 		return nil, errors.New("ParseWhileStatement: expected '(' token,got:" + next.Value)
 	}
 
 	lexer.IncrP()
-	cond, e = Expresions.ParseExpresion(lexer, Token.CLOSE_CIRCLE_BRACKET)
+	cond, e = ParseExpresion(lexer, Token.CLOSE_CIRCLE_BRACKET)
 	if e != nil {
 		return nil, e
 	}

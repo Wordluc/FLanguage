@@ -1,24 +1,23 @@
 package Evaluator
 
 import (
-	"FLanguage/Parser/Statements"
-	"FLanguage/Parser/Statements/Expresions"
+	"FLanguage/Parser"
 	"errors"
 )
 
-func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (iObject, error) {
+func evalCallFunc(expression Parser.ExpresionCallFunc, env *Environment) (iObject, error) {
 	envFunc := &Environment{
 		variables:   make(map[string]iObject),
-		functions:   make(map[string]Statements.FuncDeclarationStatement),
+		functions:   make(map[string]Parser.FuncDeclarationStatement),
 		externals:   env,
 		builtInVar:  env.builtInVar,
 		builtInFunc: env.builtInFunc,
 	}
-	var fun Statements.FuncDeclarationStatement
+	var fun Parser.FuncDeclarationStatement
 	var e error
 	var ok bool
 	switch ident := expression.Identifier.(type) {
-	case Expresions.ExpresionLeaf:
+	case Parser.ExpresionLeaf:
 		funcBuiltInObject, ok := env.getBuiltInFunc(ident.Value)
 		if ok == nil {
 			return callBuiltInFunc(expression, funcBuiltInObject, envFunc)
@@ -27,16 +26,16 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (iO
 		if e != nil {
 			return nil, e
 		}
-	case Expresions.ExpresionGetValueHash:
+	case Parser.ExpresionGetValueHash:
 		value, e := evalExpresion(ident, envFunc)
 		if e != nil {
 			return nil, e
 		}
-		fun, ok = value.(Statements.FuncDeclarationStatement)
+		fun, ok = value.(Parser.FuncDeclarationStatement)
 		if !ok {
 			return nil, errors.New("not a function")
 		}
-	case Statements.FuncDeclarationStatement:
+	case Parser.FuncDeclarationStatement:
 		fun = ident
 	}
 	if len(fun.Params) != len(expression.Values) {
@@ -44,7 +43,7 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (iO
 	}
 	evalParms(expression.Values, fun.Params, envFunc)
 
-	valExp, e := Eval(fun.Body.(*Statements.StatementNode), envFunc)
+	valExp, e := Eval(fun.Body.(*Parser.StatementNode), envFunc)
 	if e != nil {
 		return nil, e
 
@@ -56,7 +55,7 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (iO
 	return v.Value, nil
 }
 
-func callBuiltInFunc(expression Expresions.ExpresionCallFunc, funcBuiltInObject builtInFuncObject, env *Environment) (iObject, error) {
+func callBuiltInFunc(expression Parser.ExpresionCallFunc, funcBuiltInObject builtInFuncObject, env *Environment) (iObject, error) {
 	err := evalParms(expression.Values, funcBuiltInObject.NameParams, env)
 	if err != nil {
 		return nil, err
@@ -68,7 +67,7 @@ func callBuiltInFunc(expression Expresions.ExpresionCallFunc, funcBuiltInObject 
 	return funcBuiltIn, nil
 
 }
-func evalParms(values []Expresions.IExpresion, nameParms []string, env *Environment) error {
+func evalParms(values []Parser.IExpresion, nameParms []string, env *Environment) error {
 	for i, v := range values {
 
 		value, e := evalExpresion(v, env)

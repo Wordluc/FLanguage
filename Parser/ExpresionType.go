@@ -1,4 +1,4 @@
-package Expresions
+package Parser
 
 import (
 	"FLanguage/Lexer"

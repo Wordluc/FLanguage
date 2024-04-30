@@ -1,16 +1,16 @@
 package Evaluator
 
 import (
-	"FLanguage/Parser/Statements"
+	"FLanguage/Parser"
 	"errors"
 	"reflect"
 )
 
-func evalStatement(statement Statements.IStatement, env *Environment) (iObject, error) {
+func evalStatement(statement Parser.IStatement, env *Environment) (iObject, error) {
 
 	switch stat := statement.(type) {
-	case Statements.LetStatement:
-		inlineFunc, isInlineFunc := stat.Expresion.(Statements.FuncDeclarationStatement)
+	case Parser.LetStatement:
+		inlineFunc, isInlineFunc := stat.Expresion.(Parser.FuncDeclarationStatement)
 		if isInlineFunc {
 			inlineFunc.Identifier = stat.Identifier
 			env.addFunction(stat.Identifier, inlineFunc)
@@ -21,7 +21,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (iObject, 
 		if err != nil {
 			return nil, err
 		}
-		inlineFunc, isInlineFunc = value.(Statements.FuncDeclarationStatement)
+		inlineFunc, isInlineFunc = value.(Parser.FuncDeclarationStatement)
 		if isInlineFunc {
 			inlineFunc.Identifier = stat.Identifier
 			env.addFunction(stat.Identifier, inlineFunc)
@@ -35,16 +35,16 @@ func evalStatement(statement Statements.IStatement, env *Environment) (iObject, 
 			Value: value,
 		}
 		return ob, nil
-	case Statements.FuncDeclarationStatement:
+	case Parser.FuncDeclarationStatement:
 		env.addFunction(stat.Identifier, stat)
 		return nil, nil
-	case Statements.CallFuncStatement:
+	case Parser.CallFuncStatement:
 		value, err := evalExpresion(stat.Expresion, env)
 		if err != nil {
 			return nil, err
 		}
 		return value, nil
-	case Statements.ReturnStatement:
+	case Parser.ReturnStatement:
 		value, err := evalExpresion(stat.Expresion, env)
 		if err != nil {
 			return nil, err
@@ -53,12 +53,12 @@ func evalStatement(statement Statements.IStatement, env *Environment) (iObject, 
 			Value: value,
 		}
 		return ob, nil
-	case Statements.AssignExpresionStatement:
+	case Parser.AssignExpresionStatement:
 		value, err := evalExpresion(stat.Expresion, env)
 		if err != nil {
 			return nil, err
 		}
-		inlineFunc, isInlineFunc := value.(Statements.FuncDeclarationStatement)
+		inlineFunc, isInlineFunc := value.(Parser.FuncDeclarationStatement)
 		if isInlineFunc {
 			inlineFunc.Identifier = stat.Identifier
 			env.addFunction(stat.Identifier, inlineFunc)
@@ -68,7 +68,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (iObject, 
 			return nil, e
 		}
 		return nil, nil
-	case Statements.IfStatement:
+	case Parser.IfStatement:
 		obCondition, e := evalExpresion(stat.Expresion, env)
 		if e != nil {
 			return nil, e
@@ -78,15 +78,15 @@ func evalStatement(statement Statements.IStatement, env *Environment) (iObject, 
 			return nil, errors.New("invalid condition" + reflect.TypeOf(obCondition).String())
 		}
 		if cond.Value {
-			v, e := Eval(stat.Body.(*Statements.StatementNode), env)
+			v, e := Eval(stat.Body.(*Parser.StatementNode), env)
 			return v, e
 		} else {
 			if stat.Else == nil {
 				return nil, nil
 			}
-			return Eval(stat.Else.(*Statements.StatementNode), env)
+			return Eval(stat.Else.(*Parser.StatementNode), env)
 		}
-	case Statements.SetArrayValueStatement:
+	case Parser.SetArrayValueStatement:
 		exp, e := evalExpresion(stat.Value, env)
 		if e != nil {
 			return nil, e
@@ -114,7 +114,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (iObject, 
 		}
 		return nil, nil
 
-	case Statements.SetHashValueStatement:
+	case Parser.SetHashValueStatement:
 		exp, e := evalExpresion(stat.Value, env)
 		if e != nil {
 			return nil, e
@@ -134,7 +134,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (iObject, 
 		elem.Values[key] = exp
 
 		return nil, nil
-	case Statements.WhileStatement:
+	case Parser.WhileStatement:
 		obCondition, e := evalExpresion(stat.Cond, env)
 		if e != nil {
 			return nil, e
@@ -144,7 +144,7 @@ func evalStatement(statement Statements.IStatement, env *Environment) (iObject, 
 			return nil, errors.New("invalid condition")
 		}
 		for cond.Value {
-			rObject, e := Eval(stat.Body.(*Statements.StatementNode), env)
+			rObject, e := Eval(stat.Body.(*Parser.StatementNode), env)
 			if e != nil {
 				return nil, e
 			}

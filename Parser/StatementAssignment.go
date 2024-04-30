@@ -1,9 +1,8 @@
-package Statements
+package Parser
 
 import (
 	"FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements/Expresions"
 	"errors"
 )
 
@@ -18,7 +17,7 @@ func parseAssignment(l *Lexer.Lexer) (IStatement, error) {
 		return nil, errors.New("parseAssignment: expected '=' token")
 	}
 	l.IncrP()
-	ass.Expresion, e = Expresions.ParseExpresion(l, Token.DOT_COMMA)
+	ass.Expresion, e = ParseExpresion(l, Token.DOT_COMMA)
 
 	if e != nil {
 		return nil, e
