@@ -239,3 +239,28 @@ func TestArrayOp(t *testing.T) {
 
 	}
 }
+func TestHashOp(t *testing.T) {
+	text := `
+	a{"2"}
+	d={"fff":32}	
+	`
+
+	l, e := New([]byte(text))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	exp := [11]Token.TokenType{
+		Token.WORD, Token.OPEN_GRAP_BRACKET, Token.STRING, Token.CLOSE_GRAP_BRACKET,
+		Token.WORD, Token.ASSIGN, Token.OPEN_GRAP_BRACKET, Token.STRING, Token.DOUBLE_DOT, Token.NUMBER, Token.CLOSE_GRAP_BRACKET}
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	for _, i := range exp {
+		got := l.LookCurrent()
+		if got.Type != Token.TokenType(i) {
+			t.Errorf("errore parsing: got %v instead %v", got.Type, Token.TokenType(i))
+		}
+		l.IncrP()
+
+	}
+}

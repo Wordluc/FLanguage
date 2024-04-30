@@ -74,6 +74,19 @@ func (a arrayObject) ToString() string {
 	return r + "]"
 }
 
+type hashObject struct {
+	Values map[iObject]iObject
+	Type   string
+}
+
+func (a hashObject) ToString() string {
+	r := "{"
+	for i, v := range a.Values {
+		r += i.ToString() + ":" + v.ToString()
+	}
+	return r + "}"
+}
+
 type builtInFunc func(env *Environment) (iObject, error)
 
 type builtInFuncObject struct {

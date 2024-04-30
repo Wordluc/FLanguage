@@ -96,6 +96,27 @@ func evalStatement(statement Statements.IStatement, env *Environment) (iObject, 
 			}
 		}
 		return nil, nil
+
+	case Statements.SetHashValueStatement:
+		exp, e := evalExpresion(stat.Value, env)
+		if e != nil {
+			return nil, e
+		}
+		hash, e := env.getVariable(stat.Identifier)
+		if e != nil {
+			return nil, e
+		}
+		elem, ok := hash.(hashObject)
+		if !ok {
+			return nil, errors.New("invalid hash")
+		}
+		key, e := evalExpresion(stat.Index, env)
+		if e != nil {
+			return nil, e
+		}
+		elem.Values[key] = exp
+
+		return nil, nil
 	case Statements.WhileStatement:
 		obCondition, e := evalExpresion(stat.Cond, env)
 		if e != nil {

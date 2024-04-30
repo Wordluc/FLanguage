@@ -22,7 +22,6 @@ func main() {
 		fmt.Println(e)
 		return
 	}
-
 	p, e := Statements.ParsingStatement(&l, Token.END)
 	if e != nil {
 		fmt.Println(e)
