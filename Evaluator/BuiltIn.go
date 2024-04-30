@@ -3,7 +3,6 @@ package Evaluator
 import (
 	"bufio"
 	"errors"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -34,6 +33,8 @@ func printBuiltIn(env *Environment) (iObject, error) {
 	if aObject == nil {
 		return nil, errors.New("is nil")
 	}
+
+	print(aObject.ToString())
 	return nil, nil
 }
 
@@ -45,6 +46,7 @@ func printlnBuiltIn(env *Environment) (iObject, error) {
 	if aObject == nil {
 		return nil, errors.New("is nil")
 	}
+	println(aObject.ToString())
 	return nil, nil
 }
 
@@ -143,7 +145,6 @@ func ImportLibrary(env *Environment) (iObject, error) {
 	}
 	dirtyPath, e := os.Getwd()
 	if e != nil {
-		log.Fatalf("open file error: %v", e)
 		return nil, e
 	}
 	pwd := filepath.Dir(dirtyPath)

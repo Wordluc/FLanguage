@@ -37,6 +37,7 @@ func ReplProgram(env *Environment) error {
 	if e != nil {
 		return errors.New("Eval:" + e.Error())
 	}
+	println()
 	return ReplProgram(env)
 }
 func readBlockLines(reader *bufio.Reader) []byte {
