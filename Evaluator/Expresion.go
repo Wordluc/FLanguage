@@ -48,6 +48,8 @@ func evalExpresion(expresion Parser.IExpresion, env *Environment) (iObject, erro
 			}
 			return ob, nil
 		}
+	case Parser.FuncDeclarationStatement:
+		return expObject, nil
 	case Parser.ExpresionNode:
 		var left iObject
 		var e error

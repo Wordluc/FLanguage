@@ -24,19 +24,25 @@ func evalCallFunc(expression Parser.ExpresionCallFunc, env *Environment) (iObjec
 		}
 		fun, e = env.getFunction(ident.Value)
 		if e != nil {
-			return nil, e
+			inlineVar, e := env.getVariable(ident.Value)
+			if e != nil {
+				return nil, e
+			}
+			inlineFun, ok := inlineVar.(Parser.FuncDeclarationStatement)
+			if !ok {
+				return nil, errors.New("not a function")
+			}
+			fun = inlineFun
 		}
-	case Parser.ExpresionGetValueHash:
-		value, e := evalExpresion(ident, envFunc)
+	default:
+		ident, e := evalExpresion(expression.Identifier, env)
 		if e != nil {
 			return nil, e
 		}
-		fun, ok = value.(Parser.FuncDeclarationStatement)
+		fun, ok = ident.(Parser.FuncDeclarationStatement)
 		if !ok {
 			return nil, errors.New("not a function")
 		}
-	case Parser.FuncDeclarationStatement:
-		fun = ident
 	}
 	if len(fun.Params) != len(expression.Values) {
 		return nil, errors.New("not enough parms")

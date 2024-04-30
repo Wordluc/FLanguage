@@ -75,11 +75,13 @@ func (v *Environment) getFunction(name string) (Parser.FuncDeclarationStatement,
 	funct, exist := v.functions[name]
 	if !exist {
 		if v.externals != nil {
-			variable, existEx := v.externals.getFunction(name)
+			funct, existEx := v.externals.getFunction(name)
 			if existEx == nil {
-				return variable, nil
+				return funct, nil
 			}
 		}
+
+		return Parser.FuncDeclarationStatement{}, errors.New("function not defined,name:" + name)
 	}
 	return funct, nil
 }
