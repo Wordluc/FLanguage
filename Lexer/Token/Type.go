@@ -46,6 +46,7 @@ const (
 	EQUAL
 	ELSE
 	BOOLEAN
+	AT
 	WHILE
 	ERROR_L TokenType = 255
 )
@@ -116,6 +117,8 @@ func GetTokenType(typeF string) TokenType {
 		return WORD
 	case ":":
 		return DOUBLE_DOT
+	case "@":
+		return AT
 	default:
 		if isASingleLineComment(typeF) {
 			return LINE_COMM

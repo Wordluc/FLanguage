@@ -10,6 +10,12 @@ func evalStatement(statement Statements.IStatement, env *Environment) (iObject, 
 
 	switch stat := statement.(type) {
 	case Statements.LetStatement:
+		inlineFunc, isInlineFunc := stat.Expresion.(Statements.FuncDeclarationStatement)
+		if isInlineFunc {
+			inlineFunc.Identifier = stat.Identifier
+			env.addFunction(stat.Identifier, inlineFunc)
+			return nil, nil
+		}
 		value, err := evalExpresion(stat.Expresion, env)
 		if err != nil {
 			return nil, err
