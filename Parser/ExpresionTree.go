@@ -51,7 +51,7 @@ func parseTree(l *Lexer.Lexer, left IExpresion, exitTokens ...Token.TokenType) (
 	if e != nil {
 		return nil, e
 	}
-	if powerCur < powerNext {
+	if powerCur <= powerNext {
 		fop, e := GetParse(lookNextOp.Type)
 		if e != nil || fop == nil {
 			return nil, e

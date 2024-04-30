@@ -533,7 +533,7 @@ func TestParseReturn_Expresion(t *testing.T) {
 
 	Ff prova ( a ) {
                 Prova("cioa","frfr",3,)
-                RETURN ((a * 3) - 2) + (4 / 2)
+                RETURN (a * 3) - (2 + (4 / 2))
 	}`
 
 	if !IsEqual(program.ToString(), expected) {
@@ -571,7 +571,7 @@ func TestParseComment(t *testing.T) {
 
 	Ff prova ( a ) {
                 Prova("cioa","frfr",3,)
-                RETURN ((a * 3) - 2) + (4 / 2)
+                RETURN (a * 3) - (2 + (4 / 2))
 	}`
 
 	if !IsEqual(program.ToString(), expected) {

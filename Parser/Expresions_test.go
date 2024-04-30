@@ -61,12 +61,26 @@ func TestParseExpresion_Valid_ShouldPass1(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
-	expected := "(((10 + (2 * 1)) + 2) + (22 / 2)) + (16 * 3)"
+	expected := "((10 + (2 * 1)) + (2 + (22 / 2))) + (16 * 3)"
 	if program.ToString() != expected {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
-
+func TestParseExpresion_Valid_ShouldPass3(t *testing.T) {
+	ist := "(2+4)*2/2+1/2*4;"
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	if e != nil {
+		t.Error(e)
+	}
+	expected := "((2 + 4) * (2 / 2)) + (1 / (2 * 4))"
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
 func TestParseExpresion_Valid_ShouldPass2(t *testing.T) {
 	ist := "10+22/2+16*3;"
 	lexer, e := Lexer.New([]byte(ist))
@@ -116,7 +130,7 @@ func TestParseExpresion_WithBracket_ShouldPass(t *testing.T) {
 		t.Error(e)
 	}
 	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
-	expected := "(22 * (2 + 16)) * 3"
+	expected := "22 * ((2 + 16) * 3)"
 	if program.ToString() != expected {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
@@ -142,7 +156,7 @@ func TestParseExpresion_WithBracket_ShouldPass_2(t *testing.T) {
 		t.Error(e)
 	}
 	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
-	expected := "(22 * (2 + (16 * 2))) * 3"
+	expected := "22 * ((2 + (16 * 2)) * 3)"
 	if program.ToString() != expected {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
@@ -155,7 +169,7 @@ func TestParseExpresion_WithBracketAtTheEnd_ShouldPass(t *testing.T) {
 		t.Error(e)
 	}
 	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
-	expected := "(22 * (2 + 16)) * 2"
+	expected := "22 * ((2 + 16) * 2)"
 	if program.ToString() != expected {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
