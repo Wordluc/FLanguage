@@ -5,9 +5,8 @@ import (
 	"FLanguage/Lexer/Token"
 )
 
-func parseCallFunc(l *Lexer.Lexer, _ IExpresion, _ ...Token.TokenType) (IExpresion, error) {
-
-	callFunc := ExpresionCallFunc{NameFunc: l.LookCurrent().Value}
+func ParseCallFunc(l *Lexer.Lexer, back IExpresion, _ ...Token.TokenType) (IExpresion, error) {
+	callFunc := ExpresionCallFunc{Identifier: back}
 	l.IncrP()
 	l.IncrP()
 	parms, e := ParseExpresionsGroup(l, nil, Token.CLOSE_CIRCLE_BRACKET, Token.COMMA)

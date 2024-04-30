@@ -61,6 +61,14 @@ func (l *Lexer) LookNext() (Token.Token, error) {
 	return Token.New(l.input[l.pNextValue], ttype), nil
 
 }
+func (l *Lexer) LookNextAt(n int) (Token.Token, error) {
+	if l.pCurrectValue+n == (len(l.input))-1 {
+		return Token.Token{}, errors.New("no more token")
+	}
+	ttype := Token.GetTokenType(l.input[l.pCurrectValue+n])
+	return Token.New(l.input[l.pNextValue+n], ttype), nil
+}
+
 func (l *Lexer) LookBack() (Token.Token, error) {
 	if l.pCurrectValue-1 < 0 {
 		return Token.Token{}, errors.New("no back token")
