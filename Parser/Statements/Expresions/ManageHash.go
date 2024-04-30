@@ -63,15 +63,19 @@ func parseExpresionsGroupHash(l *Lexer.Lexer, _ IExpresion, exist Token.TokenTyp
 	return values, nil
 }
 func parseGetValueHash(l *Lexer.Lexer, back IExpresion) (IExpresion, error) {
-	array := ExpresionGetValueHash{}
-	array.Value = back
+	hash := ExpresionGetValueHash{}
+	hash.Value = back
 	l.IncrP()
 	values, e := ParseExpresion(l, Token.CLOSE_GRAP_BRACKET)
 	if e != nil {
 		return nil, e
 	}
-	array.Index = values
-	l.IncrP()
-	return array, nil
+	hash.Index = values
+	token, e := l.LookNext()
+	if e == nil && token.Type == Token.OPEN_CIRCLE_BRACKET {
 
+		return parseCallFunc(l, hash)
+	}
+	l.IncrP()
+	return hash, nil
 }

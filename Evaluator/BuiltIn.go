@@ -47,7 +47,6 @@ func printlnBuiltIn(env *Environment) (iObject, error) {
 	if aObject == nil {
 		return nil, errors.New("is nil")
 	}
-	println(aObject.ToString())
 	return nil, nil
 }
 
