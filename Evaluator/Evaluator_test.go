@@ -1151,6 +1151,6 @@ func TestCallInlineFuncInDeclaration(t *testing.T) {
 		t.Error(e)
 	}
 	if v.Value != 3 {
-		t.Error("should be '1' ,got:", v.Value)
+		t.Error("should be '3' ,got:", v.Value)
 	}
 }

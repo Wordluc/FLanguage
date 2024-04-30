@@ -33,6 +33,10 @@ func ParsingInlineFunction(lexer *Lexer.Lexer, exitTokens ...Token.TokenType) (E
 		return nil, e
 	}
 	funcDeclaration.Body = program
+	curToken, e = lexer.LookNext()
+	if e == nil && curToken.Type == Token.OPEN_CIRCLE_BRACKET {
+		return Expresions.ParseCallFunc(lexer, funcDeclaration)
+	}
 	lexer.IncrP()
 	return funcDeclaration, nil
 }

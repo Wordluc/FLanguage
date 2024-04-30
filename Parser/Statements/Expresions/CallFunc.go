@@ -5,7 +5,7 @@ import (
 	"FLanguage/Lexer/Token"
 )
 
-func parseCallFunc(l *Lexer.Lexer, back IExpresion, _ ...Token.TokenType) (IExpresion, error) {
+func ParseCallFunc(l *Lexer.Lexer, back IExpresion, _ ...Token.TokenType) (IExpresion, error) {
 	callFunc := ExpresionCallFunc{Identifier: back}
 	l.IncrP()
 	l.IncrP()

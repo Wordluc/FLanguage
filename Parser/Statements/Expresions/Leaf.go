@@ -14,7 +14,7 @@ func parseLeaf(l *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IEx
 	leaf := ExpresionLeaf{}.New(curToken)
 	if l.LookCurrent().Type == Token.WORD {
 		if nextT.Type == Token.OPEN_CIRCLE_BRACKET {
-			return parseCallFunc(l, leaf)
+			return ParseCallFunc(l, leaf)
 		}
 
 	}
