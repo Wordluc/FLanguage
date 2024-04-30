@@ -74,7 +74,7 @@ func parseGetValueHash(l *Lexer.Lexer, back IExpresion) (IExpresion, error) {
 	token, e := l.LookNext()
 	if e == nil && token.Type == Token.OPEN_CIRCLE_BRACKET {
 
-		return parseCallFunc(l, hash)
+		return ParseCallFunc(l, hash)
 	}
 	l.IncrP()
 	return hash, nil
