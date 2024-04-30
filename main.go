@@ -4,7 +4,7 @@ import (
 	"FLanguage/Evaluator"
 	Lexer "FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
-	"FLanguage/Parser/Statements"
+	"FLanguage/Parser"
 	"fmt"
 	"os"
 )
@@ -22,7 +22,7 @@ func main() {
 		fmt.Println(e)
 		return
 	}
-	p, e := Statements.ParsingStatement(&l, Token.END)
+	p, e := Parser.ParsingStatement(&l, Token.END)
 	if e != nil {
 		fmt.Println(e)
 		return
@@ -30,7 +30,7 @@ func main() {
 	env := Evaluator.NewEnvironment()
 	Evaluator.LoadBuiltInFunction(env)
 	Evaluator.LoadBuiltInVariable(env)
-	_, e = Evaluator.Eval(p.(*Statements.StatementNode), env)
+	_, e = Evaluator.Eval(p.(*Parser.StatementNode), env)
 	if e != nil {
 		fmt.Println(e)
 		return
