@@ -14,21 +14,30 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (iO
 		builtInVar:  env.builtInVar,
 		builtInFunc: env.builtInFunc,
 	}
-	funcBuiltInObject, ok := env.getBuiltInFunc(expression.NameFunc)
-	if ok == nil {
-		err := evalParms(expression.Values, funcBuiltInObject.NameParams, envFunc)
-		if err != nil {
-			return nil, err
+	var fun Statements.FuncDeclarationStatement
+	var e error
+	var ok bool
+	switch ident := expression.Identifier.(type) {
+	case Expresions.ExpresionLeaf:
+		funcBuiltInObject, ok := env.getBuiltInFunc(ident.Value)
+		if ok == nil {
+			return callBuiltInFunc(expression, funcBuiltInObject, envFunc)
 		}
-		funcBuiltIn, e := funcBuiltInObject.BuiltInfunc(envFunc)
+		fun, e = env.getFunction(ident.Value)
 		if e != nil {
 			return nil, e
 		}
-		return funcBuiltIn, nil
-	}
-	fun, e := env.getFunction(expression.NameFunc)
-	if e != nil {
-		return nil, e
+	case Expresions.ExpresionGetValueHash:
+		value, e := evalExpresion(ident, envFunc)
+		if e != nil {
+			return nil, e
+		}
+		fun, ok = value.(Statements.FuncDeclarationStatement)
+		if !ok {
+			return nil, errors.New("not a function")
+		}
+	case Statements.FuncDeclarationStatement:
+		fun = ident
 	}
 	if len(fun.Params) != len(expression.Values) {
 		return nil, errors.New("not enough parms")
@@ -45,6 +54,19 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (iO
 		return nil, nil
 	}
 	return v.Value, nil
+}
+
+func callBuiltInFunc(expression Expresions.ExpresionCallFunc, funcBuiltInObject builtInFuncObject, env *Environment) (iObject, error) {
+	err := evalParms(expression.Values, funcBuiltInObject.NameParams, env)
+	if err != nil {
+		return nil, err
+	}
+	funcBuiltIn, e := funcBuiltInObject.BuiltInfunc(env)
+	if e != nil {
+		return nil, e
+	}
+	return funcBuiltIn, nil
+
 }
 func evalParms(values []Expresions.IExpresion, nameParms []string, env *Environment) error {
 	for i, v := range values {

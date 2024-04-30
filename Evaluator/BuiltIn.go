@@ -3,7 +3,6 @@ package Evaluator
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -47,7 +46,6 @@ func printlnBuiltIn(env *Environment) (iObject, error) {
 	if aObject == nil {
 		return nil, errors.New("is nil")
 	}
-	println(aObject.ToString())
 	return nil, nil
 }
 
@@ -122,7 +120,6 @@ func lenBuiltin(env *Environment) (iObject, error) {
 		return numberObject{Value: len(a.Values)}, nil
 
 	default:
-		fmt.Println(a.ToString())
 		return nil, errors.New("impossible use len")
 	}
 }

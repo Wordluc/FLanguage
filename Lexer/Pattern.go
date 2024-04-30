@@ -15,6 +15,6 @@ func GetRegex() string {
 	r.WriteString(`[(){}\[\]]|`)
 	r.WriteString(`["][^"]*["]|`)
 	r.WriteString(`['][^']+[']|`)
-	r.WriteString(`[,.:;!?\"*/]`) //Simboli
+	r.WriteString(`[,.:;!?\"*/@]`) //Simboli
 	return r.String()
 }

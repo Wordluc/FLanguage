@@ -1043,3 +1043,114 @@ func TestGetHashValue(t *testing.T) {
 		t.Error("should be '3' ,got:", v.Value)
 	}
 }
+func TestInlineFunc(t *testing.T) {
+	ist := `
+	let a=@(a,b){
+		ret a+b;
+	};
+	let b=a(1,2);
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	b, e := env.getVariable("b")
+	if e != nil {
+		t.Error(e)
+	}
+	v := b.(numberObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Value != 3 {
+		t.Error("should be '1' ,got:", v.Value)
+	}
+}
+func TestInlineFuncInHash(t *testing.T) {
+	ist := `
+	let a=@(a,b){
+		ret a+b;
+	};
+	let b={"a":a};
+	let c=b{"a"}(1,2);
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	c, e := env.getVariable("c")
+	if e != nil {
+		t.Error(e)
+	}
+	v := c.(numberObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Value != 3 {
+		t.Error("should be '1' ,got:", v.Value)
+	}
+}
+func TestCallInlineFuncInDeclaration(t *testing.T) {
+	ist := `
+	let a=@(a,b){
+		ret a+b;
+	}(1,2);
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Statements.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Statements.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	a, e := env.getVariable("a")
+	if e != nil {
+		t.Error(e)
+	}
+	v := a.(numberObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Value != 3 {
+		t.Error("should be '3' ,got:", v.Value)
+	}
+}

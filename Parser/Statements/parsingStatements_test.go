@@ -704,10 +704,9 @@ func TestWhileIncr(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
-func TestHashOp(t *testing.T) {
+func TestHashDeclare(t *testing.T) {
 	ist := `
 	let x = {"luca":34,"fff":"cioa"};
-	x{"luca"}=2;
 	END`
 	lexer, e := Lexer.New([]byte(ist))
 	if e != nil {
@@ -719,8 +718,25 @@ func TestHashOp(t *testing.T) {
 		return
 	}
 	expected := `
-	 LET x = {"luca":34,"fff":"cioa",}
-         x{"luca"} = 2`
+	 LET x = {"luca":34,"fff":"cioa",}`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
+func TestHashSet(t *testing.T) {
+	ist := `
+	x{"luca"}=3;
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `x{"luca"} = 3`
 	if !IsEqual(program.ToString(), expected) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
@@ -775,6 +791,29 @@ func TestGetMatrixFromFunction(t *testing.T) {
 
          }
          LET b = getMatrix()[0,][1,]	`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
+func TestInlineFunction(t *testing.T) {
+	ist := `
+	let a=@(c){
+		ret "cioa";
+	};
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `
+	LET a = Ff  ( c ) {
+                RETURN "cioa"
+	}`
 	if !IsEqual(program.ToString(), expected) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
