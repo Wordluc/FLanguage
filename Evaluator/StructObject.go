@@ -82,7 +82,7 @@ type hashObject struct {
 func (a hashObject) ToString() string {
 	r := "{"
 	for i, v := range a.Values {
-		r += i.ToString() + ":" + v.ToString()
+		r += i.ToString() + ":" + v.ToString() + ","
 	}
 	return r + "}"
 }
