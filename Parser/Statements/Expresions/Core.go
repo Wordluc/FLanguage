@@ -38,6 +38,8 @@ func GetParse(than Token.TokenType) (fParse, error) {
 		return parseExpresionBlock, nil
 	case Token.OPEN_SQUARE_BRACKET:
 		return parseArray, nil
+	case Token.OPEN_GRAP_BRACKET:
+		return parseHash, nil
 	}
 	fmt.Println(than)
 	return nil, errors.New("GetParse: Operator:" + string(than) + "not implemented")

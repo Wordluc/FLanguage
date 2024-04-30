@@ -704,6 +704,27 @@ func TestWhileIncr(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+func TestHashOp(t *testing.T) {
+	ist := `
+	let x = {"luca":34,"fff":"cioa"};
+	x{"luca"}=2;
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `
+	 LET x = {"luca":34,"fff":"cioa",}
+         x{"luca"} = 2`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
 func TestWrongStatementWrong(t *testing.T) {
 	ist := `
 	if(value>array[i]){

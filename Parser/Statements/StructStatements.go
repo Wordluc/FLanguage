@@ -126,6 +126,19 @@ func (s SetArrayValueStatement) ToString() string {
 	return r
 }
 
+type SetHashValueStatement struct {
+	Identifier string
+	Index      Expresions.IExpresion
+	Value      Expresions.IExpresion
+}
+
+func (s SetHashValueStatement) ToString() string {
+	r := s.Identifier + "{"
+	r += s.Index.ToString()
+	r += "} = " + s.Value.ToString()
+	return r
+}
+
 type WhileStatement struct {
 	Cond Expresions.IExpresion
 	Body IStatement

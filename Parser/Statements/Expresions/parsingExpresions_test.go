@@ -399,3 +399,39 @@ func TestNegativeNumber(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+func TestDeclareHash(t *testing.T) {
+	ist := `
+	{"cioa":3,"pep":4};
+	`
+	//[1,2,3,4];/
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	if e != nil {
+		t.Error(e)
+	}
+	expected := `{"cioa":3,"pep":4,}`
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
+func TestGetHash(t *testing.T) {
+	ist := `
+	a{"cioa"};
+	`
+	//[1,2,3,4];/
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParseExpresion(&lexer, Token.DOT_COMMA)
+	if e != nil {
+		t.Error(e)
+	}
+	expected := `a{"cioa"}`
+	if program.ToString() != expected {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}

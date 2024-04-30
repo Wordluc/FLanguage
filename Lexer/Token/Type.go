@@ -33,6 +33,7 @@ const (
 	CLOSE_COMM
 	LINE_COMM
 	DOT
+	DOUBLE_DOT
 	COMMA
 	DOT_COMMA
 	DOUBLE_QUOTE
@@ -113,6 +114,8 @@ func GetTokenType(typeF string) TokenType {
 		return WHILE
 	case "_":
 		return WORD
+	case ":":
+		return DOUBLE_DOT
 	default:
 		if isASingleLineComment(typeF) {
 			return LINE_COMM

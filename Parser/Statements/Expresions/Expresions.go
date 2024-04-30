@@ -145,3 +145,36 @@ func (e ExpresionDeclareArray) ToString() string {
 	r += "]"
 	return r
 }
+
+type ExpresionGetValueHash struct {
+	Index IExpresion
+	Value IExpresion
+}
+
+func (e ExpresionGetValueHash) ToString() string {
+	r := e.Value.ToString() + "{"
+	r += e.Index.ToString()
+	r += "}"
+	return r
+}
+
+type ExpresionDeclareHash struct {
+	Values map[IExpresion]IExpresion
+}
+
+func (e ExpresionDeclareHash) AddValue(value IExpresion, key IExpresion) {
+	e.Values[key] = value
+}
+func (e ExpresionDeclareHash) ToString() string {
+	r := "{"
+	i := 0
+	for k, v := range e.Values {
+		if i == len(e.Values) {
+			break
+		}
+		r += k.ToString() + ":" + v.ToString() + ","
+		i++
+	}
+	r += "}"
+	return r
+}

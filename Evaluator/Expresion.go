@@ -85,6 +85,36 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (iObject, 
 			array.Values[i] = value
 		}
 		return array, nil
+	case Expresions.ExpresionDeclareHash:
+		array := hashObject{}
+		array.Values = make(map[iObject]iObject)
+		for i, v := range expObject.Values {
+			key, e := evalExpresion(i, env)
+			if e != nil {
+				return nil, e
+			}
+			value, e := evalExpresion(v, env)
+			if e != nil {
+				return nil, e
+			}
+			array.Values[key] = value
+		}
+		return array, nil
+	case Expresions.ExpresionGetValueHash:
+		value, e := evalExpresion(expObject.Value, env)
+		if e != nil {
+			return nil, e
+		}
+		key, e := evalExpresion(expObject.Index, env)
+		if e != nil {
+			return nil, e
+		}
+		value, ok := value.(hashObject).Values[key]
+		if !ok {
+			return nil, errors.New("invalid get expresion")
+		}
+		return value, nil
+
 	case Expresions.ExpresionGetValueArray:
 		value, e := evalExpresion(expObject.Value, env)
 		if e != nil {
@@ -92,7 +122,7 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (iObject, 
 		}
 
 		switch v := value.(type) {
-		case arrayObject:
+		case arrayObject: //From array
 			var elem iObject = v
 			for _, idObj := range expObject.IndexsValues {
 				id, e := evalExpresion(idObj, env)
@@ -106,7 +136,7 @@ func evalExpresion(expresion Expresions.IExpresion, env *Environment) (iObject, 
 				elem = elem.(arrayObject).Values[index.Value]
 			}
 			return elem, nil
-		case stringObject:
+		case stringObject: //From string
 			id, e := evalExpresion(expObject.IndexsValues[0], env)
 			if e != nil {
 				return nil, e

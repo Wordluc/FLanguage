@@ -46,6 +46,8 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 				res, e = parseCallFunc(l)
 			case Token.OPEN_SQUARE_BRACKET:
 				res, e = parseSetArrayValue(l)
+			case Token.OPEN_GRAP_BRACKET:
+				res, e = parseSetHashValue(l)
 			case Token.ASSIGN:
 				res, e = parseAssignment(l)
 			default:
