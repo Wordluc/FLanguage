@@ -36,6 +36,8 @@ func evalCallFunc(expression Expresions.ExpresionCallFunc, env *Environment) (iO
 		if !ok {
 			return nil, errors.New("not a function")
 		}
+	case Statements.FuncDeclarationStatement:
+		fun = ident
 	}
 	if len(fun.Params) != len(expression.Values) {
 		return nil, errors.New("not enough parms")
