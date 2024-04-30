@@ -10,21 +10,10 @@ func evalStatement(statement Parser.IStatement, env *Environment) (iObject, erro
 
 	switch stat := statement.(type) {
 	case Parser.LetStatement:
-		inlineFunc, isInlineFunc := stat.Expresion.(Parser.FuncDeclarationStatement)
-		if isInlineFunc {
-			inlineFunc.Identifier = stat.Identifier
-			env.addFunction(stat.Identifier, inlineFunc)
-			env.addVariable(stat.Identifier, inlineFunc)
-			return nil, nil
-		}
+
 		value, err := evalExpresion(stat.Expresion, env)
 		if err != nil {
 			return nil, err
-		}
-		inlineFunc, isInlineFunc = value.(Parser.FuncDeclarationStatement)
-		if isInlineFunc {
-			inlineFunc.Identifier = stat.Identifier
-			env.addFunction(stat.Identifier, inlineFunc)
 		}
 		e := env.addVariable(stat.Identifier, value)
 		if e != nil {
@@ -57,11 +46,6 @@ func evalStatement(statement Parser.IStatement, env *Environment) (iObject, erro
 		value, err := evalExpresion(stat.Expresion, env)
 		if err != nil {
 			return nil, err
-		}
-		inlineFunc, isInlineFunc := value.(Parser.FuncDeclarationStatement)
-		if isInlineFunc {
-			inlineFunc.Identifier = stat.Identifier
-			env.addFunction(stat.Identifier, inlineFunc)
 		}
 		e := env.setVariable(stat.Identifier, value)
 		if e != nil {

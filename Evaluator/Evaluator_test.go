@@ -1048,7 +1048,7 @@ func TestInlineFunc(t *testing.T) {
 	let a=@(a,b){
 		ret a+b;
 	};
-	let b=a(1,2);
+	let b=a(2,1);
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
@@ -1123,6 +1123,8 @@ func TestCallInlineFuncInDeclaration(t *testing.T) {
 	let a=@(a,b){
 		ret a+b;
 	}(1,2);
+	let b={"prova":@(){ret 7;}};
+	let c=b{"prova"}();
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
@@ -1152,5 +1154,16 @@ func TestCallInlineFuncInDeclaration(t *testing.T) {
 	}
 	if v.Value != 3 {
 		t.Error("should be '3' ,got:", v.Value)
+	}
+	c, e := env.getVariable("c")
+	if e != nil {
+		t.Error(e)
+	}
+	v = c.(numberObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Value != 7 {
+		t.Error("should be '7' ,got:", v.Value)
 	}
 }

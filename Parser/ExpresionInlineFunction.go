@@ -6,10 +6,12 @@ import (
 	"errors"
 )
 
-func ParsingInlineFunction(lexer *Lexer.Lexer, exitTokens ...Token.TokenType) (IExpresion, error) {
+func parseInlineFunction(lexer *Lexer.Lexer, _ IExpresion, exitTokens ...Token.TokenType) (IExpresion, error) {
 	funcDeclaration := FuncDeclarationStatement{}
-	curToken := lexer.LookCurrent()
-
+	curToken, e := lexer.NextToken()
+	if e != nil {
+		return nil, e
+	}
 	if curToken.Type != Token.OPEN_CIRCLE_BRACKET {
 		return nil, errors.New("ParsingFuncDeclaration: expected '(' token,error Parameters")
 	}

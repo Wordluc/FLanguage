@@ -34,7 +34,6 @@ func printBuiltIn(env *Environment) (iObject, error) {
 	if aObject == nil {
 		return nil, errors.New("is nil")
 	}
-	print(aObject.ToString())
 	return nil, nil
 }
 
