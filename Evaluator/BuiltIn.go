@@ -140,6 +140,7 @@ func inputBuiltIn(env *Environment) (iObject, error) {
 }
 
 func LoadBuiltInVariable(env *Environment) error {
+	env.addVariable("nil", nullObject{})
 	return nil
 }
 func ImportLibrary(env *Environment) (iObject, error) {
@@ -155,20 +156,26 @@ func ImportLibrary(env *Environment) (iObject, error) {
 	if e != nil {
 		return nil, e
 	}
-	path := filepath.Join(localPath, "Library", pathLibraryOb.Value)
+	path := filepath.Join(localPath, pathLibraryOb.Value)
 	_, e = Run(path, env)
 	if e != nil {
 		return nil, e
 	}
 	if len(env.variables) > 1 {
-		return nil, errors.New("not possible define variables in library")
+		for name, f := range env.variables {
+			if name == "path" {
+				continue
+			}
+			if _, ok := f.(Parser.FuncDeclarationStatement); !ok {
+				return nil, errors.New("not possible define variables in library")
+			}
+		}
 	}
 	partsPath := strings.Split(pathLibraryOb.Value, "/")
 	pathLibraryOb.Value = partsPath[len(partsPath)-1]
 	var newName string
 	for name, funct := range env.functions {
 		newName = pathLibraryOb.Value[:len(pathLibraryOb.Value)-4] + "_" + name
-		env.externals.variables[newName] = funct
 		env.externals.addFunction(newName, funct)
 	}
 	return nil, nil
