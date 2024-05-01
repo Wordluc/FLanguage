@@ -1,4 +1,4 @@
-#FLanguage
+# FLanguage
 
 Benvenuto su FLanguage! Questo progetto è stato creato come esperimento per comprendere il funzionamento degli interpreti.
 
