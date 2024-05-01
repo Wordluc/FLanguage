@@ -1,6 +1,6 @@
-# Interprete FLanguage
+#FLanguage
 
-Benvenuto nell'interprete FLanguage! Questo progetto è stato creato come esperimento per comprendere il funzionamento degli interpreti.
+Benvenuto su FLanguage! Questo progetto è stato creato come esperimento per comprendere il funzionamento degli interpreti.
 
 ## Caratteristiche Principali
 
