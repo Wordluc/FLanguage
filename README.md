@@ -22,6 +22,8 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
 - **Importazione di Codice Esterno**: Importa facilmente codice da altri file per organizzare il tuo progetto in moduli separati e riutilizzare il codice esistente,i moduli devono essere composti esclusivamente da funzioni. Per richiamare una funzione, è necessario seguire una regola specifica: si concatena il nome del modulo (senza estensione) con il nome della funzione, separati da un underscore (_).
   
 - **Oggetti**:Vi è la possibilità di poter creare un hashtable con al interno delle innerfunction che potranno interaggire con la hashtable attraverso la parola chiave "this"
+- **Fine File**:Bisogna indicare la fine del file mediante le keyword  `END`
+
 ## Sintassi
 
 - **let**: Utilizzata per dichiarare variabili.Una volta assegnato un elemento non è possibile cambiare il tipo della variabile
