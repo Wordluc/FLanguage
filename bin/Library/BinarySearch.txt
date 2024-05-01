@@ -1,0 +1,19 @@
+Ff Run(array,value){
+	let low=0;
+	let high=len(array)-1;
+	let i=len(array)/2;
+	while (low<high){
+		if(array[i]==value){
+			ret i;				
+		}
+
+		if(value>array[i]){
+                     low=i+1;
+		}else{
+		     high=i;
+		}
+		i=(high+low)/2;
+	}
+	ret -1;
+}
+END
