@@ -1,4 +1,4 @@
-package main
+package repl
 
 import (
 	"FLanguage/Evaluator"
@@ -7,7 +7,7 @@ import (
 	"slices"
 )
 
-func main() {
+func Start() {
 	env := Evaluator.NewEnvironment()
 	Evaluator.LoadBuiltInFunction(env)
 	Evaluator.LoadBuiltInVariable(env)
