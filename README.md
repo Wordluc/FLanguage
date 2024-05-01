@@ -4,7 +4,7 @@ Benvenuto su FLanguage! Questo progetto è stato creato come esperimento per com
 
 ## Caratteristiche Principali
 
-- **Funzioni**: Puoi definire e utilizzare funzioni per organizzare il tuo codice in moduli riutilizzabili e per gestire compiti specifici.
+- **Funzioni**: Puoi definire e utilizzare funzioni per organizzare il tuo codice in moduli riutilizzabili e per gestire compiti specifici.Le funzioni non possono modificare l'ambiente esterno in cui sono definite.
   
 - **Array**: Manipola collezioni di dati con facilità utilizzando array, consentendo di memorizzare e accedere a elementi in modo efficiente.
   
@@ -34,8 +34,15 @@ Benvenuto su FLanguage! Questo progetto è stato creato come esperimento per com
          return [[2,4],[2,3,4]];
     }
     ```
-   
-- **return (ret)**: Utilizzata all'interno di una funzione per restituire un valore.
+- **@**: Utilizzate per definire funzioni direttamente nel contesto del codice principale, salvandole all'interno di variabili, hashtable o array.
+  - Esempio:
+    ```
+	  let a=@(a,b){
+		  ret a+b;
+	  };
+	  let b=a(2,1);
+    ```
+- **ret**: Utilizzata all'interno di una funzione per restituire un valore.
   - Esempio:
     ```
     Ff funzione(){
