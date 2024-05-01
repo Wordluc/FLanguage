@@ -5,6 +5,7 @@ import (
 	Lexer "FLanguage/Lexer"
 	"FLanguage/Lexer/Token"
 	"FLanguage/Parser"
+	"FLanguage/repl"
 	"fmt"
 	"os"
 )
@@ -16,7 +17,12 @@ func lexerFromFile(path string) (Lexer.Lexer, error) {
 }
 
 func main() {
-	path := os.Args[1]
+	typeOp := os.Args[1]
+	if typeOp == "r" {
+		repl.Start()
+		return
+	}
+	path := os.Args[2]
 	l, e := lexerFromFile(path)
 	if e != nil {
 		fmt.Println(e)
