@@ -105,7 +105,7 @@ Benvenuto su FLanguage! Questo progetto è stato creato come esperimento per com
 
 - **len**
   - Parametri: `a`
-  - Funzione incorporata: `lenBuiltin`
+  - Funzione: restituisce il numero di elementi di un array `a` o il numero di caratteri di una stringa `a`
 
 - **newArray**
   - Parametri: `n`, `type`
