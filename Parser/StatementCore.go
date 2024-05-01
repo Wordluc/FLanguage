@@ -40,22 +40,29 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 		case Token.WORD:
 
 			nextT, e := l.LookNext()
+			tl := *l
 			var res IStatement
 			switch nextT.Type {
 			case Token.OPEN_CIRCLE_BRACKET:
-				res, e = parseCallFunc(l)
+				res, e = parseCallFunc(&tl)
 			case Token.OPEN_SQUARE_BRACKET:
-				res, e = parseSetArrayValue(l)
+				res, e = parseSetArrayValue(&tl)
 			case Token.OPEN_GRAP_BRACKET:
-				res, e = parseSetHashValue(l)
+				res, e = parseSetHashValue(&tl)
 			case Token.ASSIGN:
-				res, e = parseAssignment(l)
+				res, e = parseAssignment(&tl)
 			default:
-				return nil, errors.New("ParsingStatement: unexpected token,got:" + l.LookCurrent().Value)
+				return nil, errors.New("ParsingStatement: unexpected token,got:" + nextT.Value)
 			}
-
 			if e != nil {
-				return nil, e
+				res, e = ParseExpresion(l, Token.DOT_COMMA)
+				if e != nil {
+					return nil, e
+				}
+				l.IncrP()
+			} else {
+				pc, _ := tl.GetP()
+				l.SetpCurrent(pc)
 			}
 			head.addStatement(res)
 			head.addNext(&StatementNode{})

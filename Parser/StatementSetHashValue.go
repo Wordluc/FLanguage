@@ -21,7 +21,7 @@ func parseSetHashValue(l *Lexer.Lexer) (IStatement, error) {
 		return nil, e
 	}
 	if nextToken.Type != Token.ASSIGN {
-		return nil, errors.New("parseSetArrayValue: expected '=' token")
+		return nil, errors.New("parseSetHashValue: expected '=' token")
 	}
 	l.IncrP()
 	value, e := ParseExpresion(l, Token.DOT_COMMA)

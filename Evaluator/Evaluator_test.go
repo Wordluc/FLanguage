@@ -1167,3 +1167,99 @@ func TestCallInlineFuncInDeclaration(t *testing.T) {
 		t.Error("should be '7' ,got:", v.Value)
 	}
 }
+func TestUseHashInInlineFunc(t *testing.T) {
+	ist := `
+	let object={
+	   "nome":"luca",
+	   "eta":22,
+	   "compleanno":@(){
+		this{"eta"}=this{"eta"}+1;
+		ret this{"eta"};
+	   }
+	};
+	object{"compleanno"}();
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	a, e := env.getVariable("object")
+	if e != nil {
+		t.Error(e)
+	}
+	v := a.(hashObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Values[stringObject{Value: "eta"}].(numberObject).Value != 23 {
+		t.Error("should be '23'")
+	}
+}
+func TestUseinlineFuncFromarray(t *testing.T) {
+	ist := `
+	let array=[
+	   @(){
+		ret 2;
+	   },
+	   @(){
+		ret 3;
+	   }
+	];
+	let c1=array[0]();
+	let c2=array[1]();
+	END
+	`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error("creazione Lexer fallita")
+	}
+	programParse, e := Parser.ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error("parsing fallito", e)
+	}
+	root := programParse
+
+	env := NewEnvironment()
+	LoadBuiltInFunction(env)
+	LoadBuiltInVariable(env)
+	_, e = Eval(root.(*Parser.StatementNode), env)
+	if e != nil {
+		t.Error(e)
+	}
+	c, e := env.getVariable("c1")
+	if e != nil {
+		t.Error(e)
+	}
+	v := c.(numberObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Value != 2 {
+		t.Error("should be '2'")
+	}
+	c, e = env.getVariable("c2")
+	if e != nil {
+		t.Error(e)
+	}
+	v = c.(numberObject)
+	if e != nil {
+		t.Error(e)
+	}
+	if v.Value != 3 {
+		t.Error("should be '3'")
+	}
+}

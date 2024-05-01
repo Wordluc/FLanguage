@@ -14,6 +14,17 @@ type Lexer struct {
 	pNextValue    int
 }
 
+func (l *Lexer) SetpCurrent(p int) error {
+	if p < 0 {
+		return errors.New("error setting lexer")
+	}
+	if p > len(l.input) {
+		return errors.New("error setting lexer")
+	}
+	l.pCurrectValue = p
+	l.pNextValue = p + 1
+	return nil
+}
 func (l *Lexer) GetP() (int, int) {
 	return l.pCurrectValue, l.pNextValue
 }
