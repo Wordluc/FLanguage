@@ -1219,7 +1219,8 @@ func TestUseinlineFuncFromarray(t *testing.T) {
 		ret 3;
 	   }
 	];
-	let c1=array[0]();
+	let v=array[0];
+	let c1=v();
 	let c2=array[1]();
 	END
 	`

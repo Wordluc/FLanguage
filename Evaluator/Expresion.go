@@ -113,7 +113,7 @@ func evalExpresion(expresion Parser.IExpresion, env *Environment) (iObject, erro
 		}
 		hash, ok := hash.(hashObject).Values[key]
 		if !ok {
-			return nil, errors.New("invalid get expresion")
+			return nil, errors.New("element not found")
 		}
 		return hash, nil
 

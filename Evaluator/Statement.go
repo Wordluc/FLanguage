@@ -29,7 +29,6 @@ func evalStatement(statement Parser.IStatement, env *Environment) (iObject, erro
 		}
 		return ob, nil
 	case Parser.ExpresionCallFunc:
-		println("ffff")
 		return evalCallFunc(stat, env)
 	case Parser.FuncDeclarationStatement:
 		env.addFunction(stat.Identifier, stat)
