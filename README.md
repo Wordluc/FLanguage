@@ -1,6 +1,6 @@
 # FLanguage
 
-Benvenuto su FLanguage! Questo progetto è stato creato come esperimento per comprendere il funzionamento degli interpreti.
+Benvenuto su FLanguage! Questo progetto è stato creato come esperimento per comprendere il funzionamento degli interpreti e per imparare il linguaggio di programmazione Go.
 
 ## Caratteristiche Principali
 
