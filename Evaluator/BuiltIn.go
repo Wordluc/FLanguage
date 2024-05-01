@@ -157,7 +157,7 @@ func ImportLibrary(env *Environment) (iObject, error) {
 		return nil, errors.New("not possible define variables in library")
 	}
 	for name, funct := range env.functions {
-		env.externals.addFunction(name, funct)
+		env.externals.addFunction(pathOb.Value[:len(pathOb.Value)-4]+"_"+name, funct)
 	}
 	return nil, nil
 }
