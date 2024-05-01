@@ -15,7 +15,6 @@ func evalCallFunc(expression Parser.ExpresionCallFunc, env *Environment) (iObjec
 	}
 	var fun Parser.FuncDeclarationStatement
 	var e error
-	var ok bool
 	switch ident := expression.Identifier.(type) {
 	case Parser.ExpresionLeaf:
 		funcBuiltInObject, ok := env.getBuiltInFunc(ident.Value)
@@ -35,11 +34,20 @@ func evalCallFunc(expression Parser.ExpresionCallFunc, env *Environment) (iObjec
 			fun = inlineFun
 		}
 	default:
-		ident, e := evalExpresion(expression.Identifier, env)
+		funct, e := evalExpresion(expression.Identifier, env)
 		if e != nil {
+
 			return nil, e
 		}
-		fun, ok = ident.(Parser.FuncDeclarationStatement)
+		hashGet, ok := expression.Identifier.(Parser.ExpresionGetValueHash)
+		if ok {
+			hash, e := evalExpresion(hashGet.Value, env)
+			if e != nil {
+				return nil, e
+			}
+			envFunc.addVariable("this", hash)
+		}
+		fun, ok = funct.(Parser.FuncDeclarationStatement)
 		if !ok {
 			return nil, errors.New("not a function")
 		}

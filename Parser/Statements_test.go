@@ -818,3 +818,22 @@ func TestInlineFunction(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+func TestCallFuncFromArray(t *testing.T) {
+	ist := `
+	let c=array[0]();
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `LET c = array[0,]()
+	`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
