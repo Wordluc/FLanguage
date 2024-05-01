@@ -1,11 +1,13 @@
 package Evaluator
 
 import (
+	"FLanguage/Parser"
 	"bufio"
 	"errors"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 func newArrayBuiltIn(env *Environment) (iObject, error) {
@@ -24,7 +26,6 @@ func newArrayBuiltIn(env *Environment) (iObject, error) {
 	}
 	return a, nil
 }
-
 func printBuiltIn(env *Environment) (iObject, error) {
 	aObject, e := env.getVariable("a")
 	if e != nil {
@@ -33,9 +34,12 @@ func printBuiltIn(env *Environment) (iObject, error) {
 	if aObject == nil {
 		return nil, errors.New("is nil")
 	}
-
+	if f, isFunc := aObject.(Parser.FuncDeclarationStatement); isFunc {
+		print(f.GetSignature())
+		return nullObject{}, nil
+	}
 	print(aObject.ToString())
-	return nil, nil
+	return nullObject{}, nil
 }
 
 func printlnBuiltIn(env *Environment) (iObject, error) {
@@ -46,8 +50,12 @@ func printlnBuiltIn(env *Environment) (iObject, error) {
 	if aObject == nil {
 		return nil, errors.New("is nil")
 	}
+	if f, isFunc := aObject.(Parser.FuncDeclarationStatement); isFunc {
+		println(f.GetSignature())
+		return nullObject{}, nil
+	}
 	println(aObject.ToString())
-	return nil, nil
+	return nullObject{}, nil
 }
 
 func intBuiltIn(env *Environment) (iObject, error) {
@@ -135,20 +143,19 @@ func LoadBuiltInVariable(env *Environment) error {
 	return nil
 }
 func ImportLibrary(env *Environment) (iObject, error) {
-	pathVar, e := env.getVariable("path")
+	pathLibrary, e := env.getVariable("path")
 	if e != nil {
 		return nil, e
 	}
-	pathOb, ok := pathVar.(stringObject)
+	pathLibraryOb, ok := pathLibrary.(stringObject)
 	if !ok {
 		return nil, errors.New("not a string")
 	}
-	dirtyPath, e := os.Getwd()
+	localPath, e := os.Getwd()
 	if e != nil {
 		return nil, e
 	}
-	pwd := filepath.Dir(dirtyPath)
-	path := filepath.Join(pwd, "Library", pathOb.Value)
+	path := filepath.Join(localPath, "Library", pathLibraryOb.Value)
 	_, e = Run(path, env)
 	if e != nil {
 		return nil, e
@@ -156,8 +163,13 @@ func ImportLibrary(env *Environment) (iObject, error) {
 	if len(env.variables) > 1 {
 		return nil, errors.New("not possible define variables in library")
 	}
+	partsPath := strings.Split(pathLibraryOb.Value, "/")
+	pathLibraryOb.Value = partsPath[len(partsPath)-1]
+	var newName string
 	for name, funct := range env.functions {
-		env.externals.addFunction(pathOb.Value[:len(pathOb.Value)-4]+"_"+name, funct)
+		newName = pathLibraryOb.Value[:len(pathLibraryOb.Value)-4] + "_" + name
+		env.externals.variables[newName] = funct
+		env.externals.addFunction(newName, funct)
 	}
 	return nil, nil
 }

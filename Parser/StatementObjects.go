@@ -95,6 +95,17 @@ func (s FuncDeclarationStatement) ToString() string {
 	r += "\n}"
 	return r
 }
+func (s FuncDeclarationStatement) GetSignature() string {
+	r := "Ff " + s.Identifier + " ( "
+	for i := 0; i < len(s.Params); i++ {
+		r += s.Params[i]
+		if i < len(s.Params)-1 {
+			r += ", "
+		}
+	}
+	r += " )"
+	return r
+}
 
 type ReturnStatement struct {
 	Expresion IExpresion
