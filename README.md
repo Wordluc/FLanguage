@@ -1,6 +1,7 @@
 # FLanguage
 
 Benvenuto su FLanguage! Questo progetto è stato creato come esperimento per comprendere il funzionamento degli interpreti e per imparare il linguaggio di programmazione Go.
+Puoi trovare un esempio di codice Flanguage in "Tree.txt".
 
 ## Caratteristiche Principali
 
