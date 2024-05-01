@@ -10,15 +10,14 @@ on:
     branches: [ "master" ]
 
 jobs:
-  Build:
+
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    
     - name: Build
       run: go build -v ./...
-      
-  Test:
-    runs-on: ubuntu-latest
-    steps:
+
     - name: Test
       run: go test -v ./...
