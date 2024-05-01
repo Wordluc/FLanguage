@@ -93,6 +93,7 @@ func (v *Environment) addFunction(name string, value Parser.FuncDeclarationState
 		return errors.New("function already exists:" + name)
 	}
 	v.functions[name] = value
+	v.variables[name] = value //to print the signature
 	return nil
 
 }
