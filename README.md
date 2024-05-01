@@ -17,7 +17,8 @@ Benvenuto nell'interprete FLanguage! Questo progetto è stato creato come esperi
 - **Funzioni Inline**: Definisci funzioni direttamente nel contesto del codice principale per migliorare la leggibilità e la modularità del codice.
   
 - **Importazione di Codice Esterno**: Importa facilmente codice da altri file per organizzare il tuo progetto in moduli separati e riutilizzare il codice esistente.
-- **Oggett**:Vi è la possibilità di poter creare un hashtable con al interno delle innerfunction che potranno interaggire con la hashtable attraverso la parola chiave "this"
+  
+- **Oggetti**:Vi è la possibilità di poter creare un hashtable con al interno delle innerfunction che potranno interaggire con la hashtable attraverso la parola chiave "this"
 ## Sintassi
 
 - **let**: Utilizzata per dichiarare variabili.
