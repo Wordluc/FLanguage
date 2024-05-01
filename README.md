@@ -16,17 +16,20 @@ Benvenuto su FLanguage! Questo progetto è stato creato come esperimento per com
   
 - **Funzioni Inline**: Definisci funzioni direttamente nel contesto del codice principale per migliorare la leggibilità e la modularità del codice.
   
-- **Importazione di Codice Esterno**: Importa facilmente codice da altri file per organizzare il tuo progetto in moduli separati e riutilizzare il codice esistente.
+- **Importazione di Codice Esterno**: Importa facilmente codice da altri file per organizzare il tuo progetto in moduli separati e riutilizzare il codice esistente,i moduli devono essere composti esclusivamente da funzioni. Per richiamare una funzione, è necessario seguire una regola specifica: si concatena il nome del modulo (senza estensione) con il nome della funzione, separati da un underscore (_).
   
 - **Oggetti**:Vi è la possibilità di poter creare un hashtable con al interno delle innerfunction che potranno interaggire con la hashtable attraverso la parola chiave "this"
 ## Sintassi
 
-- **let**: Utilizzata per dichiarare variabili.
+- **let**: Utilizzata per dichiarare variabili.Una volta assegnato un elemento non è possibile cambiare il tipo della variabile
   - Esempio: `let a = 2;`
 
-- **import**: Utilizzata per l'importazione di file o moduli.
-  - Esempio: `import("BinarySearch.txt");`
-
+- **import**: Utilizzata per l'importazione di file di codice.
+  - Esempio:
+    ```
+    import("BinarySearch.txt");`
+    BinarySearch_Run([1,2,3,4,7],4);
+    ```
 - **Ff**: Utilizzata per dichiarare una funzione.
   - Esempio:
     ```
