@@ -88,8 +88,8 @@ func evalExpresion(expresion Parser.IExpresion, env *Environment) (iObject, erro
 		}
 		return array, nil
 	case Parser.ExpresionDeclareHash:
-		array := hashObject{}
-		array.Values = make(map[iObject]iObject)
+		hash := hashObject{}
+		hash.Values = make(map[iObject]iObject)
 		for i, v := range expObject.Values {
 			key, e := evalExpresion(i, env)
 			if e != nil {
@@ -99,11 +99,11 @@ func evalExpresion(expresion Parser.IExpresion, env *Environment) (iObject, erro
 			if e != nil {
 				return nil, e
 			}
-			array.Values[key] = value
+			hash.Values[key] = value
 		}
-		return array, nil
+		return hash, nil
 	case Parser.ExpresionGetValueHash:
-		value, e := evalExpresion(expObject.Value, env)
+		hash, e := evalExpresion(expObject.Value, env)
 		if e != nil {
 			return nil, e
 		}
@@ -111,11 +111,11 @@ func evalExpresion(expresion Parser.IExpresion, env *Environment) (iObject, erro
 		if e != nil {
 			return nil, e
 		}
-		value, ok := value.(hashObject).Values[key]
+		hash, ok := hash.(hashObject).Values[key]
 		if !ok {
 			return nil, errors.New("invalid get expresion")
 		}
-		return value, nil
+		return hash, nil
 
 	case Parser.ExpresionGetValueArray:
 		value, e := evalExpresion(expObject.Value, env)

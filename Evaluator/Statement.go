@@ -7,23 +7,30 @@ import (
 )
 
 func evalStatement(statement Parser.IStatement, env *Environment) (iObject, error) {
-
 	switch stat := statement.(type) {
 	case Parser.LetStatement:
-
+		e := env.addVariable(stat.Identifier, NullObject{})
+		if e != nil {
+			return nil, e
+		}
 		value, err := evalExpresion(stat.Expresion, env)
 		if err != nil {
 			return nil, err
 		}
-		e := env.addVariable(stat.Identifier, value)
-		if e != nil {
-			return nil, e
+		if stat.Identifier != "_" {
+			e = env.setVariable(stat.Identifier, value)
+			if e != nil {
+				return nil, e
+			}
 		}
 		ob := letObject{
 			Name:  stat.Identifier,
 			Value: value,
 		}
 		return ob, nil
+	case Parser.ExpresionCallFunc:
+		println("ffff")
+		return evalCallFunc(stat, env)
 	case Parser.FuncDeclarationStatement:
 		env.addFunction(stat.Identifier, stat)
 		return nil, nil

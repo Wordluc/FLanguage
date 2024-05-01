@@ -5,6 +5,11 @@ import "strconv"
 type iObject interface {
 	ToString() string
 }
+type NullObject struct{}
+
+func (_ NullObject) ToString() string {
+	return "null"
+}
 
 type letObject struct {
 	Name  string
