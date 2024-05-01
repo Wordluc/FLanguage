@@ -3,9 +3,9 @@ Ff AddNode(value,node){
 		ret [[],value,[]];
 	}
 	if(value>node[1]){
-		node[2]=AddNode(value,node[2]);
+		node[2]=Tree_AddNode(value,node[2]);
 	}else{
-		node[0]=AddNode(value,node[0]);
+		node[0]=Tree_AddNode(value,node[0]);
 	}
 	ret node;
 }
@@ -16,7 +16,7 @@ Ff MakeTree(list){
 	let ordered=newArray(len(list),0);
 	let v=0;
 	while(i<len(list)){
-		AddNode(list[i],node);
+		Tree_AddNode(list[i],node);
 		ordered[i]=v;
 		i=i+1;
 	}
@@ -25,20 +25,20 @@ Ff MakeTree(list){
 Ff interateTreeNodes(node,i,list){
 
 	if(len(node[0])!=0){
-		interateTreeNodes(node[0],i,list);
+		Tree_interateTreeNodes(node[0],i,list);
 	}
 	list[i[0]]=node[1];
 	i[0]=i[0]+1;
 
 	if(len(node[2])!=0){
-		interateTreeNodes(node[2],i,list);
+		Tree_interateTreeNodes(node[2],i,list);
 	}
 }
 Ff FromTreeToList(node,n){
 
 	let i=[0];
 	let list=newArray(n,0);
-	interateTreeNodes(node,i,list);
+	Tree_interateTreeNodes(node,i,list);
 	ret list;
 }
 END
