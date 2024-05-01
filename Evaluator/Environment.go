@@ -42,7 +42,7 @@ func (v *Environment) setVariable(name string, value iObject) error {
 	if !exist {
 		return errors.New("variable not defined,name:" + name)
 	}
-	if (reflect.TypeOf(variable) != reflect.TypeOf(value)) && reflect.TypeOf(variable) != reflect.TypeOf(NullObject{}) {
+	if (reflect.TypeOf(variable) != reflect.TypeOf(value)) && reflect.TypeOf(variable) != reflect.TypeOf(nullObject{}) {
 		return errors.New(name + " should have same type")
 	}
 	v.variables[name] = value

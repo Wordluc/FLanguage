@@ -5,9 +5,9 @@ import "strconv"
 type iObject interface {
 	ToString() string
 }
-type NullObject struct{}
+type nullObject struct{}
 
-func (_ NullObject) ToString() string {
+func (_ nullObject) ToString() string {
 	return "null"
 }
 

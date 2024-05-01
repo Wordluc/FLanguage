@@ -9,7 +9,7 @@ import (
 func evalStatement(statement Parser.IStatement, env *Environment) (iObject, error) {
 	switch stat := statement.(type) {
 	case Parser.LetStatement:
-		e := env.addVariable(stat.Identifier, NullObject{})
+		e := env.addVariable(stat.Identifier, nullObject{})
 		if e != nil {
 			return nil, e
 		}
