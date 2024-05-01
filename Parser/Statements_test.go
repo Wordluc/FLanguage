@@ -837,3 +837,22 @@ func TestCallFuncFromArray(t *testing.T) {
 		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
 	}
 }
+
+func TestUseHashInMath(t *testing.T) {
+	ist := `
+	let c=3+hash{"p"};
+	END`
+	lexer, e := Lexer.New([]byte(ist))
+	if e != nil {
+		t.Error(e)
+	}
+	program, e := ParsingStatement(&lexer, Token.END)
+	if e != nil {
+		t.Error(e)
+		return
+	}
+	expected := `LET c = 3 + (hash{"p"})`
+	if !IsEqual(program.ToString(), expected) {
+		t.Error("error parsing", "expected: ", expected, "got: ", program.ToString())
+	}
+}
