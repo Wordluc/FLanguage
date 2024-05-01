@@ -32,12 +32,15 @@ Ff GetOrderedListFromTree(node,i,list){
 		GetListFromTree(node[0],i,list);
 	}
 	list[i[0]]=node[1];
-	//utilizzo l'array con l'elemento i in modo da passare l'indice come reference, sfruttando le slice di golang
+
 	i[0]=i[0]+1;
 
 	if(node[2]!=nil){
 		GetListFromTree(node[2],i,list);
 	}
 }
+let list=[22,21,6,7,9,0,55,6,-20,88,99];
+let node=MakeTree(list);
+let orderedList=FromTreeToList(node,len(list));
 
 END
