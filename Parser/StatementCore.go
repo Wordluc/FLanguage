@@ -44,7 +44,7 @@ func ParsingStatement(l *Lexer.Lexer, exitTokens ...Token.TokenType) (IStatement
 			var res IStatement
 			switch nextT.Type {
 			case Token.OPEN_CIRCLE_BRACKET:
-				res, e = parseCallFunc(&tl)
+				res, e = statementCallFunc(&tl)
 			case Token.OPEN_SQUARE_BRACKET:
 				res, e = parseSetArrayValue(&tl)
 			case Token.OPEN_GRAP_BRACKET:

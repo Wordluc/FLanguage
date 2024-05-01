@@ -34,7 +34,7 @@ func GetParse(than Token.TokenType) (fParse, error) {
 	case Token.WORD, Token.NUMBER, Token.STRING, Token.BOOLEAN, Token.NUMBER_WITH_DOT:
 		return parseLeaf, nil
 	case Token.OPEN_CIRCLE_BRACKET:
-		return parseExpresionBlock, nil
+		return parseCircleBracket, nil
 	case Token.OPEN_SQUARE_BRACKET:
 		return parseArray, nil
 	case Token.OPEN_GRAP_BRACKET:

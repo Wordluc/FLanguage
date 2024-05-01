@@ -5,7 +5,7 @@ import (
 	"FLanguage/Lexer/Token"
 )
 
-func parseCallFunc(l *Lexer.Lexer) (IStatement, error) {
+func statementCallFunc(l *Lexer.Lexer) (IStatement, error) {
 	callFunc := CallFuncStatement{}
 	exp, e := ParseExpresion(l, Token.DOT_COMMA)
 	if e != nil {
