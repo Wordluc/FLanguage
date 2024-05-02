@@ -140,7 +140,7 @@ func inputBuiltIn(env *Environment) (iObject, error) {
 }
 
 func LoadBuiltInVariable(env *Environment) error {
-	env.addVariable("nil", nullObject{})
+	env.addBuiltInVar("nil", nullObject{})
 	return nil
 }
 func ImportLibrary(env *Environment) (iObject, error) {
