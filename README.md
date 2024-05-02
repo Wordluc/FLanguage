@@ -85,7 +85,7 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
 - **import()**: Utilizzata per l'importazione di file o moduli, anche se potrebbe variare a seconda del linguaggio di programmazione specifico.
   - Esempio: `import("nome_modulo");`
 
-- **this{}**: Utilizzata per fare riferimento all'oggetto corrente all'interno di un contesto di programmazione orientato agli oggetti.
+- **this{}**: Utilizzata per fare riferimento all'hashtable corrente all'interno di un contesto di programmazione orientato agli oggetti.
   - Esempio:
     ```
     let object={
