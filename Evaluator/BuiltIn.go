@@ -171,7 +171,7 @@ func ImportLibrary(env *Environment) (iObject, error) {
 			}
 		}
 	}
-	partsPath := strings.Split(pathLibraryOb.Value, "/")
+	partsPath := strings.Split(pathLibraryOb.Value, "\\")
 	pathLibraryOb.Value = partsPath[len(partsPath)-1]
 	var newName string
 	for name, funct := range env.functions {
