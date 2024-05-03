@@ -156,7 +156,9 @@ func ImportLibrary(env *Environment) (iObject, error) {
 	if e != nil {
 		return nil, e
 	}
+	pathLibraryOb.Value = strings.Replace(pathLibraryOb.Value, "/", string(os.PathSeparator), -1)
 	path := filepath.Join(localPath, pathLibraryOb.Value)
+	println(path)
 	_, e = Run(path, env)
 	if e != nil {
 		return nil, e
@@ -171,7 +173,7 @@ func ImportLibrary(env *Environment) (iObject, error) {
 			}
 		}
 	}
-	partsPath := strings.Split(pathLibraryOb.Value, "\\")
+	partsPath := strings.Split(pathLibraryOb.Value, string(os.PathSeparator))
 	pathLibraryOb.Value = partsPath[len(partsPath)-1]
 	var newName string
 	for name, funct := range env.functions {
