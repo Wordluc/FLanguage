@@ -17,12 +17,12 @@ func lexerFromFile(path string) (Lexer.Lexer, error) {
 }
 
 func main() {
-	typeOp := os.Args[1]
-	if typeOp == "r" {
+	parm := os.Args[1]
+	if parm == "r" {
 		repl.Start()
 		return
 	}
-	path := os.Args[2]
+	path := parm
 	l, e := lexerFromFile(path)
 	if e != nil {
 		fmt.Println(e)
