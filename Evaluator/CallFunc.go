@@ -3,10 +3,11 @@ package Evaluator
 import (
 	"FLanguage/Parser"
 	"errors"
+	"strings"
 )
 
 func evalCallFunc(expression Parser.ExpresionCallFunc, env *Environment) (iObject, error) {
-	envFunc := &Environment{
+	funcEnv := &Environment{
 		variables:   make(map[string]iObject),
 		functions:   make(map[string]Parser.FuncDeclarationStatement),
 		externals:   env,
@@ -15,49 +16,45 @@ func evalCallFunc(expression Parser.ExpresionCallFunc, env *Environment) (iObjec
 	}
 	var fun Parser.FuncDeclarationStatement
 	var e error
-	switch ident := expression.Identifier.(type) {
+	switch ident := expression.Called.(type) {
 	case Parser.ExpresionLeaf:
 		funcBuiltInObject, ok := env.getBuiltInFunc(ident.Value)
 		if ok == nil {
-			return callBuiltInFunc(expression, funcBuiltInObject, envFunc)
+			return callBuiltInFunc(expression, funcBuiltInObject, funcEnv)
 		}
-		fun, e = env.getFunction(ident.Value)
-		if e != nil {
-			inlineVar, e := env.getVariable(ident.Value)
-			if e != nil {
-				return nil, e
-			}
-			inlineFun, ok := inlineVar.(Parser.FuncDeclarationStatement)
-			if !ok {
-				return nil, errors.New("not a function")
-			}
-			fun = inlineFun
+		if t, e := getFunctionInLeaf(env, ident); e == nil {
+			fun = t.(Parser.FuncDeclarationStatement)
 		}
-	default:
-		funct, e := evalExpresion(expression.Identifier, env)
-		if e != nil {
 
-			return nil, e
-		}
-		hashGet, ok := expression.Identifier.(Parser.ExpresionGetValueHash)
-		if ok {
+	default:
+		hashGet, isHashGet := expression.Called.(Parser.ExpresionGetValueHash)
+		if isHashGet {
 			hash, e := evalExpresion(hashGet.Value, env)
 			if e != nil {
 				return nil, e
 			}
-			envFunc.addVariable("this", hash)
+			if lib, ok := hash.(libraryObject); ok {
+				funcEnv.functions = lib.env.functions
+				fun, e = lib.env.getFunction(strings.Split(hashGet.Index.ToString(), `"`)[1])
+			}
+			funcEnv.addVariable("this", hash)
 		}
-		fun, ok = funct.(Parser.FuncDeclarationStatement)
-		if !ok {
-			return nil, errors.New("not a function")
+		funct, e := evalExpresion(expression.Called, env)
+		if e != nil {
+			return nil, e
+		}
+		tfun := fun
+		fun, isHashGet = funct.(Parser.FuncDeclarationStatement)
+		if !isHashGet {
+			fun = tfun
 		}
 	}
-	if len(fun.Params) != len(expression.Values) {
+	if len(fun.Params) != len(expression.Params) {
 		return nil, errors.New("not enough parms")
 	}
-	evalParms(expression.Values, fun.Params, envFunc)
+	evalParms(expression.Params, fun.Params, funcEnv)
 
-	valExp, e := Eval(fun.Body.(*Parser.StatementNode), envFunc)
+	valExp, e := Eval(fun.Body.(*Parser.StatementNode), funcEnv)
 	if e != nil {
 		return nil, e
 
@@ -69,8 +66,24 @@ func evalCallFunc(expression Parser.ExpresionCallFunc, env *Environment) (iObjec
 	return v.Value, nil
 }
 
+func getFunctionInLeaf(envSource *Environment, ident Parser.ExpresionLeaf) (iObject, error) {
+
+	fun, e := envSource.getFunction(ident.Value)
+	if e != nil {
+		inlineVar, e := envSource.getVariable(ident.Value)
+		if e != nil {
+			return nil, e
+		}
+		inlineFun, ok := inlineVar.(Parser.FuncDeclarationStatement)
+		if !ok {
+			return nil, errors.New("not a function")
+		}
+		return inlineFun, nil
+	}
+	return fun, e
+}
 func callBuiltInFunc(expression Parser.ExpresionCallFunc, funcBuiltInObject builtInFuncObject, env *Environment) (iObject, error) {
-	err := evalParms(expression.Values, funcBuiltInObject.NameParams, env)
+	err := evalParms(expression.Params, funcBuiltInObject.NameParams, env)
 	if err != nil {
 		return nil, err
 	}

@@ -9,9 +9,9 @@ import (
 
 func TestBinarySearch(t *testing.T) {
 	ist := `
-	import("../Library/BinarySearch.txt");
+	let binary=import("../Library/BinarySearch.txt");
 	let list=[2,6,7,9,22,44,55,66,77,88,99];
-	let b=BinarySearch_Run(list,66);
+	let b=binary{"Run"}(list,66);
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
@@ -46,10 +46,10 @@ func TestBinarySearch(t *testing.T) {
 
 func TestTree(t *testing.T) {
 	ist := `
-	import("../Library/Tree.txt");
+	let tree=import("../Library/Tree.txt");
 	let list=[22,21,6,7,9,0,55,6,-20,88,99];
-	let node=Tree_MakeTree(list);
-	let orderedList=Tree_FromTreeToList(node,len(list));
+	let node=tree{"MakeTree"}(list);
+	let orderedList=tree{"FromTreeToList"}(node,len(list));
 	END
 	`
 	lexer, e := Lexer.New([]byte(ist))
