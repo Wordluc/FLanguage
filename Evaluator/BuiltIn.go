@@ -158,29 +158,8 @@ func ImportLibrary(env *Environment) (iObject, error) {
 	}
 	pathLibraryOb.Value = strings.Replace(pathLibraryOb.Value, "/", string(os.PathSeparator), -1)
 	path := filepath.Join(localPath, pathLibraryOb.Value)
-	println(path)
 	_, e = Run(path, env)
-	if e != nil {
-		return nil, e
-	}
-	if len(env.variables) > 1 {
-		for name, f := range env.variables {
-			if name == "path" {
-				continue
-			}
-			if _, ok := f.(Parser.FuncDeclarationStatement); !ok {
-				return nil, errors.New("not possible define variables in library")
-			}
-		}
-	}
-	partsPath := strings.Split(pathLibraryOb.Value, string(os.PathSeparator))
-	pathLibraryOb.Value = partsPath[len(partsPath)-1]
-	var newName string
-	for name, funct := range env.functions {
-		newName = pathLibraryOb.Value[:len(pathLibraryOb.Value)-4] + "_" + name
-		env.externals.addFunction(newName, funct)
-	}
-	return nil, nil
+	return libraryObject{name: pathLibraryOb.Value, env: env}, e
 }
 func LoadBuiltInFunction(env *Environment) {
 	env.addBuiltInFunc("len", builtInFuncObject{Name: "len", NameParams: []string{"a"}, BuiltInfunc: lenBuiltin})

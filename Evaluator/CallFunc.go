@@ -3,6 +3,7 @@ package Evaluator
 import (
 	"FLanguage/Parser"
 	"errors"
+	"strings"
 )
 
 func evalCallFunc(expression Parser.ExpresionCallFunc, env *Environment) (iObject, error) {
@@ -34,22 +35,26 @@ func evalCallFunc(expression Parser.ExpresionCallFunc, env *Environment) (iObjec
 			fun = inlineFun
 		}
 	default:
-		funct, e := evalExpresion(expression.Identifier, env)
-		if e != nil {
-
-			return nil, e
-		}
 		hashGet, ok := expression.Identifier.(Parser.ExpresionGetValueHash)
 		if ok {
 			hash, e := evalExpresion(hashGet.Value, env)
 			if e != nil {
 				return nil, e
 			}
+			if lib, ok := hash.(libraryObject); ok {
+				envFunc.functions = lib.env.functions
+				fun, e = lib.env.getFunction(strings.Split(hashGet.Index.ToString(), `"`)[1])
+			}
 			envFunc.addVariable("this", hash)
 		}
+		funct, e := evalExpresion(expression.Identifier, env)
+		if e != nil {
+			return nil, e
+		}
+		tfun := fun
 		fun, ok = funct.(Parser.FuncDeclarationStatement)
 		if !ok {
-			return nil, errors.New("not a function")
+			fun = tfun
 		}
 	}
 	if len(fun.Params) != len(expression.Values) {
