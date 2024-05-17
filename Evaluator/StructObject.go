@@ -107,3 +107,12 @@ func (b builtInFuncObject) ToString() string {
 	}
 	return r + ")"
 }
+
+type libraryObject struct {
+	name string
+	env  *Environment
+}
+
+func (l libraryObject) ToString() string {
+	return "Env" + l.name
+}

@@ -111,7 +111,11 @@ func evalExpresion(expresion Parser.IExpresion, env *Environment) (iObject, erro
 		if e != nil {
 			return nil, e
 		}
+		if b, ok := hash.(libraryObject); ok {
+			return b, nil
+		}
 		hash, ok := hash.(hashObject).Values[key]
+
 		if !ok {
 			return nil, errors.New("element not found")
 		}
