@@ -29,11 +29,11 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
 - **let**: Utilizzata per dichiarare variabili.Una volta assegnato un elemento non è possibile cambiare il tipo della variabile
   - Esempio: `let a = 2;`
 
-- **import**: Utilizzata per l'importazione di file di codice.
+- **import**: Utilizzato per ottenere un modulo.
   - Esempio:
     ```
-    import("BinarySearch.txt");`
-    BinarySearch_Run([1,2,3,4,7],4);
+    let tree=import("BinarySearch.txt");`
+    tree{"Run"}([1,2,3,4,7],4);
     ```
 - **Ff**: Utilizzata per dichiarare una funzione.
   - Esempio:
@@ -82,8 +82,8 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
 - **len**: Funzione per determinare la lunghezza di un array o stringa.
   - Esempio: `let b = len(a);`
 
-- **import()**: Utilizzata per l'importazione di file o moduli, anche se potrebbe variare a seconda del linguaggio di programmazione specifico.
-  - Esempio: `import("nome_modulo");`
+- **import()**: Utilizzata per ritornare il modulo sotto forma di oggetto.
+  - Esempio: `let modulo=import("nome_modulo");`
 
 - **this{}**: Utilizzata per fare riferimento all'hashtable corrente all'interno di un contesto di programmazione orientato agli oggetti.
   - Esempio:
@@ -142,6 +142,6 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
 
 - **import**
   - Parametri: `path`
-  - Funzione: Importa un modulo o un file dall'`path` specificato
+  - Funzione: Ottiene un modulo dall'`path` e lo restituisce come oggetto
 
 
