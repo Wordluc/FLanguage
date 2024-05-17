@@ -34,7 +34,7 @@ func evalCallFunc(expression Parser.ExpresionCallFunc, env *Environment) (iObjec
 				return nil, e
 			}
 			if lib, ok := hash.(libraryObject); ok {
-				funcEnv.functions = lib.env.functions
+				funcEnv.externals = lib.env
 				fun, e = lib.env.getFunction(strings.Split(hashGet.Index.ToString(), `"`)[1])
 			}
 			funcEnv.addVariable("this", hash)
