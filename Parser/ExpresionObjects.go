@@ -85,15 +85,15 @@ func (_ ExpresionLeaf) New(t Token.Token) ExpresionLeaf {
 }
 
 type ExpresionCallFunc struct {
-	Params   []IExpresion
-	NameFunc IExpresion
+	Params []IExpresion
+	Called IExpresion
 }
 
 func (e *ExpresionCallFunc) AddParm(value IExpresion) {
 	e.Params = append(e.Params, value)
 }
 func (e ExpresionCallFunc) ToString() string {
-	r := e.NameFunc.ToString() + "("
+	r := e.Called.ToString() + "("
 	i := 0
 	for {
 
