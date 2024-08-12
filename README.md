@@ -26,7 +26,7 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
 
 ## Sintassi
 
-- **let**: Utilizzata per dichiarare variabili.Una volta assegnato un elemento non è possibile cambiare il tipo della variabile
+- **let**: Utilizzato per dichiarare variabili.Una volta assegnato un elemento non è possibile cambiare il tipo della variabile
   - Esempio: `let a = 2;`
 
 - **import**: Utilizzato per ottenere un modulo.
@@ -35,14 +35,14 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
     let tree=import("BinarySearch.txt");`
     tree{"Run"}([1,2,3,4,7],4);
     ```
-- **Ff**: Utilizzata per dichiarare una funzione.
+- **Ff**: Utilizzato per dichiarare una funzione.
   - Esempio:
     ```
     Ff getMatrix() {
          return [[2,4],[2,3,4]];
     }
     ```
-- **@**: Utilizzate per definire funzioni direttamente nel contesto del codice principale, salvandole all'interno di variabili, hashtable o array.
+- **@**: Utilizzato per definire funzioni direttamente nel contesto del codice principale, salvandole all'interno di variabili, hashtable o array.
   - Esempio:
     ```
 	  let a=@(a,b){
@@ -50,7 +50,7 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
 	  };
 	  let b=a(2,1);
     ```
-- **ret**: Utilizzata all'interno di una funzione per restituire un valore.
+- **ret**: Utilizzato all'interno di una funzione per restituire un valore.
   - Esempio:
     ```
     Ff funzione(){
@@ -58,7 +58,7 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
     }
     ```
 
-- **if/else**: Utilizzati per creare una struttura condizionale.
+- **if/else**: Utilizzato per creare una struttura condizionale.
   - Esempio:
     ```
     if (4 < 2){
@@ -68,7 +68,7 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
     }
     ```
 
-- **while**: Utilizzata per creare un ciclo che continua fintanto che la condizione specificata è vera.
+- **while**: Utilizzato per creare un ciclo che continua fintanto che la condizione specificata è vera.
   - Esempio:
     ```
     while (i < 5) {
@@ -82,10 +82,10 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
 - **len**: Funzione per determinare la lunghezza di un array o stringa.
   - Esempio: `let b = len(a);`
 
-- **import()**: Utilizzata per ritornare il modulo sotto forma di oggetto.
+- **import()**: Utilizzato per ritornare il modulo sotto forma di oggetto.
   - Esempio: `let modulo=import("nome_modulo");`
 
-- **this{}**: Utilizzata per fare riferimento all'hashtable corrente all'interno di un contesto di programmazione orientato agli oggetti.
+- **this{}**: Utilizzato per fare riferimento all'hashtable corrente all'interno di un contesto di programmazione orientato agli oggetti.
   - Esempio:
     ```
     let object={
@@ -100,10 +100,10 @@ Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
     ```
 
 
-- **string()**: Presumibilmente una funzione o un metodo per convertire un valore in una stringa.
+- **string()**: è una funzione o un metodo per convertire un valore in una stringa.
   - Esempio: `a = a + string(2);`
 
-- **getMatrix**: Presumibilmente una funzione per ottenere una matrice o una struttura dati simile.
+- **getMatrix**: è una funzione per ottenere una matrice o una struttura dati simile.
   - Esempio: `let b = getMatrix()[0][1];`
 
 ## InnerFunction:
