@@ -3,7 +3,7 @@
 Benvenuto su FLanguage! Questo progetto è stato creato come esperimento per comprendere il funzionamento degli interpreti e per imparare il linguaggio di programmazione Go.
 Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
 - **RunFile**: Per eseguire il codice Flanguage bisogna spostarsi in ./bin/ e eseguire  `.\FLanguage.exe "<file.txt>"`
-- **RunRepl**: Per eseguire il repl di Flanguage bisogna spostarsi in ./bin/ e eseguire  `.\FLanguage.exe "r"`, usare "{" e "}" per multi-line code.
+- **RunRepl**: Per eseguire il repl di Flanguage bisogna spostarsi in ./bin/ e eseguire  `.\FLanguage.exe "r"`, usare "{{" e "}} " per multi-line code.
 
 ## Caratteristiche Principali
 
