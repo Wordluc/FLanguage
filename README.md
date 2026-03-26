@@ -1,147 +1,96 @@
 # FLanguage
 
-Benvenuto su FLanguage! Questo progetto è stato creato come esperimento per comprendere il funzionamento degli interpreti e per imparare il linguaggio di programmazione Go.
-Puoi trovare un esempio di codice Flanguage in "helloWord.txt".
-- **RunFile**: Per eseguire il codice Flanguage bisogna spostarsi in ./bin/ e eseguire  `.\FLanguage.exe "<file.txt>"`
-- **RunRepl**: Per eseguire il repl di Flanguage bisogna spostarsi in ./bin/ e eseguire  `.\FLanguage.exe "r"`, usare "{{" e "}} " per multi-line code.
+Welcome to FLanguage! This project was created as an experiment to understand how interpreters work and to learn the Go programming language. You can find an example of FLanguage code in `helloWorld.txt`.
 
-## Caratteristiche Principali
+- **RunFile**: To run FLanguage code, navigate to `./bin/` and execute `.\FLanguage.exe "<file.txt>"`
+- **RunRepl**: To run the FLanguage REPL, navigate to `./bin/` and execute `.\FLanguage.exe "r"`. Use `{{` and `}}` for multi-line code.
 
-- **Funzioni**: Puoi definire e utilizzare funzioni per organizzare il tuo codice in moduli riutilizzabili e per gestire compiti specifici.Le funzioni non possono modificare l'ambiente esterno in cui sono definite.
-  
-- **Array**: Manipola collezioni di dati con facilità utilizzando array, consentendo di memorizzare e accedere a elementi in modo efficiente.
-  
-- **Hashtable**: Utilizza hashtable per implementare strutture dati chiave-valore, ideali per la gestione di associazioni tra dati e inline function.
-  
-- **Istruzioni Condizionali**: Controlla il flusso del programma utilizzando istruzioni condizionali if-else, consentendo di eseguire operazioni diverse in base a determinate condizioni.
-  
-- **Cicli While**: Itera attraverso i dati o esegui operazioni ripetute finché una condizione specifica è vera utilizzando i cicli while.
-  
-- **Funzioni Inline**: Definisci funzioni direttamente nel contesto del codice principale per migliorare la leggibilità e la modularità del codice.
-  
-- **Importazione di Codice Esterno**: Importa facilmente codice da altri file per organizzare il tuo progetto in moduli separati e riutilizzare il codice esistente,i moduli devono essere composti esclusivamente da funzioni. Per richiamare una funzione, è necessario seguire una regola specifica: si concatena il nome del modulo (senza estensione) con il nome della funzione, separati da un underscore (_).
-  
-- **Oggetti**:Vi è la possibilità di poter creare un hashtable con al interno delle innerfunction che potranno interaggire con la hashtable attraverso la parola chiave "this"
-- **Fine File**:Bisogna indicare la fine del file mediante le keyword  `END`
+## Key Features
 
-## Sintassi
+- **Functions**: Define and use functions to organize your code into reusable modules. Functions cannot modify the external environment in which they are defined.
+- **Arrays**: Easily manipulate data collections using arrays, allowing you to store and access elements efficiently.
+- **Hash Tables**: Use hash tables to implement key-value data structures, ideal for managing data associations and inline functions.
+- **Conditional Statements**: Control program flow using if-else statements, allowing different operations to be executed based on specific conditions.
+- **While Loops**: Iterate through data or repeat operations as long as a specific condition is true.
+- **Inline Functions**: Define functions directly within the main code context to improve readability and modularity.
+- **External Code Import**: Easily import code from other files to organize your project into separate modules and reuse existing code. Modules must consist exclusively of functions. To call a function from a module, concatenate the module name (without extension) with the function name, separated by an underscore (`_`).
+- **Objects**: Hash tables can contain inner functions that interact with the hash table itself through the `this` keyword.
+- **End of File**: The end of every file must be indicated with the `END` keyword.
 
-- **let**: Utilizzato per dichiarare variabili.Una volta assegnato un elemento non è possibile cambiare il tipo della variabile
-  - Esempio: `let a = 2;`
+## Syntax
 
-- **import**: Utilizzato per ottenere un modulo.
-  - Esempio:
-    ```
-    let tree=import("BinarySearch.txt");`
-    tree{"Run"}([1,2,3,4,7],4);
-    ```
-- **Ff**: Utilizzato per dichiarare una funzione.
-  - Esempio:
-    ```
-    Ff getMatrix() {
-         return [[2,4],[2,3,4]];
-    }
-    ```
-- **@**: Utilizzato per definire funzioni direttamente nel contesto del codice principale, salvandole all'interno di variabili, hashtable o array.
-  - Esempio:
-    ```
-	  let a=@(a,b){
-		  ret a+b;
-	  };
-	  let b=a(2,1);
-    ```
-- **ret**: Utilizzato all'interno di una funzione per restituire un valore.
-  - Esempio:
-    ```
-    Ff funzione(){
-       ret this{"eta"};
-    }
-    ```
+- **let** — Declare a variable. Once a type is assigned, it cannot be changed.
+  ```
+  let a = 2;
+  ```
 
-- **if/else**: Utilizzato per creare una struttura condizionale.
-  - Esempio:
-    ```
-    if (4 < 2){
-        a = a + 2;
-    } else {
-        a = a * 4;
-    }
-    ```
+- **import** — Import a module and return it as an object.
+  ```
+  let tree = import("BinarySearch.txt");
+  tree{"Run"}([1,2,3,4,7], 4);
+  ```
 
-- **while**: Utilizzato per creare un ciclo che continua fintanto che la condizione specificata è vera.
-  - Esempio:
-    ```
-    while (i < 5) {
-       i = i + 1;
-    }
-    ```
+- **Ff** — Declare a named function.
+  ```
+  Ff getMatrix() {
+      ret [[2,4],[2,3,4]];
+  }
+  ```
 
-- **newArray**:Funzione per creare un nuovo array con valori specificati.
-  - Esempio: `let a = newArray(4, 0);`
+- **@** — Define an anonymous inline function, assignable to variables, hash tables, or arrays.
+  ```
+  let a = @(a, b) {
+      ret a + b;
+  };
+  let b = a(2, 1);
+  ```
 
-- **len**: Funzione per determinare la lunghezza di un array o stringa.
-  - Esempio: `let b = len(a);`
+- **ret** — Return a value from a function.
+  ```
+  Ff greet() {
+      ret "hello";
+  }
+  ```
 
-- **import()**: Utilizzato per ritornare il modulo sotto forma di oggetto.
-  - Esempio: `let modulo=import("nome_modulo");`
+- **if / else** — Conditional branching.
+  ```
+  if (4 < 2) {
+      a = a + 2;
+  } else {
+      a = a * 4;
+  }
+  ```
 
-- **this{}**: Utilizzato per fare riferimento all'hashtable corrente all'interno di un contesto di programmazione orientato agli oggetti.
-  - Esempio:
-    ```
-    let object={
-               "nome":"luca",
-               "eta":22,
-               "compleanno":@(){
-                    this{"eta"}=this{"eta"}+1;
-                    ret this{"eta"};
-               }
-    };
-    object{"compleanno"}();
-    ```
+- **while** — Loop while a condition is true.
+  ```
+  while (i < 5) {
+      i = i + 1;
+  }
+  ```
 
+- **this{}** — Reference the current hash table from within an inner function.
+  ```
+  let object = {
+      "name": "luca",
+      "age": 22,
+      "birthday": @() {
+          this{"age"} = this{"age"} + 1;
+          ret this{"age"};
+      }
+  };
+  object{"birthday"}();
+  ```
 
-- **string()**: è una funzione o un metodo per convertire un valore in una stringa.
-  - Esempio: `a = a + string(2);`
+## Built-in Functions
 
-- **getMatrix**: è una funzione per ottenere una matrice o una struttura dati simile.
-  - Esempio: `let b = getMatrix()[0][1];`
-
-## InnerFunction:
-
-- **len**
-  - Parametri: `a`
-  - Funzione: restituisce il numero di elementi di un array `a` o il numero di caratteri di una stringa `a`
-
-- **newArray**
-  - Parametri: `n`, `type`
-  - Funzione: crea un array di grandezza `n` con ogni elemento inizializzato a `type`
-
-- **int**
-  - Parametri: `a`
-  - Funzione: converte una stringa o un float `a` in un intero se possibile
-
-- **float**
-  - Parametri: `a`
-  - Funzione: converte una stringa o un intero `a` in un float se possibile
-
-- **string**
-  - Parametri: `a`
-  - Funzione: converte un elemento `a` in stringa
-
-- **print**
-  - Parametri: `a`
-  - Funzione: Stampa `a` su console
-
-- **println**
-  - Parametri: `a`
-  - Funzione: Stampa `a` su console andando a capo
-
-- **read**
-  - Parametri: Nessuno
-  - Funzione: Legge da input
-
-- **import**
-  - Parametri: `path`
-  - Funzione: Ottiene un modulo dall'`path` e lo restituisce come oggetto
-
-
+| Function | Parameters | Description |
+|---|---|---|
+| `len` | `a` | Returns the number of elements in an array, or the number of characters in a string |
+| `newArray` | `n`, `type` | Creates an array of size `n` with every element initialized to `type` |
+| `int` | `a` | Converts a string or float to an integer |
+| `float` | `a` | Converts a string or integer to a float |
+| `string` | `a` | Converts a value to a string |
+| `print` | `a` | Prints `a` to the console |
+| `println` | `a` | Prints `a` to the console with a newline |
+| `read` | — | Reads a line from standard input |
+| `import` | `path` | Loads a module from `path` and returns it as an object |
